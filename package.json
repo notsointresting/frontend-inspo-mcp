@@ -1,0 +1,29 @@
+{
+  "name": "frontend-inspo-mcp",
+  "version": "0.1.0",
+  "description": "Local MCP server for discovering frontend/design resources from freefrontend.com, ui.watermelon.sh, and ls.graphics.",
+  "type": "module",
+  "bin": {
+    "frontend-inspo-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "smoke": "node dist/smoke.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "cheerio": "^1.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

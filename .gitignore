@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Scratch / tool artifacts
+.playwright-mcp/
+*.log
+lsg.html
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
