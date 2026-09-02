@@ -3,6 +3,7 @@
 import { freefrontend } from "./sources/freefrontend.js";
 import { lsgraphics } from "./sources/lsgraphics.js";
 import { watermelon } from "./sources/watermelon.js";
+import { aceternity, magicui, reactbits, shadcn } from "./sources/registry.js";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail: string) {
@@ -49,6 +50,27 @@ async function run() {
     }
   } catch (e) {
     check("lsgraphics", false, (e as Error).message);
+  }
+
+  // Registry sources (shadcn schema): search + code fetch.
+  for (const [name, adapter] of [
+    ["shadcn", shadcn],
+    ["magicui", magicui],
+    ["aceternity", aceternity],
+    ["reactbits", reactbits],
+  ] as const) {
+    try {
+      const res = await adapter.search({ limit: 3 });
+      check(`${name}.search`, res.length > 0, `${res.length} results, first="${res[0]?.id}"`);
+      if (res[0]) {
+        const d = await adapter.getResource(res[0].id);
+        const hasCode = d?.code && Object.keys(d.code).length > 0;
+        check(`${name}.getResource+code`, !!d && !!hasCode,
+          `code langs=${d?.code ? Object.keys(d.code).join(",") : "none"}`);
+      }
+    } catch (e) {
+      check(name, false, (e as Error).message);
+    }
   }
 
   console.error(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}`);

@@ -7,12 +7,17 @@ import { z } from "zod";
 import { freefrontend } from "./sources/freefrontend.js";
 import { lsgraphics } from "./sources/lsgraphics.js";
 import { watermelon } from "./sources/watermelon.js";
+import { aceternity, magicui, reactbits, shadcn } from "./sources/registry.js";
 import type { SourceAdapter, SourceId } from "./lib/types.js";
 
 const ADAPTERS: Record<SourceId, SourceAdapter> = {
   freefrontend,
   watermelon,
   lsgraphics,
+  shadcn,
+  magicui,
+  aceternity,
+  reactbits,
 };
 
 const SOURCE_IDS = Object.keys(ADAPTERS) as SourceId[];
