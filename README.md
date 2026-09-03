@@ -1,6 +1,6 @@
 # frontend-inspo-mcp 🎨
 
-> **A local MCP server that lets AI coding agents discover and pull real frontend code, UI components, and design mockups** — from FreeFrontend, shadcn/ui, Magic UI, Aceternity UI, React Bits, Watermelon UI, and LS.GRAPHICS.
+> **A local MCP server that lets AI coding agents discover and pull real frontend code, UI components, design mockups, and design-system tokens** — from FreeFrontend, shadcn/ui, Magic UI, Aceternity UI, React Bits, Refero Styles, three.js, drei, Watermelon UI, and LS.GRAPHICS.
 
 [![MCP](https://img.shields.io/badge/Model_Context_Protocol-server-blue)](https://modelcontextprotocol.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178c6)](https://www.typescriptlang.org/)
@@ -21,7 +21,7 @@ Most component galleries are built for humans clicking around a browser. This se
 them **agent-readable**, so your AI assistant can search, compare, and paste real code
 directly into your project.
 
-- 🔍 **Search 7 sources** through one consistent set of tools
+- 🔍 **Search 10 sources** through one consistent set of tools
 - 📋 **Get real code** — React/TSX, Tailwind, vanilla HTML/CSS/JS
 - 🎭 **Free design mockups** with direct, un-gated download links (Figma / Sketch / PSD)
 - ⚡ **Fast** — in-memory caching + polite per-host rate limiting
@@ -36,6 +36,9 @@ directly into your project.
 | **[Magic UI](https://magicui.design/)** | Animated React + Framer Motion components | ✅ | Registry JSON |
 | **[Aceternity UI](https://ui.aceternity.com/)** | Bold animated React + Tailwind components | ✅ | Registry JSON |
 | **[React Bits](https://reactbits.dev/)** | Animated React components (JS/TS, CSS/Tailwind) | ✅ | Registry JSON |
+| **[Refero Styles](https://styles.refero.design/)** | Design systems from real sites — DESIGN.md, Tailwind, CSS vars, tokens | ✅ | Public API (no login) |
+| **[three.js](https://threejs.org/)** | Official examples — GLSL shaders, post-fx, loaders, controls | ✅ | jsdelivr CDN |
+| **[drei](https://github.com/pmndrs/drei)** | React Three Fiber helper components | ✅ | GitHub source |
 | **[Watermelon UI](https://ui.watermelon.sh/)** | React blocks, dashboards, templates, showcases | — | Official JSON API |
 | **[LS.GRAPHICS](https://www.ls.graphics/free-mockups)** | Free design mockups (Figma / Sketch / PSD) | — | HTML parse |
 
@@ -53,7 +56,7 @@ Requires **Node 18+** (uses the built-in `fetch`).
 Verify every source is live:
 
 ```bash
-npm run smoke   # hits all 7 sources and asserts parsing → prints ALL PASS
+npm run smoke   # hits all 10 sources and asserts parsing → prints ALL PASS
 ```
 
 ## 🔌 Add it to your MCP client
@@ -92,7 +95,7 @@ The server speaks MCP over **stdio**. Point your client at the built `dist/index
 ## 🛠️ Tools
 
 Every tool takes a `source` argument:
-`freefrontend` · `shadcn` · `magicui` · `aceternity` · `reactbits` · `watermelon` · `lsgraphics`
+`freefrontend` · `shadcn` · `magicui` · `aceternity` · `reactbits` · `refero` · `threejs` · `drei` · `watermelon` · `lsgraphics`
 
 | Tool | Description |
 | --- | --- |
@@ -143,6 +146,13 @@ Find a free device mockup:
 - **FreeFrontend** parses server-rendered collection pages and base64-decodes the inline
   code blocks; pagination follows `/<collection>/page/N/`.
 - **Watermelon UI** calls its documented public API (`/api/v1/catalog/*`).
+- **Refero Styles** calls the **public** `styles.refero.design/api/styles` endpoints and
+  synthesizes a DESIGN.md, Tailwind theme, CSS variables, and design-token JSON from the
+  returned design-system data — **no Refero subscription is required**.
+- **three.js** lists the published npm package file tree via jsdelivr and fetches raw
+  source (GLSL shaders, post-processing, loaders, controls) from the CDN.
+- **drei** reads the `pmndrs/drei` GitHub source tree and raw files. Set an optional
+  `GITHUB_TOKEN` env var to lift GitHub's unauthenticated rate limit (60 req/hr).
 - **LS.GRAPHICS** parses the free-mockups listing and each asset page for formats and
   download links.
 
@@ -162,6 +172,8 @@ src/
     watermelon.ts       JSON API client
     lsgraphics.ts       HTML parse (mockups)
     registry.ts         shadcn-schema registry factory (shadcn/magicui/aceternity/reactbits)
+    refero.ts           Refero public API -> synthesized DESIGN.md / tokens
+    packages.ts         code libraries via jsdelivr (three.js) + GitHub (drei)
 ```
 
 ## 🤝 Contributing
@@ -180,6 +192,9 @@ source's license before reusing anything.
 - **[Magic UI](https://magicui.design/)** — MIT
 - **[Aceternity UI](https://ui.aceternity.com/)** by [Manu Arora](https://twitter.com/mannupaaji)
 - **[React Bits](https://reactbits.dev/)** by [David Haz](https://github.com/DavidHDev) — MIT
+- **[Refero](https://refero.design/)** — design-system references extracted from public websites (data served via Refero's public API; each referenced site owns its brand)
+- **[three.js](https://threejs.org/)** by [mrdoob](https://github.com/mrdoob) & contributors — MIT
+- **[drei](https://github.com/pmndrs/drei)** by [pmndrs](https://github.com/pmndrs) — MIT
 - **[Watermelon UI](https://ui.watermelon.sh/)** — open-source React platform
 - **[LS.GRAPHICS](https://www.ls.graphics/)** — free & premium design mockups
 
@@ -196,4 +211,6 @@ Third-party resources retrieved through it remain under their respective license
 <sub>**Keywords:** MCP server · Model Context Protocol · AI coding agent · UI components ·
 React components · Tailwind CSS · shadcn/ui · Magic UI · Aceternity UI · React Bits ·
 FreeFrontend · design mockups · Figma · component library · copy-paste UI ·
+design tokens · DESIGN.md · design system · Refero · three.js · GLSL shaders · WebGL ·
+React Three Fiber · drei ·
 Claude · Cursor · frontend design · CSS snippets · Watermelon UI · LS.GRAPHICS.</sub>

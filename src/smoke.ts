@@ -4,6 +4,8 @@ import { freefrontend } from "./sources/freefrontend.js";
 import { lsgraphics } from "./sources/lsgraphics.js";
 import { watermelon } from "./sources/watermelon.js";
 import { aceternity, magicui, reactbits, shadcn } from "./sources/registry.js";
+import { refero } from "./sources/refero.js";
+import { drei, threejs } from "./sources/packages.js";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail: string) {
@@ -62,6 +64,39 @@ async function run() {
     try {
       const res = await adapter.search({ limit: 3 });
       check(`${name}.search`, res.length > 0, `${res.length} results, first="${res[0]?.id}"`);
+      if (res[0]) {
+        const d = await adapter.getResource(res[0].id);
+        const hasCode = d?.code && Object.keys(d.code).length > 0;
+        check(`${name}.getResource+code`, !!d && !!hasCode,
+          `code langs=${d?.code ? Object.keys(d.code).join(",") : "none"}`);
+      }
+    } catch (e) {
+      check(name, false, (e as Error).message);
+    }
+  }
+
+  // Refero styles (public API -> synthesized DESIGN.md/tokens)
+  try {
+    const res = await refero.search({ limit: 3 });
+    check("refero.search", res.length > 0, `${res.length} results, first="${res[0]?.title}"`);
+    if (res[0]) {
+      const d = await refero.getResource(res[0].id);
+      const hasMd = !!d?.code?.["design.md"];
+      check("refero.getResource+design.md", !!d && hasMd,
+        `artifacts=${d?.code ? Object.keys(d.code).join(",") : "none"}`);
+    }
+  } catch (e) {
+    check("refero", false, (e as Error).message);
+  }
+
+  // Package sources: three.js (jsdelivr) + drei (GitHub)
+  for (const [name, adapter] of [
+    ["threejs", threejs],
+    ["drei", drei],
+  ] as const) {
+    try {
+      const res = await adapter.search({ limit: 3 });
+      check(`${name}.search`, res.length > 0, `${res.length} results, first="${res[0]?.title}"`);
       if (res[0]) {
         const d = await adapter.getResource(res[0].id);
         const hasCode = d?.code && Object.keys(d.code).length > 0;

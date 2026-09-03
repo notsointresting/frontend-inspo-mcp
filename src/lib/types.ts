@@ -7,7 +7,10 @@ export type SourceId =
   | "shadcn"
   | "magicui"
   | "aceternity"
-  | "reactbits";
+  | "reactbits"
+  | "refero"
+  | "threejs"
+  | "drei";
 
 /** A category or collection within a source (e.g. "css-hover-effects", "blocks/auth"). */
 export interface Category {
