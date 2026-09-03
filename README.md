@@ -105,6 +105,7 @@ Every tool takes a `source` argument:
 | `list_sources` | List all sources and whether each returns inline code |
 | `list_categories` | Categories/collections/kinds for a source |
 | `search_resources` | Search by `query`, `category`, `tech`, `limit` — returns lightweight summaries |
+| `search_all` | Search **many sources at once** and merge results (parallel; per-source failures are reported, not fatal) |
 | `get_resource` | Full detail for one item (metadata, license, code, formats, downloads) |
 | `get_code` | Raw source code for code-bearing sources, keyed by language |
 
@@ -160,6 +161,17 @@ Find a free device mockup:
   download links.
 
 Requests are cached in memory (10-min TTL) and throttled per host to stay polite.
+
+### Optional: persistent cache
+
+By default the cache is in-memory (cleared on restart). To persist responses across
+restarts, set an env var pointing at a writable directory:
+
+```bash
+FRONTEND_INSPO_CACHE_DIR=/path/to/cache
+```
+
+When set, responses are stored on disk (same 10-min TTL) so repeated runs skip the network.
 
 ## 🗂️ Project layout
 

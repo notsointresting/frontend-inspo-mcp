@@ -112,20 +112,47 @@ export const lsgraphics: SourceAdapter = {
       undefined;
     const image = $('meta[property="og:image"]').attr("content") || undefined;
 
-    // Collect download links and infer formats.
+    // Real download links live in the Next.js streamed data as escaped JSON
+    // fields like \"psd_link\":\"https://...zip\". Unescape and pull them out.
+    const unescaped = html.replace(/\\+"/g, '"');
     const downloads: { label: string; url: string }[] = [];
     const formats = new Set<string>();
-    $("a[href]").each((_, a) => {
-      const href = $(a).attr("href") || "";
-      const text = $(a).text().trim();
-      const hay = `${href} ${text}`.toLowerCase();
-      if (/download|\.zip|\.psd|\.fig|\.sketch|dropbox|figma|drive\.google/.test(hay)) {
-        downloads.push({ label: text || "Download", url: absUrl(href) });
+    const linkFields: Record<string, string> = {
+      zip_link: "zip",
+      psd_link: "psd",
+      figma_link: "figma",
+      sketch_link: "sketch",
+      ai_link: "illustrator",
+      ae_link: "after-effects",
+      svg_link: "svg",
+      xd_link: "xd",
+    };
+    for (const [field, fmt] of Object.entries(linkFields)) {
+      const m = unescaped.match(
+        new RegExp(`"${field}"\\s*:\\s*"(https?://[^"]+)"`, "i"),
+      );
+      if (m) {
+        downloads.push({ label: fmt, url: m[1] });
+        // the zip/psd file's real extension is the true format signal
+        const ext = m[1].split(".").pop()?.toLowerCase();
+        formats.add(ext && /^(zip|psd|fig|sketch|ai|svg|xd)$/.test(ext) ? ext : fmt);
       }
-      for (const f of ["figma", "sketch", "psd", "photoshop", "xd", "blender"]) {
-        if (hay.includes(f)) formats.add(f === "photoshop" ? "psd" : f);
-      }
-    });
+    }
+
+    // Fallback: scrape visible anchors if the embedded fields weren't found.
+    if (downloads.length === 0) {
+      $("a[href]").each((_, a) => {
+        const href = $(a).attr("href") || "";
+        const text = $(a).text().trim();
+        const hay = `${href} ${text}`.toLowerCase();
+        if (/download|\.zip|\.psd|\.fig|\.sketch|dropbox|figma|drive\.google/.test(hay)) {
+          downloads.push({ label: text || "Download", url: absUrl(href) });
+        }
+        for (const f of ["figma", "sketch", "psd", "photoshop", "xd", "blender"]) {
+          if (hay.includes(f)) formats.add(f === "photoshop" ? "psd" : f);
+        }
+      });
+    }
 
     return {
       source: "lsgraphics",

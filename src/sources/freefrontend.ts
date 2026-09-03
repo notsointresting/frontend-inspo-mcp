@@ -224,15 +224,55 @@ export const freefrontend: SourceAdapter = {
   },
 
   async getResource(id: string): Promise<ResourceDetail | null> {
-    // id is a snippet popover id, e.g. 2026-07-23-diagonal-illusion-...
-    // The date prefix isn't enough to locate its collection, so callers should
-    // pass "collection::id". Support both forms.
-    let collection = "css-hover-effects";
-    let snippetId = id;
+    // Preferred form: "collection::snippetId" (exact + fast).
     if (id.includes("::")) {
-      [collection, snippetId] = id.split("::");
+      const [collection, snippetId] = id.split("::");
+      const cards = await fetchCollection(collection, 100);
+      return cards.find((c) => c.id === snippetId) ?? null;
     }
-    const cards = await fetchCollection(collection, 100);
-    return cards.find((c) => c.id === snippetId) ?? null;
+
+    // id-only resolution: the snippet id encodes descriptive words
+    // (e.g. "2026-07-23-diagonal-illusion-pattern-in-pure-css"), so infer a
+    // short list of likely collections from those words, then scan them.
+    const slug = id.replace(/^\d{4}-\d{2}-\d{2}-/, ""); // drop date prefix
+    const candidates = new Set<string>();
+    // tech-based defaults
+    if (/tailwind/.test(slug)) candidates.add("tailwind-buttons");
+    if (/bootstrap/.test(slug)) candidates.add("bootstrap-cards");
+    // feature-word -> collection guesses (cheap, high hit-rate)
+    const wordMap: Record<string, string> = {
+      hover: "css-hover-effects",
+      glow: "css-glow-effects",
+      neon: "css-neon-effects",
+      glitch: "css-glitch-effects",
+      button: "css-buttons",
+      card: "css-cards",
+      loader: "css-loaders",
+      spinner: "css-loaders",
+      accordion: "css-accordions",
+      gallery: "css-galleries",
+      grid: "css-grid-layouts",
+      animation: "css-animations",
+      illusion: "css-optical-illusions",
+      gradient: "css-gradients",
+      form: "css-forms",
+    };
+    for (const [word, col] of Object.entries(wordMap)) {
+      if (slug.includes(word)) candidates.add(col);
+    }
+    // always include the most populated general collections as a safety net
+    candidates.add("css-hover-effects");
+    candidates.add("css-animations");
+
+    for (const collection of candidates) {
+      try {
+        const cards = await fetchCollection(collection, 100);
+        const hit = cards.find((c) => c.id === id);
+        if (hit) return hit;
+      } catch {
+        /* skip a collection that 404s */
+      }
+    }
+    return null;
   },
 };

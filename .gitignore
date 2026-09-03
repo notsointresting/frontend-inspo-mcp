@@ -8,6 +8,8 @@ dist/
 .playwright-mcp/
 *.log
 lsg.html
+peach.html
+test/
 
 # Editor / OS
 .DS_Store

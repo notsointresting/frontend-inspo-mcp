@@ -1,5 +1,10 @@
 // Polite HTTP helper: per-host rate limiting + in-memory TTL cache.
-// ponytail: cache is process-memory only (lost on restart); fine for a local stdio MCP.
+// Optional disk cache: set FRONTEND_INSPO_CACHE_DIR to persist responses across
+// restarts (memory stays the fast first layer). ponytail: disk cache is opt-in;
+// default behavior is unchanged (memory-only).
+import { createHash } from "node:crypto";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 const USER_AGENT =
   "frontend-inspo-mcp/0.1 (+https://github.com/) local discovery agent";
@@ -15,6 +20,41 @@ interface CacheEntry {
 const cache = new Map<string, CacheEntry>();
 const lastHit = new Map<string, number>(); // host -> timestamp
 const hostChain = new Map<string, Promise<unknown>>(); // serialize per host
+
+// --- optional disk cache ----------------------------------------------------
+const DISK_CACHE_DIR = process.env.FRONTEND_INSPO_CACHE_DIR;
+if (DISK_CACHE_DIR) {
+  try {
+    mkdirSync(DISK_CACHE_DIR, { recursive: true });
+  } catch {
+    /* if we can't create it, silently fall back to memory-only */
+  }
+}
+const diskPath = (url: string): string | null => {
+  if (!DISK_CACHE_DIR) return null;
+  const key = createHash("sha1").update(url).digest("hex");
+  return join(DISK_CACHE_DIR, `${key}.json`);
+};
+function diskRead(url: string): string | null {
+  const p = diskPath(url);
+  if (!p) return null;
+  try {
+    const entry = JSON.parse(readFileSync(p, "utf-8")) as CacheEntry;
+    if (entry.expires > Date.now()) return entry.body;
+  } catch {
+    /* missing or corrupt — treat as miss */
+  }
+  return null;
+}
+function diskWrite(url: string, entry: CacheEntry): void {
+  const p = diskPath(url);
+  if (!p) return;
+  try {
+    writeFileSync(p, JSON.stringify(entry));
+  } catch {
+    /* best-effort */
+  }
+}
 
 function hostOf(url: string): string {
   try {
@@ -64,9 +104,18 @@ export async function fetchText(url: string): Promise<string> {
   const cached = cache.get(url);
   if (cached && cached.expires > Date.now()) return cached.body;
 
+  // second layer: optional disk cache (survives restarts)
+  const fromDisk = diskRead(url);
+  if (fromDisk !== null) {
+    cache.set(url, { body: fromDisk, expires: Date.now() + CACHE_TTL_MS });
+    return fromDisk;
+  }
+
   await throttle(hostOf(url));
   const body = await rawFetch(url);
-  cache.set(url, { body, expires: Date.now() + CACHE_TTL_MS });
+  const entry = { body, expires: Date.now() + CACHE_TTL_MS };
+  cache.set(url, entry);
+  diskWrite(url, entry);
   return body;
 }
 

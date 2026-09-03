@@ -100,10 +100,53 @@ server.tool(
   },
 );
 
+// --- search_all -------------------------------------------------------------
+server.tool(
+  "search_all",
+  "Search several sources at once and merge the results. Use when you don't know which source has what you want. Runs sources in parallel; failures are reported per-source without failing the whole call.",
+  {
+    query: z.string().describe("Free-text keyword to search across sources."),
+    sources: z
+      .array(z.enum(SOURCE_IDS as [SourceId, ...SourceId[]]))
+      .optional()
+      .describe("Which sources to search. Defaults to all sources."),
+    perSource: z
+      .number()
+      .int()
+      .min(1)
+      .max(25)
+      .optional()
+      .describe("Max results per source (default 5)."),
+  },
+  async ({ query, sources, perSource }) => {
+    const targets = sources && sources.length ? sources : SOURCE_IDS;
+    const limit = perSource ?? 5;
+    const settled = await Promise.allSettled(
+      targets.map(async (id) => ({
+        source: id,
+        results: await ADAPTERS[id].search({ query, limit }),
+      })),
+    );
+    const merged: unknown[] = [];
+    const errors: { source: string; error: string }[] = [];
+    settled.forEach((r, i) => {
+      if (r.status === "fulfilled") merged.push(...r.value.results);
+      else errors.push({ source: targets[i], error: (r.reason as Error).message });
+    });
+    return json({
+      query,
+      sourcesSearched: targets.length,
+      count: merged.length,
+      results: merged,
+      ...(errors.length ? { errors } : {}),
+    });
+  },
+);
+
 // --- get_resource -----------------------------------------------------------
 server.tool(
   "get_resource",
-  "Get full detail for one resource. For freefrontend, pass id as 'collection::snippetId' (collection defaults to css-code-examples). For watermelon, id is 'kind/slug'. For lsgraphics, id is the asset slug.",
+  "Get full detail for one resource. For freefrontend, pass id as 'collection::snippetId' OR just the snippet id (it will resolve across likely collections). For watermelon, id is 'kind/slug'. For lsgraphics, id is the asset slug.",
   {
     source: z.enum(SOURCE_IDS as [SourceId, ...SourceId[]]),
     id: z.string().describe("Resource id as returned by search_resources."),
