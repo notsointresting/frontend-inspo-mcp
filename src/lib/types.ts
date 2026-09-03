@@ -10,7 +10,10 @@ export type SourceId =
   | "reactbits"
   | "refero"
   | "threejs"
-  | "drei";
+  | "drei"
+  | "fancy"
+  | "twojs"
+  | "scrollama";
 
 /** A category or collection within a source (e.g. "css-hover-effects", "blocks/auth"). */
 export interface Category {

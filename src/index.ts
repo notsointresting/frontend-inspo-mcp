@@ -7,9 +7,9 @@ import { z } from "zod";
 import { freefrontend } from "./sources/freefrontend.js";
 import { lsgraphics } from "./sources/lsgraphics.js";
 import { watermelon } from "./sources/watermelon.js";
-import { aceternity, magicui, reactbits, shadcn } from "./sources/registry.js";
+import { aceternity, fancy, magicui, reactbits, shadcn } from "./sources/registry.js";
 import { refero } from "./sources/refero.js";
-import { drei, threejs } from "./sources/packages.js";
+import { drei, scrollama, threejs, twojs } from "./sources/packages.js";
 import type { SourceAdapter, SourceId } from "./lib/types.js";
 
 const ADAPTERS: Record<SourceId, SourceAdapter> = {
@@ -23,6 +23,9 @@ const ADAPTERS: Record<SourceId, SourceAdapter> = {
   refero,
   threejs,
   drei,
+  fancy,
+  twojs,
+  scrollama,
 };
 
 const SOURCE_IDS = Object.keys(ADAPTERS) as SourceId[];

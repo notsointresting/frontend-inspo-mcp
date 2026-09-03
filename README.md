@@ -1,6 +1,6 @@
 # frontend-inspo-mcp 🎨
 
-> **A local MCP server that lets AI coding agents discover and pull real frontend code, UI components, design mockups, and design-system tokens** — from FreeFrontend, shadcn/ui, Magic UI, Aceternity UI, React Bits, Refero Styles, three.js, drei, Watermelon UI, and LS.GRAPHICS.
+> **A local MCP server that lets AI coding agents discover and pull real frontend code, UI components, design mockups, and design-system tokens** — from FreeFrontend, shadcn/ui, Magic UI, Aceternity UI, React Bits, Fancy Components, Refero Styles, three.js, drei, Two.js, scrollama, Watermelon UI, and LS.GRAPHICS.
 
 [![MCP](https://img.shields.io/badge/Model_Context_Protocol-server-blue)](https://modelcontextprotocol.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178c6)](https://www.typescriptlang.org/)
@@ -21,7 +21,7 @@ Most component galleries are built for humans clicking around a browser. This se
 them **agent-readable**, so your AI assistant can search, compare, and paste real code
 directly into your project.
 
-- 🔍 **Search 10 sources** through one consistent set of tools
+- 🔍 **Search 13 sources** through one consistent set of tools
 - 📋 **Get real code** — React/TSX, Tailwind, vanilla HTML/CSS/JS
 - 🎭 **Free design mockups** with direct, un-gated download links (Figma / Sketch / PSD)
 - ⚡ **Fast** — in-memory caching + polite per-host rate limiting
@@ -36,9 +36,12 @@ directly into your project.
 | **[Magic UI](https://magicui.design/)** | Animated React + Framer Motion components | ✅ | Registry JSON |
 | **[Aceternity UI](https://ui.aceternity.com/)** | Bold animated React + Tailwind components | ✅ | Registry JSON |
 | **[React Bits](https://reactbits.dev/)** | Animated React components (JS/TS, CSS/Tailwind) | ✅ | Registry JSON |
+| **[Fancy Components](https://fancycomponents.dev/)** | Motion, scroll, text-physics & 2D effect React components | ✅ | Registry JSON |
 | **[Refero Styles](https://styles.refero.design/)** | Design systems from real sites — DESIGN.md, Tailwind, CSS vars, tokens | ✅ | Public API (no login) |
 | **[three.js](https://threejs.org/)** | Official examples — GLSL shaders, post-fx, loaders, controls | ✅ | jsdelivr CDN |
 | **[drei](https://github.com/pmndrs/drei)** | React Three Fiber helper components | ✅ | GitHub source |
+| **[Two.js](https://two.js.org/)** | 2D drawing / animation library source | ✅ | jsdelivr CDN |
+| **[scrollama](https://github.com/russellsamora/scrollama)** | Scrollytelling / scroll-storytelling library source | ✅ | jsdelivr CDN |
 | **[Watermelon UI](https://ui.watermelon.sh/)** | React blocks, dashboards, templates, showcases | — | Official JSON API |
 | **[LS.GRAPHICS](https://www.ls.graphics/free-mockups)** | Free design mockups (Figma / Sketch / PSD) | — | HTML parse |
 
@@ -56,7 +59,7 @@ Requires **Node 18+** (uses the built-in `fetch`).
 Verify every source is live:
 
 ```bash
-npm run smoke   # hits all 10 sources and asserts parsing → prints ALL PASS
+npm run smoke   # hits all 13 sources and asserts parsing → prints ALL PASS
 ```
 
 ## 🔌 Add it to your MCP client
@@ -95,7 +98,7 @@ The server speaks MCP over **stdio**. Point your client at the built `dist/index
 ## 🛠️ Tools
 
 Every tool takes a `source` argument:
-`freefrontend` · `shadcn` · `magicui` · `aceternity` · `reactbits` · `refero` · `threejs` · `drei` · `watermelon` · `lsgraphics`
+`freefrontend` · `shadcn` · `magicui` · `aceternity` · `reactbits` · `fancy` · `refero` · `threejs` · `drei` · `twojs` · `scrollama` · `watermelon` · `lsgraphics`
 
 | Tool | Description |
 | --- | --- |
@@ -195,6 +198,9 @@ source's license before reusing anything.
 - **[Refero](https://refero.design/)** — design-system references extracted from public websites (data served via Refero's public API; each referenced site owns its brand)
 - **[three.js](https://threejs.org/)** by [mrdoob](https://github.com/mrdoob) & contributors — MIT
 - **[drei](https://github.com/pmndrs/drei)** by [pmndrs](https://github.com/pmndrs) — MIT
+- **[Fancy Components](https://fancycomponents.dev/)** by [Daniel Petho](https://github.com/danielpetho) — MIT
+- **[Two.js](https://two.js.org/)** by [jonobr1](https://github.com/jonobr1) — MIT
+- **[scrollama](https://github.com/russellsamora/scrollama)** by [Russell Samora](https://github.com/russellsamora) — MIT
 - **[Watermelon UI](https://ui.watermelon.sh/)** — open-source React platform
 - **[LS.GRAPHICS](https://www.ls.graphics/)** — free & premium design mockups
 

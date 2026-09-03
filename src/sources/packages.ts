@@ -184,3 +184,72 @@ export const drei: SourceAdapter = makePackageAdapter({
     return path.split("/")[2] || "core";
   },
 });
+
+// --- Generic jsdelivr /src libraries (Two.js, scrollama) --------------------
+
+const verCache = new Map<string, string>();
+async function npmLatest(pkg: string): Promise<string> {
+  const cached = verCache.get(pkg);
+  if (cached) return cached;
+  const meta = await fetchJson<{ tags?: { latest?: string } }>(
+    `https://data.jsdelivr.com/v1/package/npm/${pkg}`,
+  );
+  const v = meta.tags?.latest || "latest";
+  verCache.set(pkg, v);
+  return v;
+}
+
+function makeJsdelivrSrcAdapter(opts: {
+  id: SourceId;
+  label: string;
+  description: string;
+  homepage: string;
+  pkg: string;
+  include: RegExp;
+  categoryIndex: number; // which path segment is the category
+}): SourceAdapter {
+  return makePackageAdapter({
+    id: opts.id,
+    label: opts.label,
+    description: opts.description,
+    homepage: opts.homepage,
+    license: "MIT",
+    include: opts.include,
+    async loadTree() {
+      const ver = await npmLatest(opts.pkg);
+      const flat = await fetchJson<JsdelivrFlat>(
+        `https://data.jsdelivr.com/v1/packages/npm/${opts.pkg}@${ver}?structure=flat`,
+      );
+      return (flat.files || []).map((f) => ({ path: f.name }));
+    },
+    rawUrl(path: string) {
+      const ver = verCache.get(opts.pkg) || "latest";
+      return `https://cdn.jsdelivr.net/npm/${opts.pkg}@${ver}${path}`;
+    },
+    categoryOf(path: string) {
+      return path.split("/")[opts.categoryIndex] || "misc";
+    },
+  });
+}
+
+export const twojs = makeJsdelivrSrcAdapter({
+  id: "twojs",
+  label: "Two.js",
+  description:
+    "Two.js — 2D drawing / animation library source (renderers, shapes, effects). Real source via jsdelivr.",
+  homepage: "https://two.js.org/",
+  pkg: "two.js",
+  include: /^\/src\/.*\.js$/,
+  categoryIndex: 2, // /src/<category>/<file>
+});
+
+export const scrollama = makeJsdelivrSrcAdapter({
+  id: "scrollama",
+  label: "scrollama",
+  description:
+    "scrollama — scrollytelling / scroll-storytelling library source (IntersectionObserver-based). Real source via jsdelivr.",
+  homepage: "https://github.com/russellsamora/scrollama",
+  pkg: "scrollama",
+  include: /^\/src\/.*\.js$/,
+  categoryIndex: 1, // /src/<file>
+});

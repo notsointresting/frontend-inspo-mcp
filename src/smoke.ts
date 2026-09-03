@@ -3,9 +3,9 @@
 import { freefrontend } from "./sources/freefrontend.js";
 import { lsgraphics } from "./sources/lsgraphics.js";
 import { watermelon } from "./sources/watermelon.js";
-import { aceternity, magicui, reactbits, shadcn } from "./sources/registry.js";
+import { aceternity, fancy, magicui, reactbits, shadcn } from "./sources/registry.js";
 import { refero } from "./sources/refero.js";
-import { drei, threejs } from "./sources/packages.js";
+import { drei, scrollama, threejs, twojs } from "./sources/packages.js";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail: string) {
@@ -60,6 +60,7 @@ async function run() {
     ["magicui", magicui],
     ["aceternity", aceternity],
     ["reactbits", reactbits],
+    ["fancy", fancy],
   ] as const) {
     try {
       const res = await adapter.search({ limit: 3 });
@@ -93,6 +94,8 @@ async function run() {
   for (const [name, adapter] of [
     ["threejs", threejs],
     ["drei", drei],
+    ["twojs", twojs],
+    ["scrollama", scrollama],
   ] as const) {
     try {
       const res = await adapter.search({ limit: 3 });

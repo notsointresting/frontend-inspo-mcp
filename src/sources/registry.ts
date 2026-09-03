@@ -228,3 +228,16 @@ export const reactbits = makeRegistryAdapter({
   itemUrl: (base, name) => `${base}/r/${name}.json`,
   license: "MIT",
 });
+
+export const fancy = makeRegistryAdapter({
+  id: "fancy",
+  label: "Fancy Components",
+  description:
+    "Fancy Components — motion, scroll, text-physics and 2D effect React components (Framer Motion / Tailwind). Returns real source.",
+  homepage: "https://fancycomponents.dev/",
+  base: "https://fancycomponents.dev",
+  indexUrl: "https://fancycomponents.dev/r/registry.json",
+  indexItems: (p) => ((p as { items?: RegistryItem[] })?.items ?? []),
+  itemUrl: (base, name) => `${base}/r/${name}.json`,
+  license: "MIT",
+});
