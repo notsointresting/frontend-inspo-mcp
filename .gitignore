@@ -6,6 +6,7 @@ dist/
 
 # Scratch / tool artifacts
 .playwright-mcp/
+_skill_extract/
 *.log
 lsg.html
 peach.html

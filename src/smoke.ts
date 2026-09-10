@@ -3,9 +3,26 @@
 import { freefrontend } from "./sources/freefrontend.js";
 import { lsgraphics } from "./sources/lsgraphics.js";
 import { watermelon } from "./sources/watermelon.js";
-import { aceternity, fancy, magicui, reactbits, shadcn } from "./sources/registry.js";
+import { aceternity, canvasui, fancy, magicui, reactbits, shadcn, vengeanceui } from "./sources/registry.js";
 import { refero } from "./sources/refero.js";
-import { drei, scrollama, threejs, twojs } from "./sources/packages.js";
+import {
+  detectgpu,
+  drei,
+  glyph,
+  gsap,
+  img2threejs,
+  liquidglass,
+  liquidlogo,
+  postprocessing,
+  reactspring,
+  scrollama,
+  shadergradient,
+  threejs,
+  twojs,
+  zustand,
+} from "./sources/packages.js";
+import { threeui } from "./sources/threeui.js";
+import { r3f } from "./sources/r3f.js";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail: string) {
@@ -61,6 +78,8 @@ async function run() {
     ["aceternity", aceternity],
     ["reactbits", reactbits],
     ["fancy", fancy],
+    ["vengeanceui", vengeanceui],
+    ["canvasui", canvasui],
   ] as const) {
     try {
       const res = await adapter.search({ limit: 3 });
@@ -96,6 +115,17 @@ async function run() {
     ["drei", drei],
     ["twojs", twojs],
     ["scrollama", scrollama],
+    ["reactspring", reactspring],
+    ["zustand", zustand],
+    ["glyph", glyph],
+    ["postprocessing", postprocessing],
+    ["detectgpu", detectgpu],
+    ["shadergradient", shadergradient],
+    ["liquidlogo", liquidlogo],
+    ["liquidglass", liquidglass],
+    ["img2threejs", img2threejs],
+    ["gsap", gsap],
+    ["threeui", threeui],
   ] as const) {
     try {
       const res = await adapter.search({ limit: 3 });
@@ -109,6 +139,22 @@ async function run() {
     } catch (e) {
       check(name, false, (e as Error).message);
     }
+  }
+
+  // R3F (bundled offline skill markdown)
+  try {
+    const cats = await r3f.listCategories();
+    check("r3f.listCategories", cats.length > 0, `${cats.length} categories`);
+    const res = await r3f.search({ query: "scroll", limit: 5 });
+    check("r3f.search", res.length > 0, `${res.length} results, first="${res[0]?.title}"`);
+    if (res[0]) {
+      const d = await r3f.getResource(res[0].id);
+      const hasCode = d?.code && Object.keys(d.code).length > 0;
+      check("r3f.getResource+code", !!d && !!hasCode,
+        `code langs=${d?.code ? Object.keys(d.code).join(",") : "none"}`);
+    }
+  } catch (e) {
+    check("r3f", false, (e as Error).message);
   }
 
   console.error(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}`);

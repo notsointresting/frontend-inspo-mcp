@@ -232,6 +232,177 @@ function makeJsdelivrSrcAdapter(opts: {
   });
 }
 
+// --- Generic GitHub source-tree libraries -----------------------------------
+// Reads a repo's git tree (on a given branch), keeps files matching `include`,
+// and serves raw file content. Generalizes the drei adapter above so any
+// GitHub-hosted library can be exposed with one config block.
+
+function makeGithubSrcAdapter(opts: {
+  id: SourceId;
+  label: string;
+  description: string;
+  homepage: string;
+  repo: string; // "owner/name"
+  branch: string; // default branch (varies: main/master/next)
+  license: string;
+  include: RegExp;
+  categoryIndex: number; // which path segment (0-based, after leading "/") is the category
+}): SourceAdapter {
+  return makePackageAdapter({
+    id: opts.id,
+    label: opts.label,
+    description: opts.description,
+    homepage: opts.homepage,
+    license: opts.license,
+    include: opts.include,
+    async loadTree() {
+      const t = await githubJson<GhTree>(
+        `https://api.github.com/repos/${opts.repo}/git/trees/${opts.branch}?recursive=1`,
+      );
+      return (t.tree || [])
+        .filter((n) => n.type === "blob")
+        .map((n) => ({ path: `/${n.path}` }));
+    },
+    rawUrl(path: string) {
+      return `https://raw.githubusercontent.com/${opts.repo}/${opts.branch}${path}`;
+    },
+    categoryOf(path: string) {
+      // path always starts with "/", so split()[0] === "" ; +1 to skip it.
+      return path.split("/")[opts.categoryIndex + 1] || "misc";
+    },
+  });
+}
+
+export const reactspring = makeGithubSrcAdapter({
+  id: "reactspring",
+  label: "react-spring",
+  description:
+    "@react-spring — spring-physics animation library for React. Real source (animated, core, web, three, konva, native targets) from the pmndrs/react-spring repo.",
+  homepage: "https://github.com/pmndrs/react-spring",
+  repo: "pmndrs/react-spring",
+  branch: "next",
+  license: "MIT",
+  include: /^\/packages\/[^/]+\/src\/.*\.tsx?$/,
+  categoryIndex: 1, // /packages/<category>/src/...
+});
+
+export const zustand = makeGithubSrcAdapter({
+  id: "zustand",
+  label: "zustand",
+  description:
+    "zustand — minimal bear-necessities state management for React. Real source (core, middleware, react bindings) from the pmndrs/zustand repo.",
+  homepage: "https://github.com/pmndrs/zustand",
+  repo: "pmndrs/zustand",
+  branch: "main",
+  license: "MIT",
+  include: /^\/src\/.*\.tsx?$/,
+  categoryIndex: 1, // /src/<category-or-file>
+});
+
+export const glyph = makeGithubSrcAdapter({
+  id: "glyph",
+  label: "glyph (pmndrs)",
+  description:
+    "@pmndrs/glyph — GPU text/geometry glyph baking utilities (TSL, typegpu, raster). Real source from the pmndrs/glyph repo.",
+  homepage: "https://github.com/pmndrs/glyph",
+  repo: "pmndrs/glyph",
+  branch: "main",
+  license: "MIT",
+  include: /^\/packages\/[^/]+\/src\/.*\.tsx?$/,
+  categoryIndex: 1, // /packages/<category>/src/...
+});
+
+export const postprocessing = makeGithubSrcAdapter({
+  id: "postprocessing",
+  label: "postprocessing",
+  description:
+    "postprocessing — post-processing effects + EffectComposer for three.js (bloom, DOF, SSAO, glitch, and more). Real source from the pmndrs/postprocessing repo.",
+  homepage: "https://github.com/pmndrs/postprocessing",
+  repo: "pmndrs/postprocessing",
+  branch: "main",
+  license: "Zlib",
+  include: /^\/src\/.*\.js$/,
+  categoryIndex: 1, // /src/<category>/<file>
+});
+
+export const detectgpu = makeGithubSrcAdapter({
+  id: "detectgpu",
+  label: "detect-gpu",
+  description:
+    "detect-gpu — classify a device's GPU tier via benchmarks (pick fidelity/quality at runtime). Real source from the pmndrs/detect-gpu repo.",
+  homepage: "https://github.com/pmndrs/detect-gpu",
+  repo: "pmndrs/detect-gpu",
+  branch: "master",
+  license: "MIT",
+  include: /^\/src\/.*\.ts$/,
+  categoryIndex: 1, // /src/<category-or-file>
+});
+
+export const shadergradient = makeGithubSrcAdapter({
+  id: "shadergradient",
+  label: "ShaderGradient",
+  description:
+    "ShaderGradient — animated, customizable gradient meshes for R3F/three.js (as seen in Framer). Real source from the ruucm/shadergradient repo.",
+  homepage: "https://github.com/ruucm/shadergradient",
+  repo: "ruucm/shadergradient",
+  branch: "main",
+  license: "See ruucm/shadergradient",
+  include: /^\/packages\/[^/]+\/src\/.*\.(tsx?|glsl)$/,
+  categoryIndex: 1, // /packages/<category>/src/...
+});
+
+export const liquidlogo = makeGithubSrcAdapter({
+  id: "liquidlogo",
+  label: "liquid-logo",
+  description:
+    "liquid-logo — turn a logo/image into an animated liquid-metal WebGL effect (GLSL shader + canvas video export). Real source from the collidingScopes/liquid-logo repo.",
+  homepage: "https://github.com/collidingScopes/liquid-logo",
+  repo: "collidingScopes/liquid-logo",
+  branch: "main",
+  license: "MIT",
+  include: /^\/[^/]+\.(js|glsl|html)$/,
+  categoryIndex: 0, // flat repo: category = the file itself
+});
+
+export const liquidglass = makeGithubSrcAdapter({
+  id: "liquidglass",
+  label: "liquid-glass-js",
+  description:
+    "liquid-glass-js — Apple-style 'liquid glass' refraction/displacement effect for the web, framework-agnostic. Real source from the dashersw/liquid-glass-js repo.",
+  homepage: "https://github.com/dashersw/liquid-glass-js",
+  repo: "dashersw/liquid-glass-js",
+  branch: "main",
+  license: "MIT",
+  include: /^\/[^/]+\.(m?js|ts)$/,
+  categoryIndex: 0, // flat repo: category = the file itself
+});
+
+export const img2threejs = makeGithubSrcAdapter({
+  id: "img2threejs",
+  label: "img2threejs",
+  description:
+    "img2threejs — pipeline that converts a single image into a three.js/GLB 3D scene. Real source (Python 'forge' pipeline) from the img2threejs/img2threejs repo.",
+  homepage: "https://github.com/img2threejs/img2threejs",
+  repo: "img2threejs/img2threejs",
+  branch: "main",
+  license: "Apache-2.0",
+  include: /^\/forge\/.*\.py$/,
+  categoryIndex: 1, // /forge/<category>/...
+});
+
+export const gsap = makeGithubSrcAdapter({
+  id: "gsap",
+  label: "GSAP Skills",
+  description:
+    "GreenSock's official GSAP 'skills' — agent-ready guidance (core, plugins, ScrollTrigger, React, frameworks, performance) plus runnable examples for React/Vue/Nuxt/vanilla. Real source from the greensock/gsap-skills repo.",
+  homepage: "https://github.com/greensock/gsap-skills",
+  repo: "greensock/gsap-skills",
+  branch: "main",
+  license: "MIT",
+  include: /^\/(skills|examples)\/.*\.(md|jsx?|tsx?|vue|html)$/,
+  categoryIndex: 1, // /<skills|examples>/<category>/...
+});
+
 export const twojs = makeJsdelivrSrcAdapter({
   id: "twojs",
   label: "Two.js",

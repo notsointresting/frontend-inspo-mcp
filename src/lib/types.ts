@@ -13,7 +13,21 @@ export type SourceId =
   | "drei"
   | "fancy"
   | "twojs"
-  | "scrollama";
+  | "scrollama"
+  | "r3f"
+  | "reactspring"
+  | "zustand"
+  | "glyph"
+  | "postprocessing"
+  | "detectgpu"
+  | "shadergradient"
+  | "liquidlogo"
+  | "liquidglass"
+  | "img2threejs"
+  | "gsap"
+  | "vengeanceui"
+  | "threeui"
+  | "canvasui";
 
 /** A category or collection within a source (e.g. "css-hover-effects", "blocks/auth"). */
 export interface Category {

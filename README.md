@@ -1,6 +1,6 @@
 # frontend-inspo-mcp 🎨
 
-> **A local MCP server that lets AI coding agents discover and pull real frontend code, UI components, design mockups, and design-system tokens** — from FreeFrontend, shadcn/ui, Magic UI, Aceternity UI, React Bits, Fancy Components, Refero Styles, three.js, drei, Two.js, scrollama, Watermelon UI, and LS.GRAPHICS.
+> **A local MCP server that lets AI coding agents discover and pull real frontend code, UI components, design mockups, and design-system tokens** — from FreeFrontend, shadcn/ui, Magic UI, Aceternity UI, React Bits, Fancy Components, VengeanceUI, Refero Styles, three.js, drei, React Three Fiber, react-spring, zustand, glyph, postprocessing, detect-gpu, ShaderGradient, liquid-logo, liquid-glass-js, ThreeUI, img2threejs, GSAP, Two.js, scrollama, Watermelon UI, and LS.GRAPHICS.
 
 [![MCP](https://img.shields.io/badge/Model_Context_Protocol-server-blue)](https://modelcontextprotocol.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178c6)](https://www.typescriptlang.org/)
@@ -21,7 +21,7 @@ Most component galleries are built for humans clicking around a browser. This se
 them **agent-readable**, so your AI assistant can search, compare, and paste real code
 directly into your project.
 
-- 🔍 **Search 13 sources** through one consistent set of tools
+- 🔍 **Search 25 sources** through one consistent set of tools
 - 📋 **Get real code** — React/TSX, Tailwind, vanilla HTML/CSS/JS
 - 🎭 **Free design mockups** with direct, un-gated download links (Figma / Sketch / PSD)
 - ⚡ **Fast** — in-memory caching + polite per-host rate limiting
@@ -37,9 +37,23 @@ directly into your project.
 | **[Aceternity UI](https://ui.aceternity.com/)** | Bold animated React + Tailwind components | ✅ | Registry JSON |
 | **[React Bits](https://reactbits.dev/)** | Animated React components (JS/TS, CSS/Tailwind) | ✅ | Registry JSON |
 | **[Fancy Components](https://fancycomponents.dev/)** | Motion, scroll, text-physics & 2D effect React components | ✅ | Registry JSON |
+| **[VengeanceUI](https://github.com/Ashutoshx7/VengeanceUI)** | Animated React + Tailwind + Framer Motion components | ✅ | Registry JSON (GitHub) |
+| **[Canvas UI](https://canvasui.dev/)** | React WebGL/canvas & animated components | ✅ | Registry JSON |
 | **[Refero Styles](https://styles.refero.design/)** | Design systems from real sites — DESIGN.md, Tailwind, CSS vars, tokens | ✅ | Public API (no login) |
 | **[three.js](https://threejs.org/)** | Official examples — GLSL shaders, post-fx, loaders, controls | ✅ | jsdelivr CDN |
 | **[drei](https://github.com/pmndrs/drei)** | React Three Fiber helper components | ✅ | GitHub source |
+| **[React Three Fiber](https://r3f.docs.pmnd.rs/)** | Curated R3F guidance (Canvas/hooks, geometry, scroll storytelling) | ✅ | Bundled offline |
+| **[react-spring](https://github.com/pmndrs/react-spring)** | Spring-physics animation library for React | ✅ | GitHub source |
+| **[zustand](https://github.com/pmndrs/zustand)** | Minimal state management for React (core + middleware) | ✅ | GitHub source |
+| **[glyph](https://github.com/pmndrs/glyph)** | GPU text/geometry glyph baking utilities (TSL, typegpu) | ✅ | GitHub source |
+| **[postprocessing](https://github.com/pmndrs/postprocessing)** | Post-processing effects + EffectComposer for three.js | ✅ | GitHub source |
+| **[detect-gpu](https://github.com/pmndrs/detect-gpu)** | Classify a device's GPU tier via benchmarks | ✅ | GitHub source |
+| **[ShaderGradient](https://github.com/ruucm/shadergradient)** | Animated customizable gradient meshes for R3F/three.js | ✅ | GitHub source |
+| **[liquid-logo](https://github.com/collidingScopes/liquid-logo)** | Animated liquid-metal WebGL effect from a logo/image (GLSL) | ✅ | GitHub source |
+| **[liquid-glass-js](https://github.com/dashersw/liquid-glass-js)** | Apple-style "liquid glass" refraction effect for the web | ✅ | GitHub source |
+| **[ThreeUI](https://threeui.com/browse)** | Community Three.js/WebGL components & landing pages | ✅ | GitHub manifest |
+| **[img2threejs](https://github.com/img2threejs/img2threejs)** | Image → three.js/GLB 3D scene pipeline (Python) | ✅ | GitHub source |
+| **[GSAP Skills](https://github.com/greensock/gsap-skills)** | Official GSAP agent guidance + runnable examples | ✅ | GitHub source |
 | **[Two.js](https://two.js.org/)** | 2D drawing / animation library source | ✅ | jsdelivr CDN |
 | **[scrollama](https://github.com/russellsamora/scrollama)** | Scrollytelling / scroll-storytelling library source | ✅ | jsdelivr CDN |
 | **[Watermelon UI](https://ui.watermelon.sh/)** | React blocks, dashboards, templates, showcases | — | Official JSON API |
@@ -59,7 +73,7 @@ Requires **Node 18+** (uses the built-in `fetch`).
 Verify every source is live:
 
 ```bash
-npm run smoke   # hits all 13 sources and asserts parsing → prints ALL PASS
+npm run smoke   # hits all 25 sources and asserts parsing → prints ALL PASS
 ```
 
 ## 🔌 Add it to your MCP client
@@ -98,7 +112,7 @@ The server speaks MCP over **stdio**. Point your client at the built `dist/index
 ## 🛠️ Tools
 
 Every tool takes a `source` argument:
-`freefrontend` · `shadcn` · `magicui` · `aceternity` · `reactbits` · `fancy` · `refero` · `threejs` · `drei` · `twojs` · `scrollama` · `watermelon` · `lsgraphics`
+`freefrontend` · `shadcn` · `magicui` · `aceternity` · `reactbits` · `fancy` · `vengeanceui` · `canvasui` · `refero` · `threejs` · `drei` · `r3f` · `reactspring` · `zustand` · `glyph` · `postprocessing` · `detectgpu` · `shadergradient` · `liquidlogo` · `liquidglass` · `threeui` · `img2threejs` · `gsap` · `twojs` · `scrollama` · `watermelon` · `lsgraphics`
 
 | Tool | Description |
 | --- | --- |
@@ -157,6 +171,17 @@ Find a free device mockup:
   source (GLSL shaders, post-processing, loaders, controls) from the CDN.
 - **drei** reads the `pmndrs/drei` GitHub source tree and raw files. Set an optional
   `GITHUB_TOKEN` env var to lift GitHub's unauthenticated rate limit (60 req/hr).
+- **GitHub source-tree libraries** (react-spring, zustand, glyph, postprocessing,
+  detect-gpu, ShaderGradient, liquid-logo, liquid-glass-js, img2threejs, GSAP Skills, drei)
+  share one adapter that lists a repo's git tree on its default branch, keeps the relevant
+  files, and serves raw source. Branches vary (`main`/`master`/`next`) and are configured
+  per source. The same optional `GITHUB_TOKEN` applies.
+- **VengeanceUI** uses the registry adapter, reading its shadcn-schema `registry.json` and
+  per-item JSON directly from raw GitHub.
+- **React Three Fiber (r3f)** serves a bundled, offline R3F guidance skill (no network).
+- **ThreeUI** fetches the `MengTo/threeui` Community `source-code.json` manifest once and
+  caches the parsed catalog in-process (the manifest is large), then returns each
+  component's inline HTML/JS/GLSL/CSS.
 - **LS.GRAPHICS** parses the free-mockups listing and each asset page for formats and
   download links.
 
@@ -210,6 +235,19 @@ source's license before reusing anything.
 - **[Refero](https://refero.design/)** — design-system references extracted from public websites (data served via Refero's public API; each referenced site owns its brand)
 - **[three.js](https://threejs.org/)** by [mrdoob](https://github.com/mrdoob) & contributors — MIT
 - **[drei](https://github.com/pmndrs/drei)** by [pmndrs](https://github.com/pmndrs) — MIT
+- **[react-spring](https://github.com/pmndrs/react-spring)** by [pmndrs](https://github.com/pmndrs) — MIT
+- **[zustand](https://github.com/pmndrs/zustand)** by [pmndrs](https://github.com/pmndrs) — MIT
+- **[glyph](https://github.com/pmndrs/glyph)** by [pmndrs](https://github.com/pmndrs) — MIT
+- **[postprocessing](https://github.com/pmndrs/postprocessing)** by [Raoul van Rüschen](https://github.com/vanruesc) — Zlib
+- **[detect-gpu](https://github.com/pmndrs/detect-gpu)** by [pmndrs](https://github.com/pmndrs) — MIT
+- **[ShaderGradient](https://github.com/ruucm/shadergradient)** by [ruucm](https://github.com/ruucm)
+- **[liquid-logo](https://github.com/collidingScopes/liquid-logo)** by [collidingScopes](https://github.com/collidingScopes) — MIT
+- **[liquid-glass-js](https://github.com/dashersw/liquid-glass-js)** by [Armagan Amcalar](https://github.com/dashersw) — MIT
+- **[ThreeUI](https://github.com/MengTo/threeui)** by [Meng To](https://github.com/MengTo) — MIT
+- **[img2threejs](https://github.com/img2threejs/img2threejs)** — Apache-2.0
+- **[GSAP](https://github.com/greensock/gsap-skills)** by [GreenSock](https://github.com/greensock) — MIT
+- **[VengeanceUI](https://github.com/Ashutoshx7/VengeanceUI)** by [Ashutosh](https://github.com/Ashutoshx7) — MIT
+- **[Canvas UI](https://canvasui.dev/)** by [David Haz](https://github.com/DavidHDev) — MIT
 - **[Fancy Components](https://fancycomponents.dev/)** by [Daniel Petho](https://github.com/danielpetho) — MIT
 - **[Two.js](https://two.js.org/)** by [jonobr1](https://github.com/jonobr1) — MIT
 - **[scrollama](https://github.com/russellsamora/scrollama)** by [Russell Samora](https://github.com/russellsamora) — MIT

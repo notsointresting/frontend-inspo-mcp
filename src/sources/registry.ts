@@ -229,6 +229,32 @@ export const reactbits = makeRegistryAdapter({
   license: "MIT",
 });
 
+export const vengeanceui = makeRegistryAdapter({
+  id: "vengeanceui",
+  label: "VengeanceUI",
+  description:
+    "VengeanceUI — animated React + Tailwind + Framer Motion components (shadcn-schema). Real .tsx source served from the Ashutoshx7/VengeanceUI repo.",
+  homepage: "https://github.com/Ashutoshx7/VengeanceUI",
+  base: "https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/public/r",
+  indexUrl: "https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/public/r/registry.json",
+  indexItems: (p) => (Array.isArray(p) ? (p as RegistryItem[]) : []),
+  itemUrl: (base, name) => `${base}/${name}.json`,
+  license: "MIT",
+});
+
+export const canvasui = makeRegistryAdapter({
+  id: "canvasui",
+  label: "Canvas UI",
+  description:
+    "Canvas UI — React WebGL/canvas & animated components (shadcn-schema). Returns real .tsx source from canvasui.dev.",
+  homepage: "https://canvasui.dev/",
+  base: "https://canvasui.dev",
+  indexUrl: "https://canvasui.dev/r/registry.json",
+  indexItems: (p) => ((p as { items?: RegistryItem[] })?.items ?? []),
+  itemUrl: (base, name) => `${base}/r/${name}.json`,
+  license: "MIT",
+});
+
 export const fancy = makeRegistryAdapter({
   id: "fancy",
   label: "Fancy Components",
