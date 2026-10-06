@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // frontend-inspo-mcp — local stdio MCP server exposing discovery tools across
 // freefrontend.com, ui.watermelon.sh, and ls.graphics.
+import { readFileSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
@@ -73,7 +74,8 @@ function err(message: string) {
 
 const server = new McpServer({
   name: "frontend-inspo-mcp",
-  version: "0.1.0",
+  // dist/index.js -> ../package.json, so the reported version can never drift from the package.
+  version: (JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf-8")) as { version: string }).version,
 });
 
 // --- list_sources -----------------------------------------------------------
