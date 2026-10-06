@@ -2,7 +2,7 @@
 // Listing: https://www.ls.graphics/free-mockups  (cards link to /assets/<slug>)
 // Detail:  https://www.ls.graphics/assets/<slug>
 import * as cheerio from "cheerio";
-import { fetchText } from "../lib/fetch.js";
+import { fetchText, isTransient } from "../lib/fetch.js";
 import type {
   Category,
   ResourceDetail,
@@ -97,14 +97,17 @@ export const lsgraphics: SourceAdapter = {
     const url = `${BASE}/assets/${id}`;
     let html: string;
     try {
-      html = await fetchText(url);
-    } catch {
+      // ponytail: /assets/<slug> currently answers HTTP 500 with a complete page
+      // (title + download links). Accept it; drop okStatuses once upstream is fixed.
+      html = await fetchText(url, { okStatuses: [500] });
+    } catch (e) {
+      if (isTransient(e)) throw e; // keep rate limits/network errors visible
       return null;
     }
     const $ = cheerio.load(html);
     const title =
       $("h1").first().text().trim() ||
-      $('meta[property="og:title"]').attr("content") ||
+      $('meta[property="og:title"]').attr("content")?.replace(/\s*\|\s*LS\.GRAPHICS$/i, "") ||
       id.replace(/-/g, " ");
     const description =
       $('meta[name="description"]').attr("content") ||
