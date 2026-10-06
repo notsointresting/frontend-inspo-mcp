@@ -6,6 +6,7 @@
 [![MCP](https://img.shields.io/badge/Model_Context_Protocol-server-blue)](https://modelcontextprotocol.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-7.0-3178c6)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/badge/Node-18%2B-339933)](https://nodejs.org/)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15252/badge)](https://www.bestpractices.dev/projects/15252)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
