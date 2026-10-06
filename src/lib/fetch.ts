@@ -9,7 +9,14 @@ import { join } from "node:path";
 const USER_AGENT = "frontend-inspo-mcp/0.1 (+https://github.com/) local discovery agent";
 
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
-const MIN_GAP_MS = 400; // min delay between requests to the same host
+const DEFAULT_MIN_GAP_MS = 400; // min delay between requests to the same host
+/** Politeness gap; FRONTEND_INSPO_MIN_GAP_MS overrides it (the unit tests set 0). Read per call. */
+const minGapMs = (): number => {
+  const v = Number(process.env.FRONTEND_INSPO_MIN_GAP_MS);
+  return Number.isFinite(v) && v >= 0 && process.env.FRONTEND_INSPO_MIN_GAP_MS
+    ? v
+    : DEFAULT_MIN_GAP_MS;
+};
 
 interface CacheEntry {
   body: string;
@@ -73,7 +80,7 @@ async function throttle(host: string): Promise<void> {
   );
   await prev;
   const last = lastHit.get(host) ?? 0;
-  const wait = Math.max(0, MIN_GAP_MS - (Date.now() - last));
+  const wait = Math.max(0, minGapMs() - (Date.now() - last));
   if (wait > 0) await new Promise((r) => setTimeout(r, wait));
   lastHit.set(host, Date.now());
   // release the slot shortly after so the next queued request can proceed
