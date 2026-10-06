@@ -250,6 +250,8 @@ src/
 New sources are welcome — most fit in one small adapter file implementing the
 `SourceAdapter` contract in `src/lib/types.ts`. Open a PR.
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the step-by-step guide, code standards, and the checks a PR must pass.
+
 ## 🙏 Credits & acknowledgements
 
 This project is a **discovery layer** over third-party resources. All content, code
