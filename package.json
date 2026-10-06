@@ -1,6 +1,6 @@
 {
   "name": "frontend-inspo-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Local MCP server that lets AI coding agents discover and pull real frontend code, UI components, and design mockups from shadcn, Magic UI, Aceternity, FreeFrontend, and more.",
   "type": "module",
   "main": "dist/index.js",
