@@ -142,7 +142,48 @@ function requestHeaders(url: string): Record<string, string> {
   return headers;
 }
 
+/** Largest response body we will read. The biggest real one (ThreeUI manifest) is ~30 MB. */
+const DEFAULT_MAX_BODY_BYTES = 100 * 1024 * 1024;
+/** FRONTEND_INSPO_MAX_BODY_BYTES overrides the cap (the tests shrink it). Read per call. */
+export const maxBodyBytes = (): number => {
+  const v = Number(process.env.FRONTEND_INSPO_MAX_BODY_BYTES);
+  return Number.isFinite(v) && v > 0 ? v : DEFAULT_MAX_BODY_BYTES;
+};
+
+const LOOPBACK = new Set(["127.0.0.1", "localhost", "[::1]"]);
+
+/** HTTPS only. Plain HTTP is allowed solely for loopback, which the tests use. */
+export function isSecureUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" || (u.protocol === "http:" && LOOPBACK.has(u.hostname));
+  } catch {
+    return false;
+  }
+}
+
+/** Read the body as text, aborting once it exceeds maxBodyBytes() (chunked replies send no length). */
+async function readCapped(res: Response, url: string): Promise<string> {
+  if (!res.body) return await res.text();
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let text = "";
+  let bytes = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    bytes += value.byteLength;
+    if (bytes > maxBodyBytes()) {
+      await reader.cancel();
+      throw new FetchError(`Response too large for ${url}`, false);
+    }
+    text += decoder.decode(value, { stream: true });
+  }
+  return text + decoder.decode();
+}
+
 async function rawFetch(url: string, opts: FetchOptions, timeoutMs = 15000): Promise<string> {
+  if (!isSecureUrl(url)) throw new FetchError(`Refusing non-HTTPS URL: ${url}`, false);
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -157,6 +198,13 @@ async function rawFetch(url: string, opts: FetchOptions, timeoutMs = 15000): Pro
       // DNS/connect/reset/timeout: no HTTP response at all -> transient.
       throw new FetchError(`Network error for ${url}: ${(e as Error).message}`, true);
     }
+    // A redirect must not downgrade us to plain HTTP.
+    if (res.url && !isSecureUrl(res.url)) {
+      throw new FetchError(`Refusing redirect to non-HTTPS URL: ${res.url}`, false);
+    }
+    if (Number(res.headers.get("content-length")) > maxBodyBytes()) {
+      throw new FetchError(`Response too large for ${url}`, false);
+    }
     if (!res.ok && !opts.okStatuses?.includes(res.status)) {
       throw new FetchError(
         `HTTP ${res.status} for ${url}`,
@@ -165,7 +213,7 @@ async function rawFetch(url: string, opts: FetchOptions, timeoutMs = 15000): Pro
         serverWaitMs(res.headers),
       );
     }
-    return await res.text();
+    return await readCapped(res, url);
   } finally {
     clearTimeout(timer);
   }
