@@ -38,7 +38,15 @@ Versions up to and including 0.2.1 were published manually, before this process 
 
 ## One-time setup (lead maintainer)
 
-On npmjs.com, open the package's **Settings → Trusted publishing**, choose **GitHub Actions**, and enter:
+From the repository root, with 2FA (needs a recent npm 11; checked with npm 11.17):
+
+```bash
+npm trust github frontend-inspo-mcp --file publish.yml --repository notsointresting/frontend-inspo-mcp --allow-publish
+```
+
+This lets anyone with write access to the GitHub repository publish by pushing a `v*` tag, so only give write access to maintainers. Check the result with `npm trust list frontend-inspo-mcp`.
+
+Or, on npmjs.com, open the package's **Settings → Trusted publishing**, choose **GitHub Actions**, and enter:
 
 - Organization or user: `notsointresting`
 - Repository: `frontend-inspo-mcp`
