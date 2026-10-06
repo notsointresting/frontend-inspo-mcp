@@ -24,12 +24,13 @@ frontend-inspo-mcp uses a **maintainer-led** governance model. The maintainers d
 
 The project must be able to keep going if any one person stops working on it. In particular, someone else must be able to create and close issues, accept changes, and publish a release within a week. The plan:
 
-- **Repository:** at least one other trusted person has admin access to the GitHub repository.
-- **npm:** the same person is an owner of the `frontend-inspo-mcp` npm package.
-- **Releases** are built and published by CI (see [RELEASING.md](RELEASING.md)), so publishing does not depend on one person's machine or keys.
+- **Releases do not depend on any one person's keys.** Since v0.3.0, npm releases are published by CI through npm trusted publishing (see [RELEASING.md](RELEASING.md)). Anyone with write access to this repository can release by creating a version tag; no npm password or token is needed.
+- **Repository access:** a trusted backup person holds write or admin access to the repository as a collaborator, so they can triage issues, merge pull requests and cut releases straight away if the lead maintainer is unavailable for any reason.
+- **Ownership:** the backup is also named as the lead maintainer's GitHub account successor, so they can take over or transfer the repository if the lead maintainer dies.
+- **npm package administration** (owners, settings): the backup is added with `npm owner add`, so the package itself is not stranded.
 - **Everything else** (source, CI, tests, documentation and this plan) is public in the repository.
 
-> **Status:** a backup maintainer has not been named yet. Until one is, the project's bus factor is 1.
+> **Status:** a backup person has not been named yet. Until one is, the project's bus factor is 1.
 
 ## Releases, versioning and upgrades
 

@@ -8,7 +8,7 @@ This is what frontend-inspo-mcp plans to do, and deliberately not do, between Oc
 
 **Add sources carefully.** New design-system and component sources are added as small adapters (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-a-source)), but only when the site offers a public API or public pages that its `robots.txt` allows, and its content may be reused as reference material.
 
-**Strengthen release integrity.** Publish releases from CI with npm provenance (Sigstore-signed), so users can verify a package was built from this repository (see [RELEASING.md](RELEASING.md)).
+**Keep release integrity.** Every release is published from CI with npm provenance (Sigstore-signed), starting with v0.3.0, so users can verify a package was built from this repository (see [RELEASING.md](RELEASING.md)). Next step: sign release tags as well.
 
 **Improve test depth.** Raise branch coverage above 80%, and keep statement coverage above 85% (currently about 92%).
 

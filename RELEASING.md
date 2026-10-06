@@ -26,7 +26,7 @@ N packages have verified attestations
 
 You can also open the version on <https://www.npmjs.com/package/frontend-inspo-mcp>. The **Provenance** section links to the exact commit and workflow run that built it. The public keys npm uses for registry signatures are published at <https://registry.npmjs.org/-/npm/v1/keys>, and Sigstore's trust root is distributed by Sigstore itself.
 
-Versions up to and including 0.2.1 were published manually, before this process existed, and have registry signatures but no provenance.
+Versions up to and including 0.2.1 were published manually, before this process existed, and have registry signatures but no provenance. 0.3.0 is the first release with a provenance attestation.
 
 ## Cutting a release (maintainers)
 
