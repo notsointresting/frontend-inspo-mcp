@@ -2,6 +2,7 @@
 
 > **A local MCP server that lets AI coding agents discover and pull real frontend code, UI components, design mockups, and design-system tokens** — from FreeFrontend, shadcn/ui, Magic UI, Aceternity UI, React Bits, Fancy Components, VengeanceUI, Refero Styles, three.js, drei, React Three Fiber, react-spring, zustand, glyph, postprocessing, detect-gpu, ShaderGradient, liquid-logo, liquid-glass-js, ThreeUI, img2threejs, GSAP, Two.js, scrollama, Watermelon UI, and LS.GRAPHICS.
 
+[![npm version](https://img.shields.io/npm/v/frontend-inspo-mcp.svg)](https://www.npmjs.com/package/frontend-inspo-mcp)
 [![MCP](https://img.shields.io/badge/Model_Context_Protocol-server-blue)](https://modelcontextprotocol.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178c6)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/badge/Node-18%2B-339933)](https://nodejs.org/)
@@ -12,6 +13,34 @@ Give Claude, Cursor, Kiro, or any MCP-compatible agent instant access to **thous
 copy-paste UI components and free design assets** — with the **actual source code**, not
 just links. Ask for "a glassmorphism card" or "an animated shadcn button" and get real,
 usable code back.
+
+## 📦 Install from npm (no clone needed)
+
+Add this to your MCP client config and restart it; `npx` fetches and runs the server for you:
+
+```json
+{
+  "mcpServers": {
+    "frontend-inspo": {
+      "command": "npx",
+      "args": ["-y", "frontend-inspo-mcp"]
+    }
+  }
+}
+```
+
+- **Claude Desktop** — paste it into `claude_desktop_config.json`
+  (macOS: `~/Library/Application Support/Claude/`, Windows: `%APPDATA%\Claude\`).
+- **Claude Code** — run `claude mcp add frontend-inspo -- npx -y frontend-inspo-mcp`,
+  or put the same JSON in a project-level `.mcp.json`.
+- **Cursor** — paste it into `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (per project).
+
+Prefer to hack on it? See [Quick start](#-quick-start) to run from source.
+
+## 🎬 Demo
+
+<!-- TODO: replace with recorded demo video -->
+Demo video coming soon.
 
 ---
 
