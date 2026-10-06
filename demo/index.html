@@ -493,8 +493,11 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   animation: marquee-scroll 42s linear infinite;
   padding-block: .5rem;
 }
-.marquee-container:hover .marquee-track {
-  animation-play-state: paused;
+.marquee-container:hover .marquee-track,
+.studio-marquee-wrap:hover .marquee-track,
+.marquee-track:hover,
+.marquee-track.is-paused {
+  animation-play-state: paused !important;
 }
 @keyframes marquee-scroll {
   from { transform: translateX(0); }
@@ -1140,6 +1143,12 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   border-color: var(--emulsion);
   color: var(--emulsion);
 }
+.btn-copy-code.active {
+  border-color: var(--emulsion) !important;
+  color: var(--emulsion) !important;
+  background: rgb(230 223 91 / 0.18) !important;
+  font-weight: 700;
+}
 .response-pre {
   margin: 0;
   font: .8125rem/1.55 var(--mono);
@@ -1471,22 +1480,30 @@ footer .provenance-box strong {
   color: var(--emulsion);
 }
 
-/* Floating Quick Navigation Dock */
+/* Floating Quick Navigation Dock - Autohides after 2 seconds */
 .quick-dock {
   position: fixed;
   bottom: 1.5rem;
   left: 50%;
-  transform: translateX(-50%);
-  background: rgb(13 21 32 / 0.85);
+  transform: translate(-50%, 25px);
+  opacity: 0;
+  pointer-events: none;
+  background: rgb(13 21 32 / 0.92);
   border: 1px solid var(--border-line);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
   padding: .4rem .75rem;
   border-radius: 9999px;
   display: flex;
   align-items: center;
   gap: .5rem;
-  box-shadow: 0 12px 32px rgb(0 0 0 / 0.4);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
   z-index: 90;
+  transition: opacity .35s ease, transform .35s ease;
+}
+.quick-dock.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
 }
 .quick-dock a {
   font: 600 .75rem var(--mono);
@@ -1741,32 +1758,78 @@ footer .provenance-box strong {
         <div class="studio-stage" id="studio-stage">
           <!-- Marquee Stage Default -->
           <div id="stage-marquee-view" style="width: 100%;">
-            <div style="background: var(--bg-darkest); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); overflow: hidden;">
-              <div class="marquee-track" id="studio-mini-marquee" style="animation-duration: 25s;">
-                <div class="marquee-card" style="flex: 0 0 15rem; min-height: 5rem;">
+            <div class="studio-marquee-wrap" style="background: var(--bg-darkest); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); overflow: hidden;">
+              <div class="marquee-track" id="studio-mini-marquee" style="animation-duration: 22s;">
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
                   <span class="source-badge" style="font-size: 1rem;">Magic UI</span>
-                  <span class="item-title" style="font-size: .875rem;">Interactive Review</span>
+                  <span class="item-title" style="font-size: .875rem;">Interactive Marquee</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · marquee.tsx</span>
                 </div>
-                <div class="marquee-card" style="flex: 0 0 15rem; min-height: 5rem;">
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
                   <span class="source-badge" style="font-size: 1rem;">Aceternity</span>
-                  <span class="item-title" style="font-size: .875rem;">3D Pin Card</span>
+                  <span class="item-title" style="font-size: .875rem;">3D Tilt Pin Card</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · 3d-card.tsx</span>
                 </div>
-                <div class="marquee-card" style="flex: 0 0 15rem; min-height: 5rem;">
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
                   <span class="source-badge" style="font-size: 1rem;">shadcn/ui</span>
-                  <span class="item-title" style="font-size: .875rem;">Radix Tooltip</span>
+                  <span class="item-title" style="font-size: .875rem;">Radix Dialog Suite</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · button.tsx</span>
                 </div>
-                <div class="marquee-card" style="flex: 0 0 15rem; min-height: 5rem;">
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Uiverse</span>
+                  <span class="item-title" style="font-size: .875rem;">Calm Tiger Wave</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · calm-tiger-42</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Fontsource</span>
+                  <span class="item-title" style="font-size: .875rem;">Big Shoulders Display</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_resource · OFL-1.1</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Refero</span>
+                  <span class="item-title" style="font-size: .875rem;">Linear Midnight Tokens</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · tokens.json</span>
+                </div>
+                <!-- Duplicate half for seamless infinite loop -->
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
                   <span class="source-badge" style="font-size: 1rem;">Magic UI</span>
-                  <span class="item-title" style="font-size: .875rem;">Interactive Review</span>
+                  <span class="item-title" style="font-size: .875rem;">Interactive Marquee</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · marquee.tsx</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Aceternity</span>
+                  <span class="item-title" style="font-size: .875rem;">3D Tilt Pin Card</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · 3d-card.tsx</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">shadcn/ui</span>
+                  <span class="item-title" style="font-size: .875rem;">Radix Dialog Suite</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · button.tsx</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Uiverse</span>
+                  <span class="item-title" style="font-size: .875rem;">Calm Tiger Wave</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · calm-tiger-42</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Fontsource</span>
+                  <span class="item-title" style="font-size: .875rem;">Big Shoulders Display</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_resource · OFL-1.1</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Refero</span>
+                  <span class="item-title" style="font-size: .875rem;">Linear Midnight Tokens</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · tokens.json</span>
                 </div>
               </div>
             </div>
             <div class="studio-controls-bar">
               <label>Speed:</label>
-              <button class="btn-copy-code" id="speed-slow-btn" type="button">Slow</button>
-              <button class="btn-copy-code" id="speed-normal-btn" type="button" style="border-color: var(--emulsion); color: var(--emulsion);">Normal</button>
-              <button class="btn-copy-code" id="speed-fast-btn" type="button">Fast</button>
-              <span style="opacity: .6; margin-left: auto;">Hover to pause</span>
+              <button class="btn-copy-code speed-btn" id="speed-slow-btn" type="button">Slow</button>
+              <button class="btn-copy-code speed-btn active" id="speed-normal-btn" type="button">Normal</button>
+              <button class="btn-copy-code speed-btn" id="speed-fast-btn" type="button">Fast</button>
+              <button class="btn-copy-code pause-btn" id="marquee-toggle-play-btn" type="button" style="margin-left: auto;">⏸️ Pause</button>
+              <span style="opacity: .6; font-size: .8rem;">(or hover track)</span>
             </div>
           </div>
 
@@ -1779,11 +1842,11 @@ footer .provenance-box strong {
             </div>
             <div class="studio-controls-bar" style="justify-content: center;">
               <label>Variant:</label>
-              <button class="btn-copy-code active-var" data-var="primary" type="button">Primary</button>
-              <button class="btn-copy-code" data-var="secondary" type="button">Secondary</button>
-              <button class="btn-copy-code" data-var="destructive" type="button">Destructive</button>
-              <button class="btn-copy-code" data-var="outline" type="button">Outline</button>
-              <button class="btn-copy-code" data-var="ghost" type="button">Ghost</button>
+              <button class="btn-copy-code var-btn active" data-var="primary" type="button">Primary</button>
+              <button class="btn-copy-code var-btn" data-var="secondary" type="button">Secondary</button>
+              <button class="btn-copy-code var-btn" data-var="destructive" type="button">Destructive</button>
+              <button class="btn-copy-code var-btn" data-var="outline" type="button">Outline</button>
+              <button class="btn-copy-code var-btn" data-var="ghost" type="button">Ghost</button>
             </div>
           </div>
 
@@ -2041,7 +2104,7 @@ footer .provenance-box strong {
 </main>
 
 <!-- Floating Quick Navigation Dock -->
-<div class="quick-dock" aria-label="Quick Section Navigation">
+<div class="quick-dock" id="quick-dock" aria-label="Quick Section Navigation">
   <a href="#potential">Potential</a>
   <a href="#studio">Studio</a>
   <a href="#showcase">Artifacts</a>
@@ -2154,11 +2217,14 @@ class TabsAutomatic {
   };
   const HEX = /^#[0-9a-f]{6}$/i;
 
+  let toastTimer = null;
   const showToast = (msg) => {
     const t = $("toast");
+    if (!t) return;
     t.textContent = msg;
     t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 2200);
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 2000);
   };
 
   const copyText = async (text, successMsg = "Copied to clipboard!") => {
@@ -2315,25 +2381,52 @@ class TabsAutomatic {
     copyText(studioPre.textContent, "Component source code copied!");
   });
 
-  // Marquee Speed Controls
+  // Marquee Speed & Playback Controls
   const miniMarquee = $("studio-mini-marquee");
-  $("speed-slow-btn").addEventListener("click", () => {
-    miniMarquee.style.animationDuration = "40s";
-    showToast("Marquee speed: Slow");
-  });
-  $("speed-normal-btn").addEventListener("click", () => {
-    miniMarquee.style.animationDuration = "25s";
-    showToast("Marquee speed: Normal");
-  });
-  $("speed-fast-btn").addEventListener("click", () => {
-    miniMarquee.style.animationDuration = "10s";
-    showToast("Marquee speed: Fast");
-  });
+  const speedBtns = document.querySelectorAll(".speed-btn");
+  const setMarqueeSpeed = (duration, activeBtn, label) => {
+    if (miniMarquee) {
+      miniMarquee.style.animationDuration = duration;
+    }
+    speedBtns.forEach((b) => b.classList.remove("active"));
+    if (activeBtn) activeBtn.classList.add("active");
+    showToast(`Marquee speed: ${label}`);
+  };
+
+  const slowBtn = $("speed-slow-btn");
+  const normalBtn = $("speed-normal-btn");
+  const fastBtn = $("speed-fast-btn");
+  const togglePlayBtn = $("marquee-toggle-play-btn");
+
+  if (slowBtn) slowBtn.addEventListener("click", () => setMarqueeSpeed("45s", slowBtn, "Slow"));
+  if (normalBtn) normalBtn.addEventListener("click", () => setMarqueeSpeed("22s", normalBtn, "Normal"));
+  if (fastBtn) fastBtn.addEventListener("click", () => setMarqueeSpeed("10s", fastBtn, "Fast"));
+
+  let isMarqueePaused = false;
+  if (togglePlayBtn && miniMarquee) {
+    togglePlayBtn.addEventListener("click", () => {
+      isMarqueePaused = !isMarqueePaused;
+      if (isMarqueePaused) {
+        miniMarquee.classList.add("is-paused");
+        togglePlayBtn.textContent = "▶️ Play";
+        togglePlayBtn.classList.add("active");
+        showToast("Marquee paused");
+      } else {
+        miniMarquee.classList.remove("is-paused");
+        togglePlayBtn.textContent = "⏸️ Pause";
+        togglePlayBtn.classList.remove("active");
+        showToast("Marquee playing");
+      }
+    });
+  }
 
   // shadcn Button Matrix Interaction
   const interactiveBtn = $("interactive-sc-btn");
-  document.querySelectorAll("[data-var]").forEach((btn) => {
+  const varBtns = document.querySelectorAll(".var-btn");
+  varBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
+      varBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
       interactiveBtn.className = `sc-btn sc-btn-${btn.dataset.var}`;
       interactiveBtn.textContent = `Variant: ${btn.dataset.var}`;
       showToast(`Applied shadcn variant: ${btn.dataset.var}`);
@@ -2659,6 +2752,53 @@ class TabsAutomatic {
       animFrame = requestAnimationFrame(render);
     };
     render();
+  }
+
+  // Floating Quick Navigation Dock (Auto-hides after 2 seconds)
+  const dock = $("quick-dock") || document.querySelector(".quick-dock");
+  if (dock) {
+    let dockTimer = null;
+    let isHoveringDock = false;
+
+    const hideDock = () => {
+      if (!isHoveringDock) {
+        dock.classList.remove("visible");
+      }
+    };
+
+    const showDock = () => {
+      dock.classList.add("visible");
+      clearTimeout(dockTimer);
+      dockTimer = setTimeout(hideDock, 2000);
+    };
+
+    // Show initially when the page loads, then auto-hide after 2 seconds
+    showDock();
+
+    // Re-show on scroll or mouse movement, auto-hide after 2 seconds of inactivity
+    window.addEventListener("scroll", showDock, { passive: true });
+    window.addEventListener("mousemove", showDock, { passive: true });
+
+    // Keep dock visible while hovering over it directly
+    dock.addEventListener("mouseenter", () => {
+      isHoveringDock = true;
+      dock.classList.add("visible");
+      clearTimeout(dockTimer);
+    });
+
+    dock.addEventListener("mouseleave", () => {
+      isHoveringDock = false;
+      dockTimer = setTimeout(hideDock, 2000);
+    });
+
+    // Auto-hide shortly after clicking a destination anchor
+    dock.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        isHoveringDock = false;
+        clearTimeout(dockTimer);
+        dockTimer = setTimeout(hideDock, 1000);
+      });
+    });
   }
 })();
 </script>
