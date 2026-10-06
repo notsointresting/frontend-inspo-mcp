@@ -6,6 +6,7 @@
 // parsed result in-process (bypassing the shared 10-min text cache to avoid
 // re-parsing megabytes on every call). Upgrade path: switch to a streamed/
 // per-component endpoint if ThreeUI ever publishes one.
+import { fetchJson } from "../lib/fetch.js";
 import type {
   Category,
   ResourceDetail,
@@ -45,13 +46,7 @@ let manifestPromise: Promise<Manifest> | null = null;
 async function loadManifest(): Promise<Manifest> {
   if (manifestCache) return manifestCache;
   if (!manifestPromise) {
-    manifestPromise = fetch(MANIFEST_URL, {
-      headers: { "user-agent": "frontend-inspo-mcp", accept: "application/json" },
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status} for ThreeUI manifest`);
-        return r.json() as Promise<Manifest>;
-      })
+    manifestPromise = fetchJson<Manifest>(MANIFEST_URL)
       .then((m) => {
         manifestCache = m;
         return m;

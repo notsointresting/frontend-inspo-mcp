@@ -2,7 +2,7 @@
 // drei (via GitHub). Lists a file tree, searches by path, and returns raw source.
 // ponytail: GitHub unauthenticated API is 60 req/hr; we cache the tree and read an
 // optional GITHUB_TOKEN to lift the limit. Upgrade path: add ETag caching if needed.
-import { fetchJson, fetchText } from "../lib/fetch.js";
+import { fetchJson, fetchText, isTransient } from "../lib/fetch.js";
 import type {
   Category,
   ResourceDetail,
@@ -88,7 +88,8 @@ function makePackageAdapter(cfg: PackageConfig): SourceAdapter {
       let content: string;
       try {
         content = await fetchText(cfg.rawUrl(path));
-      } catch {
+      } catch (e) {
+        if (isTransient(e)) throw e; // keep rate limits/network errors visible
         return null;
       }
       return {
@@ -147,18 +148,9 @@ export const threejs: SourceAdapter = makePackageAdapter({
 
 interface GhTree { tree: { path: string; type: string }[] }
 
-async function githubJson<T>(url: string): Promise<T> {
-  const token = process.env.GITHUB_TOKEN;
-  const r = await fetch(url, {
-    headers: {
-      "user-agent": "frontend-inspo-mcp",
-      accept: "application/vnd.github+json",
-      ...(token ? { authorization: `Bearer ${token}` } : {}),
-    },
-  });
-  if (!r.ok) throw new Error(`GitHub HTTP ${r.status} for ${url}`);
-  return (await r.json()) as T;
-}
+// Goes through fetchJson so GitHub 403/429 rate limits get retried with backoff;
+// fetch.ts attaches GITHUB_TOKEN for api.github.com.
+const githubJson = <T>(url: string): Promise<T> => fetchJson<T>(url);
 
 export const drei: SourceAdapter = makePackageAdapter({
   id: "drei",
