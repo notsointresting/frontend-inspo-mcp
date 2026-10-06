@@ -1,19 +1,56 @@
 {
   "name": "frontend-inspo-mcp",
   "version": "0.1.0",
-  "description": "Local MCP server for discovering frontend/design resources from freefrontend.com, ui.watermelon.sh, and ls.graphics.",
+  "description": "Local MCP server that lets AI coding agents discover and pull real frontend code, UI components, and design mockups from shadcn, Magic UI, Aceternity, FreeFrontend, and more.",
   "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "bin": {
     "frontend-inspo-mcp": "dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc && node scripts/copy-assets.mjs",
     "start": "node dist/index.js",
-    "smoke": "node dist/smoke.js"
+    "smoke": "node dist/smoke.js",
+    "prepublishOnly": "npm run build"
   },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "ai-agent",
+    "claude",
+    "cursor",
+    "kiro",
+    "frontend",
+    "ui-components",
+    "shadcn",
+    "shadcn-ui",
+    "magic-ui",
+    "aceternity",
+    "tailwindcss",
+    "react",
+    "threejs",
+    "vibe-coding",
+    "llm-tools"
+  ],
+  "author": "notsointresting",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/notsointresting/frontend-inspo-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/notsointresting/frontend-inspo-mcp/issues"
+  },
+  "homepage": "https://github.com/notsointresting/frontend-inspo-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
     "cheerio": "^1.0.0",
