@@ -258,22 +258,29 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 }
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  gap: 3.5rem;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(2rem, 4vw, 3.5rem);
   align-items: center;
   position: relative;
   z-index: 2;
 }
+.hero-grid > * {
+  min-width: 0;
+}
 .hero h1 {
-  font-size: clamp(3.5rem, 9.5vw, 7.8rem);
-  line-height: .86;
+  font-size: clamp(2.25rem, 4.2vw, 4.25rem);
+  line-height: .92;
   color: #ffffff;
   margin-bottom: 1.5rem;
+  overflow-wrap: break-word;
+}
+.hero h1 span {
+  display: block;
 }
 .hero h1 .highlight {
   display: block;
   color: var(--emulsion);
-  text-shadow: 0 0 40px rgb(230 223 91 / 0.3);
+  text-shadow: 0 0 35px rgb(230 223 91 / 0.25);
 }
 .hero .lede {
   font-size: clamp(1.125rem, 1.8vw, 1.375rem);
@@ -416,6 +423,10 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(12px);
+  min-width: 0;
+  width: 100%;
+  max-width: 32rem;
+  justify-self: end;
 }
 .terminal-header {
   display: flex;
@@ -1513,8 +1524,9 @@ footer .provenance-box strong {
 /* ==========================================================================
    Responsive Breakpoints
    ========================================================================== */
-@media (max-width: 68rem) {
-  .hero-grid { grid-template-columns: 1fr; }
+@media (max-width: 72rem) {
+  .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .terminal-card { justify-self: stretch; max-width: 100%; }
   .potential-grid { grid-template-columns: 1fr; }
   .studio-content-grid { grid-template-columns: 1fr; }
   .frame, .frame.wide { grid-column: span 3; }
@@ -1566,7 +1578,7 @@ footer .provenance-box strong {
     <div class="hero-grid">
       <div>
         <p class="eyebrow">Local MCP Superpower for AI Coding Agents</p>
-        <h1 id="hero-title">Real frontend code. <span class="highlight">Zero hallucinations.</span></h1>
+        <h1 id="hero-title"><span>Real frontend code.</span> <span class="highlight">Zero hallucinations.</span></h1>
         <p class="lede">
           Connect your coding agent to <strong>65 public sources</strong> of production React, Tailwind CSS, Framer Motion,
           Three.js shaders, design tokens, and ARIA patterns. Runs locally over stdio, fetches exact source files, and arms your AI with real design systems.
