@@ -29,8 +29,8 @@ jobs:
     - name: Build
       run: npm run build
       
-    - name: Fetch retry self-check
-      run: node scripts/check-fetch.mjs
+    - name: Unit tests
+      run: npm test
 
     - name: Smoke Test (Verify all sources are live)
       run: npm run smoke
