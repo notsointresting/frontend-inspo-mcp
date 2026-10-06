@@ -99,6 +99,12 @@ npm run build
 
 Requires **Node 18+** (uses the built-in `fetch`).
 
+Run the offline unit tests (no network needed):
+
+```bash
+npm test
+```
+
 Verify every source is live:
 
 ```bash
