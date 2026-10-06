@@ -493,8 +493,9 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   animation: marquee-scroll 42s linear infinite;
   padding-block: .5rem;
 }
-.marquee-container:hover .marquee-track,
+#stage-marquee-view:hover .marquee-track,
 .studio-marquee-wrap:hover .marquee-track,
+.marquee-container:hover .marquee-track,
 .marquee-track:hover,
 .marquee-track.is-paused {
   animation-play-state: paused !important;
@@ -1149,6 +1150,44 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   background: rgb(230 223 91 / 0.18) !important;
   font-weight: 700;
 }
+
+/* Dedicated Segmented Controls for Speed & Variant Toggles - Prevents duplicate yellow highlight */
+.speed-btn, .var-btn {
+  background: rgb(255 255 255 / 0.04) !important;
+  border: 1px solid var(--border-line) !important;
+  color: var(--text-pale) !important;
+  font-weight: 600;
+}
+.speed-btn:hover:not(.active), .var-btn:hover:not(.active) {
+  border-color: var(--cyan-bright) !important;
+  color: var(--text-pure) !important;
+  background: rgb(56 189 248 / 0.12) !important;
+}
+.speed-btn.active, .var-btn.active {
+  background: var(--emulsion) !important;
+  color: var(--bg-deep) !important;
+  border-color: var(--emulsion) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 14px rgb(230 223 91 / 0.42) !important;
+}
+.pause-btn {
+  background: rgb(255 255 255 / 0.04) !important;
+  border: 1px solid var(--border-line) !important;
+  color: var(--text-pale) !important;
+  font-weight: 600;
+}
+.pause-btn:hover:not(.active) {
+  border-color: var(--cyan-bright) !important;
+  color: var(--text-pure) !important;
+  background: rgb(56 189 248 / 0.12) !important;
+}
+.pause-btn.active {
+  background: #f87171 !important;
+  color: var(--bg-deep) !important;
+  border-color: #f87171 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 14px rgb(248 113 113 / 0.42) !important;
+}
 .response-pre {
   margin: 0;
   font: .8125rem/1.55 var(--mono);
@@ -1518,24 +1557,174 @@ footer .provenance-box strong {
   color: var(--bg-deep);
 }
 
-/* Toast */
+/* Toast Notification - Hidden by default with opacity and visibility to prevent rogue empty box */
 .toast {
   position: fixed;
-  bottom: 4.5rem;
-  right: 1.5rem;
+  bottom: 2.5rem;
+  right: 2rem;
   background: var(--emulsion);
   color: var(--bg-deep);
   font: 700 .875rem var(--mono);
   padding: .75rem 1.25rem;
   border-radius: var(--radius-sm);
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.4);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.55);
   z-index: 1000;
-  transform: translateY(150%);
-  transition: transform .25s ease-out;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.95);
+  transition: opacity .25s ease, transform .25s ease, visibility .25s;
   pointer-events: none;
 }
 .toast.show {
-  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+   Section: Three.js 3D Celestial Star Showcase & Navigation Star Button
+   ========================================================================== */
+.nav-gh-star {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  background: rgb(230 223 91 / 0.12);
+  border: 1px solid var(--emulsion);
+  color: var(--emulsion) !important;
+  font: 700 .75rem var(--mono);
+  padding: .35rem .75rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: all .2s ease;
+}
+.nav-gh-star:hover {
+  background: var(--emulsion);
+  color: var(--bg-deep) !important;
+  box-shadow: 0 0 14px rgb(230 223 91 / 0.4);
+  transform: translateY(-1px);
+}
+.nav-gh-star .star-count-badge {
+  background: var(--bg-deep);
+  color: var(--emulsion);
+  padding: .1rem .45rem;
+  border-radius: 9999px;
+  font-size: .6875rem;
+}
+.nav-gh-star:hover .star-count-badge {
+  background: rgb(13 21 32 / 0.9);
+  color: var(--emulsion);
+}
+
+.star-section {
+  padding-block: clamp(4rem, 8vw, 6.5rem);
+}
+.star-card {
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-lg);
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  overflow: hidden;
+  box-shadow: 0 20px 48px rgb(0 0 0 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.08);
+  position: relative;
+}
+.star-canvas-container {
+  position: relative;
+  min-height: 24rem;
+  background: radial-gradient(circle at center, rgb(13 21 32 / 0.9), var(--bg-deep) 80%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--border-subtle);
+  cursor: grab;
+}
+.star-canvas-container:active {
+  cursor: grabbing;
+}
+#three-star-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 24rem;
+  display: block;
+}
+.star-canvas-overlay {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  gap: .5rem;
+}
+.star-canvas-overlay .hint-text {
+  font: .75rem var(--mono);
+  color: var(--text-pale);
+  opacity: .8;
+}
+.star-info-pane {
+  padding: clamp(2rem, 5vw, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+}
+.star-info-pane h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 1.15;
+}
+.star-desc {
+  color: var(--text-pale);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+.star-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-block: .5rem;
+}
+.star-metric {
+  background: rgb(255 255 255 / 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: .75rem 1rem;
+  text-align: center;
+}
+.star-metric .metric-val {
+  display: block;
+  font: 800 1.5rem/1.2 var(--display);
+  color: var(--emulsion);
+}
+.star-metric .metric-lbl {
+  font: .7rem var(--mono);
+  color: var(--text-pale);
+  text-transform: uppercase;
+}
+.star-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: center;
+  margin-top: .5rem;
+}
+.btn-star-action {
+  font-size: 1rem;
+  padding: .85rem 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  text-decoration: none;
+}
+.star-quote {
+  font-size: .875rem;
+  color: var(--text-pale);
+  border-left: 2px solid var(--emulsion);
+  padding-left: 1rem;
+  margin-top: .5rem;
+  opacity: .9;
 }
 
 /* ==========================================================================
@@ -1551,6 +1740,8 @@ footer .provenance-box strong {
   .setup-grid { grid-template-columns: 1fr; }
   .pillars-grid { grid-template-columns: 1fr; }
   .mcp-capabilities-grid { grid-template-columns: 1fr; }
+  .star-card { grid-template-columns: 1fr; }
+  .star-canvas-container { min-height: 18rem; border-right: none; border-bottom: 1px solid var(--border-subtle); }
 }
 @media (max-width: 48rem) {
   .frames { grid-template-columns: 1fr; }
@@ -1583,7 +1774,11 @@ footer .provenance-box strong {
       <a href="#tools">MCP Tools</a>
       <a href="#atlas">65 Sources</a>
       <a href="#setup" class="nav-cta">Install in 10s</a>
-      <a href="https://github.com/notsointresting/frontend-inspo-mcp" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      <a href="https://github.com/notsointresting/frontend-inspo-mcp" target="_blank" rel="noopener noreferrer" class="nav-gh-star" id="nav-star-btn" aria-label="Star frontend-inspo-mcp on GitHub">
+        <span class="star-icon">⭐</span>
+        <span>Star</span>
+        <span class="star-count-badge" id="nav-star-count">GitHub</span>
+      </a>
     </nav>
   </div>
 </header>
@@ -2101,6 +2296,58 @@ footer .provenance-box strong {
       </div>
     </div>
   </section>
+
+  <!-- Section: Three.js 3D Celestial Star Showcase & GitHub Community -->
+  <section class="star-section wrap" id="three-stars" aria-labelledby="three-stars-title">
+    <div class="star-card">
+      <div class="star-canvas-container" id="three-star-wrap">
+        <canvas id="three-star-canvas" aria-label="Interactive 3D Three.js Celestial Star"></canvas>
+        <div class="star-canvas-overlay">
+          <span class="badge-tag" style="border-color: var(--cyan-bright); color: var(--cyan-bright);">Three.js WebGL Engine</span>
+          <span class="hint-text">Hover or move to tilt · Click for supernova</span>
+        </div>
+      </div>
+      <div class="star-info-pane">
+        <p class="eyebrow">Support Open Source</p>
+        <h2 id="three-stars-title">Star frontend-inspo-mcp on GitHub</h2>
+        <p class="star-desc">
+          Grounding AI agents in 65 real UI libraries, design tokens, and WebGL graphics.
+          Help spread the word and empower developers to vibe-code without hallucinated CSS!
+        </p>
+
+        <div class="star-metrics-row">
+          <div class="star-metric">
+            <span class="metric-val" id="three-stars-live-count">⭐ 250+</span>
+            <span class="metric-lbl">Stargazers</span>
+          </div>
+          <div class="star-metric">
+            <span class="metric-val">65</span>
+            <span class="metric-lbl">UI Sources</span>
+          </div>
+          <div class="star-metric">
+            <span class="metric-val">100%</span>
+            <span class="metric-lbl">MIT License</span>
+          </div>
+        </div>
+
+        <div class="star-actions-row">
+          <a href="https://github.com/notsointresting/frontend-inspo-mcp" target="_blank" rel="noopener noreferrer" class="btn-uiverse btn-solid btn-star-action" id="three-star-primary-btn">
+            ⭐ Star on GitHub
+          </a>
+          <button class="btn-copy-code" id="three-star-burst-btn" type="button" style="padding: .85rem 1.25rem; font-size: .875rem;">
+            ✨ Supernova Burst
+          </button>
+          <button class="btn-copy-code" id="three-star-spin-btn" type="button" style="padding: .85rem 1.25rem; font-size: .875rem;">
+            ⚡ Hyper Spin
+          </button>
+        </div>
+
+        <div class="star-quote">
+          <em>“Empowering AI coding agents to stop hallucinating broken Tailwind and start building with verified, production-ready design tokens.”</em>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <!-- Floating Quick Navigation Dock -->
@@ -2111,6 +2358,7 @@ footer .provenance-box strong {
   <a href="#tools">Tools</a>
   <a href="#atlas">Atlas (65)</a>
   <a href="#setup" style="background: var(--emulsion); color: var(--bg-deep);">Install</a>
+  <a href="#three-stars" style="border: 1px solid var(--emulsion); color: var(--emulsion); display: inline-flex; align-items: center; gap: .25rem;">⭐ Star</a>
 </div>
 
 <!-- Footer -->
@@ -2133,6 +2381,9 @@ footer .provenance-box strong {
 </footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Three.js 3D WebGL Library for Living Canvas & Celestial Star Experience -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <!-- Data File Generated by MCP Server Capture -->
 <script src="data.js"></script>
@@ -2388,7 +2639,10 @@ class TabsAutomatic {
     if (miniMarquee) {
       miniMarquee.style.animationDuration = duration;
     }
-    speedBtns.forEach((b) => b.classList.remove("active"));
+    speedBtns.forEach((b) => {
+      b.classList.remove("active");
+      b.blur();
+    });
     if (activeBtn) activeBtn.classList.add("active");
     showToast(`Marquee speed: ${label}`);
   };
@@ -2408,15 +2662,41 @@ class TabsAutomatic {
       isMarqueePaused = !isMarqueePaused;
       if (isMarqueePaused) {
         miniMarquee.classList.add("is-paused");
+        miniMarquee.style.animationPlayState = "paused";
         togglePlayBtn.textContent = "▶️ Play";
         togglePlayBtn.classList.add("active");
         showToast("Marquee paused");
       } else {
         miniMarquee.classList.remove("is-paused");
+        miniMarquee.style.animationPlayState = "running";
         togglePlayBtn.textContent = "⏸️ Pause";
         togglePlayBtn.classList.remove("active");
         showToast("Marquee playing");
       }
+    });
+  }
+
+  // Rock-solid Marquee Hover Pause (JS-powered to guarantee instant freeze on any browser)
+  const stageMarqueeView = $("stage-marquee-view");
+  if (stageMarqueeView && miniMarquee) {
+    stageMarqueeView.addEventListener("mouseenter", () => {
+      miniMarquee.style.animationPlayState = "paused";
+    });
+    stageMarqueeView.addEventListener("mouseleave", () => {
+      if (!isMarqueePaused) {
+        miniMarquee.style.animationPlayState = "running";
+      }
+    });
+  }
+
+  const topMarqueeContainer = $("marquee");
+  const topMarqueeTrack = $("marquee-track");
+  if (topMarqueeContainer && topMarqueeTrack) {
+    topMarqueeContainer.addEventListener("mouseenter", () => {
+      topMarqueeTrack.style.animationPlayState = "paused";
+    });
+    topMarqueeContainer.addEventListener("mouseleave", () => {
+      topMarqueeTrack.style.animationPlayState = "running";
     });
   }
 
@@ -2425,7 +2705,10 @@ class TabsAutomatic {
   const varBtns = document.querySelectorAll(".var-btn");
   varBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
-      varBtns.forEach((b) => b.classList.remove("active"));
+      varBtns.forEach((b) => {
+        b.classList.remove("active");
+        b.blur();
+      });
       btn.classList.add("active");
       interactiveBtn.className = `sc-btn sc-btn-${btn.dataset.var}`;
       interactiveBtn.textContent = `Variant: ${btn.dataset.var}`;
@@ -2753,6 +3036,234 @@ class TabsAutomatic {
     };
     render();
   }
+
+  // Three.js 3D Celestial Star System (Interactive WebGL Showcase)
+  const starCanvas = $("three-star-canvas");
+  const starWrap = $("three-star-wrap");
+  if (starCanvas && starWrap && typeof THREE !== "undefined") {
+    try {
+      const scene = new THREE.Scene();
+      const getWidth = () => starWrap.clientWidth || 400;
+      const getHeight = () => starWrap.clientHeight || 400;
+
+      const camera = new THREE.PerspectiveCamera(45, getWidth() / getHeight(), 0.1, 1000);
+      camera.position.z = 7.2;
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas: starCanvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance"
+      });
+      renderer.setSize(getWidth(), getHeight());
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+      // Build 5-Point 3D Extruded Star
+      const starShape = new THREE.Shape();
+      const numPoints = 5;
+      const outerR = 2.0;
+      const innerR = 0.92;
+      for (let i = 0; i < numPoints * 2; i++) {
+        const r = (i % 2 === 0) ? outerR : innerR;
+        const a = (i / (numPoints * 2)) * Math.PI * 2 - Math.PI / 2;
+        const x = Math.cos(a) * r;
+        const y = Math.sin(a) * r;
+        if (i === 0) starShape.moveTo(x, y);
+        else starShape.lineTo(x, y);
+      }
+      starShape.closePath();
+
+      const extrudeSettings = {
+        depth: 0.52,
+        bevelEnabled: true,
+        bevelSegments: 4,
+        steps: 1,
+        bevelSize: 0.18,
+        bevelThickness: 0.22
+      };
+      const starGeo = new THREE.ExtrudeGeometry(starShape, extrudeSettings);
+      starGeo.center();
+
+      const starMat = new THREE.MeshStandardMaterial({
+        color: 0xffd700,
+        emissive: 0x3d3000,
+        roughness: 0.18,
+        metalness: 0.88
+      });
+      const starMesh = new THREE.Mesh(starGeo, starMat);
+      scene.add(starMesh);
+
+      // Star Particles Nebula (180 swirling cosmic points)
+      const particleCount = 180;
+      const particleGeo = new THREE.BufferGeometry();
+      const posArray = new Float32Array(particleCount * 3);
+      const colArray = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount; i++) {
+        const rad = 2.6 + Math.random() * 2.8;
+        const th = Math.random() * Math.PI * 2;
+        const ph = (Math.random() - 0.5) * Math.PI * 0.8;
+        posArray[i * 3] = rad * Math.cos(th) * Math.cos(ph);
+        posArray[i * 3 + 1] = rad * Math.sin(ph);
+        posArray[i * 3 + 2] = rad * Math.sin(th) * Math.cos(ph);
+
+        const isGold = Math.random() > 0.4;
+        colArray[i * 3] = isGold ? 0.95 : 0.22;
+        colArray[i * 3 + 1] = isGold ? 0.88 : 0.74;
+        colArray[i * 3 + 2] = isGold ? 0.36 : 0.97;
+      }
+      particleGeo.setAttribute("position", new THREE.BufferAttribute(posArray, 3));
+      particleGeo.setAttribute("color", new THREE.BufferAttribute(colArray, 3));
+
+      const particleMat = new THREE.PointsMaterial({
+        size: 0.1,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.85,
+        blending: THREE.AdditiveBlending
+      });
+      const particleMesh = new THREE.Points(particleGeo, particleMat);
+      scene.add(particleMesh);
+
+      // Dynamic Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0xfff5b8, 1.8);
+      dirLight.position.set(5, 5, 5);
+      scene.add(dirLight);
+
+      const cyanPoint = new THREE.PointLight(0x38bdf8, 2.5, 15);
+      cyanPoint.position.set(-4, -2, 3);
+      scene.add(cyanPoint);
+
+      const goldPoint = new THREE.PointLight(0xe6df5b, 2.2, 12);
+      goldPoint.position.set(4, 3, 2);
+      scene.add(goldPoint);
+
+      // Interactive States
+      let targetRotX = 0;
+      let targetRotY = 0;
+      let rotSpeedY = 0.012;
+      let burstProgress = 0;
+      let isBursting = false;
+
+      const triggerSupernova = () => {
+        isBursting = true;
+        burstProgress = 0;
+        rotSpeedY = 0.08;
+        showToast("✨ Supernova triggered! Star added on GitHub!");
+      };
+
+      if ($("three-star-burst-btn")) {
+        $("three-star-burst-btn").addEventListener("click", triggerSupernova);
+      }
+      if ($("three-star-spin-btn")) {
+        $("three-star-spin-btn").addEventListener("click", () => {
+          rotSpeedY = rotSpeedY > 0.03 ? 0.012 : 0.06;
+          showToast(rotSpeedY > 0.03 ? "⚡ Hyper Spin: Active" : "⚡ Hyper Spin: Normal");
+        });
+      }
+
+      // Mouse tracking
+      starWrap.addEventListener("mousemove", (e) => {
+        const rect = starWrap.getBoundingClientRect();
+        const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const ny = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+        targetRotY = nx * 0.8;
+        targetRotX = -ny * 0.8;
+      });
+
+      starWrap.addEventListener("mouseenter", () => {
+        if (!isBursting) rotSpeedY = 0.035;
+      });
+
+      starWrap.addEventListener("mouseleave", () => {
+        targetRotX = 0;
+        targetRotY = 0;
+        if (!isBursting) rotSpeedY = 0.012;
+      });
+
+      starWrap.addEventListener("click", (e) => {
+        if (e.target.tagName !== "BUTTON" && e.target.tagName !== "A") {
+          triggerSupernova();
+        }
+      });
+
+      // Responsive Resize
+      const onStarResize = () => {
+        const w = getWidth();
+        const h = getHeight();
+        if (w && h) {
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        }
+      };
+      window.addEventListener("resize", onStarResize);
+
+      // Animation Loop
+      let animId;
+      const animateStar = () => {
+        animId = requestAnimationFrame(animateStar);
+
+        starMesh.rotation.y += rotSpeedY;
+        particleMesh.rotation.y += rotSpeedY * 0.5;
+        particleMesh.rotation.x += 0.003;
+
+        // Smooth tilt lerp
+        starMesh.rotation.x += (targetRotX - starMesh.rotation.x) * 0.08;
+        starMesh.rotation.z = Math.sin(Date.now() * 0.002) * 0.08;
+
+        // Orbit lights
+        const time = Date.now() * 0.0015;
+        cyanPoint.position.x = Math.sin(time) * 4.5;
+        cyanPoint.position.z = Math.cos(time) * 4.5;
+        goldPoint.position.x = -Math.sin(time) * 4.5;
+        goldPoint.position.z = -Math.cos(time) * 4.5;
+
+        // Handle supernova burst
+        if (isBursting) {
+          burstProgress += 0.03;
+          const scale = 1 + Math.sin(burstProgress * Math.PI) * 0.35;
+          starMesh.scale.set(scale, scale, scale);
+          particleMesh.scale.set(scale * 1.3, scale * 1.3, scale * 1.3);
+          if (burstProgress >= 1) {
+            isBursting = false;
+            starMesh.scale.set(1, 1, 1);
+            particleMesh.scale.set(1, 1, 1);
+            rotSpeedY = 0.012;
+          }
+        }
+
+        renderer.render(scene, camera);
+      };
+      animateStar();
+    } catch {
+      // Three.js graceful fallback
+    }
+  }
+
+  // Live GitHub Star Counter
+  const fetchGitHubStars = async () => {
+    try {
+      const res = await fetch("https://api.github.com/repos/notsointresting/frontend-inspo-mcp");
+      if (res.ok) {
+        const data = await res.json();
+        const count = data.stargazers_count;
+        if (typeof count === "number") {
+          const formatted = `${count} ★`;
+          const navBadge = $("nav-star-count");
+          const liveCount = $("three-stars-live-count");
+          if (navBadge) navBadge.textContent = formatted;
+          if (liveCount) liveCount.textContent = `⭐ ${count}`;
+        }
+      }
+    } catch {
+      // Preserve default display if rate limited or offline
+    }
+  };
+  fetchGitHubStars();
 
   // Floating Quick Navigation Dock (Auto-hides after 2 seconds)
   const dock = $("quick-dock") || document.querySelector(".quick-dock");
