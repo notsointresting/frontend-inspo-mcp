@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/frontend-inspo-mcp.svg)](https://www.npmjs.com/package/frontend-inspo-mcp)
 [![MCP](https://img.shields.io/badge/Model_Context_Protocol-server-blue)](https://modelcontextprotocol.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-7.0-3178c6)](https://www.typescriptlang.org/)
-[![Node](https://img.shields.io/badge/Node-18%2B-339933)](https://nodejs.org/)
+[![Node](https://img.shields.io/badge/Node-20.18%2B-339933)](https://nodejs.org/)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15252/badge)](https://www.bestpractices.dev/projects/15252)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
@@ -69,7 +69,7 @@ directly into your project.
 | **[Fancy Components](https://fancycomponents.dev/)** | Motion, scroll, text-physics & 2D effect React components | ✅ | Registry JSON |
 | **[VengeanceUI](https://github.com/Ashutoshx7/VengeanceUI)** | Animated React + Tailwind + Framer Motion components | ✅ | Registry JSON (GitHub) |
 | **[Canvas UI](https://canvasui.dev/)** | React WebGL/canvas & animated components | ✅ | Registry JSON |
-| **[Refero Styles](https://styles.refero.design/)** | Design systems from real sites — DESIGN.md, Tailwind, CSS vars, tokens | ✅ | Public API (no login) |
+| **[Refero Styles](https://styles.refero.design/)** | Design systems from real sites — DESIGN.md, Tailwind, CSS vars, tokens | ✅ | Public pages (no login) |
 | **[three.js](https://threejs.org/)** | Official examples — GLSL shaders, post-fx, loaders, controls | ✅ | jsdelivr CDN |
 | **[drei](https://github.com/pmndrs/drei)** | React Three Fiber helper components | ✅ | GitHub source |
 | **[React Three Fiber](https://r3f.docs.pmnd.rs/)** | Curated R3F guidance (Canvas/hooks, geometry, scroll storytelling) | ✅ | Bundled offline |
@@ -98,7 +98,7 @@ npm install
 npm run build
 ```
 
-Requires **Node 18+** (uses the built-in `fetch`).
+Requires **Node 20.18.1+** (uses the built-in `fetch`).
 
 Run the offline unit tests (no network needed):
 
@@ -194,15 +194,16 @@ Find a free device mockup:
 
 ## 🧭 How it works
 
-- **Registry sources** (shadcn, Magic UI, Aceternity, React Bits) share one adapter that
+- **Registry sources** (shadcn, Magic UI, Aceternity, React Bits, Fancy Components, VengeanceUI, Canvas UI) share one adapter that
   reads the [shadcn registry schema](https://ui.shadcn.com/docs/registry) — an index of
   items plus per-item JSON containing the real component source.
 - **FreeFrontend** parses server-rendered collection pages and base64-decodes the inline
   code blocks; pagination follows `/<collection>/page/N/`.
 - **Watermelon UI** calls its documented public API (`/api/v1/catalog/*`).
-- **Refero Styles** calls the **public** `styles.refero.design/api/styles` endpoints and
-  synthesizes a DESIGN.md, Tailwind theme, CSS variables, and design-token JSON from the
-  returned design-system data — **no Refero subscription is required**.
+- **Refero Styles** reads the public, server-rendered gallery and `/style/<id>` pages of
+  `styles.refero.design` (its `/api/` path is disallowed by `robots.txt`, so it is not used)
+  and synthesizes a DESIGN.md, Tailwind theme, CSS variables, and design-token JSON from the
+  embedded design-system data — **no Refero subscription is required**.
 - **three.js** lists the published npm package file tree via jsdelivr and fetches raw
   source (GLSL shaders, post-processing, loaders, controls) from the CDN.
 - **drei** reads the `pmndrs/drei` GitHub source tree and raw files. Set an optional
@@ -221,7 +222,7 @@ Find a free device mockup:
 - **LS.GRAPHICS** parses the free-mockups listing and each asset page for formats and
   download links.
 
-Requests are cached in memory (10-min TTL) and throttled per host to stay polite.
+Requests use HTTPS only, are cached in memory (10-min TTL), throttled per host to stay polite, and retried with backoff on rate limits.
 
 ### Optional: persistent cache
 
@@ -238,19 +239,27 @@ When set, responses are stored on disk (same 10-min TTL) so repeated runs skip t
 
 ```
 src/
-  index.ts              server + tool registration
-  smoke.ts              live per-adapter checks
+  index.ts              stdio launcher (npm bin)
+  server.ts             the six MCP tools, input validation, response size cap
+  smoke.ts              live per-source checks (npm run smoke)
   lib/
     types.ts            shared types + SourceAdapter contract
-    fetch.ts            cached, throttled HTTP + base64 decode
+    validate.ts         allowlist schemas for tool arguments
+    fetch.ts            HTTPS-only, cached, throttled HTTP with retry/backoff
   sources/
+    registry.ts         shadcn-schema registry factory (7 sources)
+    packages.ts         source trees via jsDelivr + GitHub (14 sources)
     freefrontend.ts     HTML parse + base64 code decode
     watermelon.ts       JSON API client
     lsgraphics.ts       HTML parse (mockups)
-    registry.ts         shadcn-schema registry factory (shadcn/magicui/aceternity/reactbits)
-    refero.ts           Refero public API -> synthesized DESIGN.md / tokens
-    packages.ts         code libraries via jsdelivr (three.js) + GitHub (drei)
+    refero.ts           Refero public pages -> synthesized DESIGN.md / tokens
+    threeui.ts          ThreeUI manifest
+    r3f.ts              bundled React Three Fiber guide (offline)
+tests/                  offline unit tests (node:test), network faked
+scripts/                build helpers + reproducible-build check
 ```
+
+How the pieces fit together is described in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## 🤝 Contributing
 
@@ -258,6 +267,15 @@ New sources are welcome — most fit in one small adapter file implementing the
 `SourceAdapter` contract in `src/lib/types.ts`. Open a PR.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the step-by-step guide, code standards, and the checks a PR must pass.
+
+Project documents:
+
+- [ROADMAP.md](ROADMAP.md): what is planned for the next year, and what is out of scope
+- [GOVERNANCE.md](GOVERNANCE.md): how decisions are made, roles, and releases
+- [ARCHITECTURE.md](ARCHITECTURE.md): how the server is built
+- [SECURITY.md](SECURITY.md) and [the security assurance case](docs/security-assurance-case.md): reporting vulnerabilities, and what to expect
+- [RELEASING.md](RELEASING.md): how releases are signed and how to verify them
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## 🙏 Credits & acknowledgements
 
@@ -270,7 +288,7 @@ source's license before reusing anything.
 - **[Magic UI](https://magicui.design/)** — MIT
 - **[Aceternity UI](https://ui.aceternity.com/)** by [Manu Arora](https://twitter.com/mannupaaji)
 - **[React Bits](https://reactbits.dev/)** by [David Haz](https://github.com/DavidHDev) — MIT
-- **[Refero](https://refero.design/)** — design-system references extracted from public websites (data served via Refero's public API; each referenced site owns its brand)
+- **[Refero](https://refero.design/)** — design-system references extracted from public websites (data read from Refero's public pages; each referenced site owns its brand)
 - **[three.js](https://threejs.org/)** by [mrdoob](https://github.com/mrdoob) & contributors — MIT
 - **[drei](https://github.com/pmndrs/drei)** by [pmndrs](https://github.com/pmndrs) — MIT
 - **[react-spring](https://github.com/pmndrs/react-spring)** by [pmndrs](https://github.com/pmndrs) — MIT
