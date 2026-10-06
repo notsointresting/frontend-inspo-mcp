@@ -1,4 +1,4 @@
-// Copies bundled non-TS assets into dist after tsc (tsc only emits .js).
+// Copies bundled non-TS assets into dist after tsc (tsc only emits .js and .d.ts).
 // Currently: the react-three-fiber skill markdown used by the r3f source.
 import { cpSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";

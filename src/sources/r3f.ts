@@ -9,6 +9,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { rankByQuery } from "../lib/search.js";
 import type {
   Category,
   ResourceDetail,
@@ -103,6 +104,8 @@ export const r3f: SourceAdapter = {
     "Curated React Three Fiber (R3F) guidance — Canvas/hooks/JSX-Three.js core, geometry & materials, scroll-driven 3D storytelling, and a stack-selection + performance checklist. Offline, bundled reference (SKILL.md + docs); returns the guidance markdown as inline 'code'.",
   homepage: HOMEPAGE,
   hasInlineCode: true,
+  stack: ["react", "3d", "guidance"],
+  idFormat: "doc id: skill, geometry-and-scenes, scroll-storytelling or architecture-decisions",
 
   async listCategories(): Promise<Category[]> {
     const counts = new Map<string, number>();
@@ -112,17 +115,21 @@ export const r3f: SourceAdapter = {
 
   async search(args: SearchArgs): Promise<ResourceSummary[]> {
     const limit = Math.min(Math.max(args.limit ?? 20, 1), 100);
-    const q = (args.query || "").toLowerCase();
     const cat = (args.category || "").toLowerCase();
-    const out: ResourceSummary[] = [];
-    for (const doc of DOCS) {
-      if (cat && doc.category.toLowerCase() !== cat) continue;
-      const md = await readDoc(doc.file);
-      if (q && !`${doc.title}\n${md}`.toLowerCase().includes(q)) continue;
-      out.push(summaryOf(doc, md));
-      if (out.length >= limit) break;
-    }
-    return out;
+    const docs = await Promise.all(
+      DOCS.filter((d) => !cat || d.category.toLowerCase() === cat).map(async (doc) => {
+        const md = await readDoc(doc.file);
+        return { summary: summaryOf(doc, md), md, sections: headingTitles(md).join(" ") };
+      }),
+    );
+    const fields = (d: (typeof docs)[number]) => [
+      d.summary.title,
+      d.summary.id,
+      d.summary.description,
+      d.sections,
+      d.md,
+    ];
+    return rankByQuery(docs, args.query, fields, limit).map((d) => d.summary);
   },
 
   async getResource(id: string): Promise<ResourceDetail | null> {

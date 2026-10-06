@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.notsointresting/frontend-inspo-mcp",
+  "title": "Frontend Inspo",
+  "description": "Lets AI agents search and fetch real UI components, frontend code, design tokens and mockups.",
+  "repository": {
+    "url": "https://github.com/notsointresting/frontend-inspo-mcp",
+    "source": "github"
+  },
+  "version": "0.3.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "frontend-inspo-mcp",
+      "version": "0.3.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "GITHUB_TOKEN",
+          "description": "Optional. Lifts GitHub's 60 requests/hour limit for the GitHub-backed sources. Sent only to api.github.com; a token with no scopes is enough.",
+          "isRequired": false,
+          "isSecret": true,
+          "format": "string"
+        },
+        {
+          "name": "FRONTEND_INSPO_CACHE_DIR",
+          "description": "Optional. A writable directory for a persistent response cache; without it the cache is in memory only.",
+          "isRequired": false,
+          "format": "filepath"
+        }
+      ]
+    }
+  ]
+}

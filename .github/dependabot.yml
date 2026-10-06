@@ -21,7 +21,7 @@ updates:
           - "minor"
           - "patch"
 
-  # Actions used in your CI workflows (.github/workflows/)
+  # GitHub Actions in .github/workflows/: updates the commit-SHA pins and their "# vX.Y.Z" comments.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

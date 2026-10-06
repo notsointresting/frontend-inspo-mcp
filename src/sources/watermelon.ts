@@ -1,6 +1,6 @@
-// Watermelon UI adapter — uses the official public JSON API.
-// API: https://ui.watermelon.sh/openapi.json
-import { fetchJson } from "../lib/fetch.js";
+// Watermelon UI adapter — the official public JSON API for search, and each entry's shadcn
+// registry item for the code. API: https://ui.watermelon.sh/openapi.json
+import { fetchJson, isTransient } from "../lib/fetch.js";
 import type {
   Category,
   ResourceDetail,
@@ -8,11 +8,16 @@ import type {
   SearchArgs,
   SourceAdapter,
 } from "../lib/types.js";
+import { idSchema } from "../lib/validate.js";
+import { fetchRegistryItem, registryDetail } from "./registry.js";
 
 const BASE = "https://ui.watermelon.sh";
 // Must match the API's `hint` list: it 400s on unknown kinds ("showcases" was removed upstream).
 const KINDS = ["components", "animated-components", "blocks", "dashboards", "templates"] as const;
 type Kind = (typeof KINDS)[number];
+/** The only registry item URLs we fetch. An entry's `registryUrl` is upstream data that also ends
+ *  up in the `extra.install` shell command, so it is used only if it has exactly this shape. */
+const REGISTRY_URL = /^https:\/\/(?:ui|registry)\.watermelon\.sh\/r\/[\w.-]+\.json$/;
 
 interface ApiEntry {
   kind: Kind;
@@ -21,7 +26,10 @@ interface ApiEntry {
   description: string;
   category?: string;
   image?: string;
-  path: string;
+  path: string; // a file path in Watermelon's repo, not a page
+  // Undocumented, but on live entries (templates have no registryUrl):
+  previewUrl?: string;
+  registryUrl?: string;
 }
 interface SummaryResp {
   totalEntries: number;
@@ -43,7 +51,7 @@ function toSummary(e: ApiEntry): ResourceSummary {
     title: e.title,
     description: e.description,
     category: e.category,
-    url: e.path.startsWith("http") ? e.path : `${BASE}${e.path}`,
+    url: e.previewUrl?.startsWith(`${BASE}/`) ? e.previewUrl : `${BASE}/home`,
     image: e.image,
     tags: [e.kind, e.category].filter(Boolean) as string[],
   };
@@ -60,9 +68,12 @@ export const watermelon: SourceAdapter = {
   id: "watermelon",
   label: "Watermelon UI",
   description:
-    "Open-source React components, animated components, blocks, dashboards, and templates (official JSON API).",
+    "Open-source React + Tailwind components, animated components, blocks, dashboards, and templates (official JSON API). Returns real .tsx source from its shadcn registry.",
   homepage: "https://ui.watermelon.sh/home",
-  hasInlineCode: false,
+  hasInlineCode: true,
+  stack: ["react", "tailwind", "animation"],
+  idFormat:
+    'kind/slug from search_resources, e.g. "blocks/announcement-1" (kinds: components, animated-components, blocks, dashboards, templates)',
 
   async listCategories(): Promise<Category[]> {
     const summary = await fetchJson<SummaryResp>(`${BASE}/api/v1/catalog/summary`);
@@ -95,7 +106,8 @@ export const watermelon: SourceAdapter = {
       const resp = await fetchJson<EntriesResp>(
         `${BASE}/api/v1/catalog/entries?${params.toString()}`,
       );
-      results.push(...resp.entries.map(toSummary));
+      // Skip entries whose id the tools would reject.
+      results.push(...resp.entries.map(toSummary).filter((r) => idSchema.safeParse(r.id).success));
       if (results.length >= limit && !searchAll) break;
     }
     return results.slice(0, limit);
@@ -105,15 +117,30 @@ export const watermelon: SourceAdapter = {
     const [kind, ...rest] = id.split("/");
     const slug = rest.join("/");
     if (!KINDS.includes(kind as Kind) || !slug) return null;
-    const resp = await fetchJson<EntryResp>(
-      `${BASE}/api/v1/catalog/entries/${kind}/${encodeURIComponent(slug)}`,
-    );
+    let resp: EntryResp;
+    try {
+      resp = await fetchJson<EntryResp>(
+        `${BASE}/api/v1/catalog/entries/${kind}/${encodeURIComponent(slug)}`,
+      );
+    } catch (e) {
+      if (isTransient(e)) throw e;
+      return null; // the API answers 404 for an unknown slug
+    }
     if (!resp.found || !resp.entry) return null;
-    const s = toSummary(resp.entry);
+    const e = resp.entry;
+    // The entry's own registryUrl if it is trustworthy, else the registry's naming convention.
+    const registryUrl = [e.registryUrl, `https://registry.watermelon.sh/r/${e.slug}.json`].find(
+      (u) => typeof u === "string" && REGISTRY_URL.test(u),
+    );
+    const item = registryUrl ? await fetchRegistryItem(registryUrl) : null;
     return {
-      ...s,
-      license: "See Watermelon UI repository license",
-      extra: { note: "Source code lives on the linked page / repository." },
+      ...toSummary(e),
+      license: "MIT",
+      ...(registryUrl && item
+        ? registryDetail(registryUrl, item)
+        : {
+            extra: { note: "No registry item for this entry; the source is on the linked page." },
+          }),
     };
   },
 };

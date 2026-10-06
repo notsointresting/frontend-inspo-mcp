@@ -4,8 +4,9 @@
 // Rules were checked against every real id and category returned by all 27 live sources.
 import { z } from "zod";
 
-/** Resource ids: slugs, `kind/slug`, `collection::snippetId`, `/src/path/File.tsx`, uuids. */
-const ID_RE = /^\/?[A-Za-z0-9][A-Za-z0-9._~:/@+-]*$/;
+/** Resource ids: slugs, `kind/slug`, `collection::snippetId`, `/src/path/File.tsx`, uuids,
+ *  and route-group folders such as `/src/routes/(docs)/+page.md`. */
+const ID_RE = /^\/?[A-Za-z0-9][A-Za-z0-9._~:/@+()-]*$/;
 /** Category / collection names, including display labels such as "Canvas 2D + DOM/CSS". */
 const CATEGORY_RE = /^[A-Za-z0-9][A-Za-z0-9 ._:/@+()-]*$/;
 /** Technology hints: css, js, react, blocks, ... */

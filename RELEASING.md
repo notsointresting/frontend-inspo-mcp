@@ -30,11 +30,41 @@ Versions up to and including 0.2.1 were published manually, before this process 
 
 ## Cutting a release (maintainers)
 
-1. Make sure `main` is green in CI.
-2. Bump the version without creating a tag: `npm version <patch|minor|major> --no-git-tag-version`. Commit it as `chore: bump version to X.Y.Z` and push.
+1. Make sure `main` is green in CI and no issue labelled `smoke-failure` is open (the [nightly smoke test](.github/workflows/smoke.yml) checks every source against the live sites).
+2. Bump the version without creating a tag: `npm version <patch|minor|major> --no-git-tag-version`. Set the same version in `server.json` (`version` and `packages[0].version`) and `manifest.json` (`version`), then run `npm run check:versions`. Commit it as `chore: bump version to X.Y.Z` and push.
 3. Write the release notes: highlights, fixes, any vulnerabilities fixed (with credit, see [SECURITY.md](SECURITY.md)), and upgrade steps if anything breaks.
-4. Create the GitHub release with tag `vX.Y.Z` on that commit, for example `gh release create vX.Y.Z --target <full-sha> --notes-file notes.md`. Pushing the tag starts the publish workflow, which checks the tag matches `package.json`, runs lint, tests with coverage and the reproducibility check, and then publishes.
+4. Create the GitHub release with tag `vX.Y.Z` on that commit, for example `gh release create vX.Y.Z --target <full-sha> --notes-file notes.md`. Pushing the tag starts the publish workflow, which checks that the tag, `server.json` and `manifest.json` match `package.json`, runs lint, tests with coverage and the reproducibility check, and then publishes.
 5. Confirm the workflow passed and that `npm view frontend-inspo-mcp version` shows the new version.
+6. Publish the new version to the [MCP Registry](#publishing-to-the-mcp-registry), and build the [MCP Bundle](#building-the-mcp-bundle-mcpb) and attach it to the GitHub release.
+
+## Publishing to the MCP Registry
+
+The [MCP Registry](https://registry.modelcontextprotocol.io) lists the server as `io.github.notsointresting/frontend-inspo-mcp`. It stores only the metadata in `server.json`, and accepts a version only if the npm package of that version has a matching `mcpName` in its `package.json`, so publish to npm first. 0.3.0 was published without `mcpName`, so the first version that can be listed is the one after it.
+
+After the npm release, from the repository root at the release tag:
+
+```bash
+mcp-publisher login github   # device-code login as the GitHub user notsointresting
+mcp-publisher publish        # publishes ./server.json
+```
+
+Install `mcp-publisher` from the [registry releases](https://github.com/modelcontextprotocol/registry/releases) or with `brew install mcp-publisher`. Check the listing with `curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.notsointresting/frontend-inspo-mcp"`.
+
+To publish from CI instead, use the registry's [GitHub Actions OIDC flow](https://modelcontextprotocol.io/registry/github-actions), which needs no secret: after the `npm publish` step in `publish.yml` (the job already has `id-token: write`), download a pinned `mcp-publisher` release, check it against that release's checksums file, and run `mcp-publisher login github-oidc` and `mcp-publisher publish`.
+
+## Building the MCP Bundle (.mcpb)
+
+`manifest.json` describes an [MCP Bundle](https://github.com/modelcontextprotocol/mcpb): a single file that Claude Desktop and other MCPB clients install with one click. Build it from a clean checkout of the release tag and attach it to the GitHub release:
+
+```bash
+npm ci && npm run build   # the build needs the dev dependencies
+npm ci --omit=dev         # leaves only production dependencies in node_modules
+npm run pack:mcpb         # writes frontend-inspo-mcp.mcpb (the mcpb CLI version is pinned in package.json)
+gh release upload vX.Y.Z frontend-inspo-mcp.mcpb
+npm ci                    # brings the dev dependencies back
+```
+
+`.mcpbignore` keeps the bundle to `manifest.json`, `package.json`, `dist/`, the production `node_modules/`, `LICENSE` and `README.md`. The manifest maps the optional `github_token` setting to `GITHUB_TOKEN` and gives it an empty default; without that default, a client would pass the literal text `${user_config.github_token}` as the token when the setting is left blank.
 
 ## One-time setup (lead maintainer)
 

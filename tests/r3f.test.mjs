@@ -32,6 +32,19 @@ describe("r3f", () => {
     assert.equal((await r3f.search({ limit: 1 })).length, 1);
   });
 
+  it("ranks the best match first, in any word order and with plurals", async () => {
+    const first = async (query) => (await r3f.search({ query }))[0]?.id;
+    assert.equal(await first("scroll"), "scroll-storytelling");
+    assert.equal(await first("storytelling scroll"), "scroll-storytelling");
+    assert.equal(await first("material"), "geometry-and-scenes");
+    assert.equal(await first("architecture decision"), "architecture-decisions");
+  });
+
+  it("declares its stack and an id format naming every doc", async () => {
+    assert.deepEqual(r3f.stack, ["react", "3d", "guidance"]);
+    for (const r of await r3f.search({ limit: 100 })) assert.ok(r3f.idFormat.includes(r.id), r.id);
+  });
+
   it("returns the markdown as code for a known id", async () => {
     const d = await r3f.getResource("skill");
     assert.ok(d.code.md.length > 500);

@@ -3,10 +3,12 @@
 // (public/source-code.json) that contains every Community component's inline
 // source in `components[].files[].code`, plus `sharedFiles[]`.
 // ponytail: the manifest is ~30MB, so we fetch+parse it once and keep the
-// parsed result in-process (bypassing the shared 10-min text cache to avoid
+// parsed result in-process for 6 hours (bypassing the shared 10-min text cache to avoid
 // re-parsing megabytes on every call). Upgrade path: switch to a streamed/
 // per-component endpoint if ThreeUI ever publishes one.
 import { fetchJson } from "../lib/fetch.js";
+import { memoAsync } from "../lib/memo.js";
+import { rankByQuery } from "../lib/search.js";
 import type {
   Category,
   ResourceDetail,
@@ -40,24 +42,10 @@ interface Manifest {
   sharedFiles?: ManifestFile[];
 }
 
-let manifestCache: Manifest | null = null;
-let manifestPromise: Promise<Manifest> | null = null;
-
-async function loadManifest(): Promise<Manifest> {
-  if (manifestCache) return manifestCache;
-  if (!manifestPromise) {
-    manifestPromise = fetchJson<Manifest>(MANIFEST_URL)
-      .then((m) => {
-        manifestCache = m;
-        return m;
-      })
-      .catch((e) => {
-        manifestPromise = null; // allow retry on next call
-        throw e;
-      });
-  }
-  return manifestPromise;
-}
+/** Re-downloaded after 6 hours, so a long session sees new components. */
+const MANIFEST_TTL_MS = 6 * 60 * 60 * 1000;
+/** Concurrent callers share one download; a failed one is retried on the next call. */
+const loadManifest = memoAsync(() => fetchJson<Manifest>(MANIFEST_URL), MANIFEST_TTL_MS);
 
 const titleOf = (c: ManifestComponent): string =>
   c.title ||
@@ -88,6 +76,9 @@ export const threeui: SourceAdapter = {
     "ThreeUI — open-source Community catalog of live, interactive Three.js/WebGL components and landing pages. Returns real inline source (HTML/JS/GLSL/CSS) from the MengTo/threeui repo.",
   homepage: HOMEPAGE,
   hasInlineCode: true,
+  stack: ["3d", "javascript", "html"],
+  idFormat: 'component id from search_resources, e.g. "energy-orb"',
+  heavy: true, // one ~30 MB manifest
 
   async listCategories(): Promise<Category[]> {
     const m = await loadManifest();
@@ -104,16 +95,13 @@ export const threeui: SourceAdapter = {
   async search(args: SearchArgs): Promise<ResourceSummary[]> {
     const limit = Math.min(Math.max(args.limit ?? 20, 1), 100);
     const m = await loadManifest();
-    const q = (args.query || "").toLowerCase();
     const cat = (args.category || "").toLowerCase();
-    const out: ResourceSummary[] = [];
-    for (const c of m.components || []) {
-      if (cat && categoryOf(c).toLowerCase() !== cat) continue;
-      if (q && !`${c.id} ${titleOf(c)}`.toLowerCase().includes(q)) continue;
-      out.push(summaryOf(c));
-      if (out.length >= limit) break;
-    }
-    return out;
+    const summaries = (m.components || [])
+      .filter((c) => !cat || categoryOf(c).toLowerCase() === cat)
+      .map(summaryOf);
+    // Tags are one field, so a component's tag count does not raise its score.
+    const fields = (s: ResourceSummary) => [s.title, s.id, s.category, s.tags?.join(" ")];
+    return rankByQuery(summaries, args.query, fields, limit);
   },
 
   async getResource(id: string): Promise<ResourceDetail | null> {

@@ -1,5 +1,9 @@
 // Live smoke check: hits each source and asserts basic parsing works.
-// Run after build: `npm run smoke`.
+// Run after build: `npm run smoke` (all sources) or `npm run smoke -- shadcn magicui`.
+//
+// Every registered source gets the same check: search -> getResource -> non-empty code
+// (or just a detail object for sources without inline code). HINTS tweaks the few sources
+// that need different search arguments or an extra check.
 //
 // Failures are classified per source:
 //   HARD      - parsing/schema/API contract is broken (0 results, missing code,
@@ -10,38 +14,8 @@
 // PASS/FAIL table is always printed last.
 
 import { isTransient } from "./lib/fetch.js";
-import type { SourceAdapter } from "./lib/types.js";
-import { freefrontend } from "./sources/freefrontend.js";
-import { lsgraphics } from "./sources/lsgraphics.js";
-import {
-  detectgpu,
-  drei,
-  glyph,
-  gsap,
-  img2threejs,
-  liquidglass,
-  liquidlogo,
-  postprocessing,
-  reactspring,
-  scrollama,
-  shadergradient,
-  threejs,
-  twojs,
-  zustand,
-} from "./sources/packages.js";
-import { r3f } from "./sources/r3f.js";
-import { refero } from "./sources/refero.js";
-import {
-  aceternity,
-  canvasui,
-  fancy,
-  magicui,
-  reactbits,
-  shadcn,
-  vengeanceui,
-} from "./sources/registry.js";
-import { threeui } from "./sources/threeui.js";
-import { watermelon } from "./sources/watermelon.js";
+import type { ResourceSummary, SearchArgs, SourceAdapter } from "./lib/types.js";
+import { ADAPTER_LIST } from "./sources/index.js";
 
 type Kind = "HARD" | "TRANSIENT";
 interface Row {
@@ -58,6 +32,34 @@ interface Result {
   attempts: number;
   detail: string;
 }
+interface Hint {
+  /** Search arguments for the check (default `{ limit: 3 }`). */
+  search?: SearchArgs;
+  /** Turn the first search result into the id passed to getResource (default: its id). */
+  resolveId?: (r: ResourceSummary) => string;
+  /** An extra contract check, run before the search. */
+  extra?: (a: SourceAdapter, check: Check) => Promise<void>;
+}
+
+const HINTS: Record<string, Hint> = {
+  freefrontend: {
+    search: { query: "button", tech: "css", limit: 3 },
+    resolveId: (r) => `${r.category}::${r.id}`,
+  },
+  watermelon: {
+    extra: async (a, check) => {
+      const cats = await a.listCategories();
+      check(`${a.id}.listCategories`, cats.length === 5, `${cats.length} kinds`);
+    },
+  },
+  r3f: {
+    search: { query: "scroll", limit: 5 },
+    extra: async (a, check) => {
+      const cats = await a.listCategories();
+      check(`${a.id}.listCategories`, cats.length > 0, `${cats.length} categories`);
+    },
+  },
+};
 
 const MAX_RETRIES = 3;
 const RETRY_BASE_MS = 2000;
@@ -110,19 +112,26 @@ async function source(name: string, body: (check: Check) => Promise<void>): Prom
   }
 }
 
-/** Shared shape for adapters that just need search -> getResource -> has code. */
-function searchAndCode(name: string, adapter: SourceAdapter, firstBy: "id" | "title") {
-  return source(name, async (check) => {
-    const res = await adapter.search({ limit: 3 });
-    check(`${name}.search`, res.length > 0, `${res.length} results, first="${res[0]?.[firstBy]}"`);
-    if (res[0]) {
-      const d = await adapter.getResource(res[0].id);
-      const hasCode = d?.code && Object.keys(d.code).length > 0;
-      check(
-        `${name}.getResource+code`,
-        !!d && !!hasCode,
-        `code langs=${d?.code ? Object.keys(d.code).join(",") : "none"}`,
-      );
+/** search -> getResource -> code (or a detail, for sources without inline code). */
+function checkSource(a: SourceAdapter): Promise<void> {
+  const hint = HINTS[a.id] ?? {};
+  return source(a.id, async (check) => {
+    if (hint.extra) await hint.extra(a, check);
+    const res = await a.search(hint.search ?? { limit: 3 });
+    const first = res[0];
+    check(
+      `${a.id}.search`,
+      res.length > 0,
+      `${res.length} results, first="${first?.title ?? ""}" (${first?.id ?? "-"})`,
+    );
+    if (!first) return;
+    const d = await a.getResource(hint.resolveId ? hint.resolveId(first) : first.id);
+    if (a.hasInlineCode) {
+      const langs = d?.code ? Object.keys(d.code) : [];
+      check(`${a.id}.getResource+code`, langs.length > 0, `code=${langs.join(",") || "none"}`);
+    } else {
+      const formats = d?.formats ? ` formats=${d.formats.join(",")}` : "";
+      check(`${a.id}.getResource`, !!d, `title="${d?.title}"${formats}`);
     }
   });
 }
@@ -154,113 +163,15 @@ function printSummary(): void {
 }
 
 async function run() {
-  // Watermelon (JSON API)
-  await source("watermelon", async (check) => {
-    const cats = await watermelon.listCategories();
-    check("watermelon.listCategories", cats.length === 5, `${cats.length} kinds`);
-    const res = await watermelon.search({ limit: 3 });
-    check("watermelon.search", res.length > 0, `${res.length} results, first="${res[0]?.title}"`);
-    if (res[0]) {
-      const d = await watermelon.getResource(res[0].id);
-      check("watermelon.getResource", !!d, `title="${d?.title}"`);
-    }
-  });
-
-  // freefrontend (HTML + base64)
-  await source("freefrontend", async (check) => {
-    const res = await freefrontend.search({ tech: "css", limit: 3 });
-    check("freefrontend.search", res.length > 0, `${res.length} results, first="${res[0]?.title}"`);
-    if (res[0]) {
-      const d = await freefrontend.getResource(`css-hover-effects::${res[0].id}`);
-      const hasCode = d?.code && Object.keys(d.code).length > 0;
-      check(
-        "freefrontend.getResource+code",
-        !!d && !!hasCode,
-        `code langs=${d?.code ? Object.keys(d.code).join(",") : "none"}`,
-      );
-    }
-  });
-
-  // ls.graphics (HTML)
-  await source("lsgraphics", async (check) => {
-    const res = await lsgraphics.search({ limit: 3 });
-    check("lsgraphics.search", res.length > 0, `${res.length} results, first="${res[0]?.title}"`);
-    if (res[0]) {
-      const d = await lsgraphics.getResource(res[0].id);
-      check(
-        "lsgraphics.getResource",
-        !!d,
-        `title="${d?.title}" formats=${d?.formats?.join(",") ?? "?"}`,
-      );
-    }
-  });
-
-  // Registry sources (shadcn schema): search + code fetch.
-  for (const [name, adapter] of [
-    ["shadcn", shadcn],
-    ["magicui", magicui],
-    ["aceternity", aceternity],
-    ["reactbits", reactbits],
-    ["fancy", fancy],
-    ["vengeanceui", vengeanceui],
-    ["canvasui", canvasui],
-  ] as const) {
-    await searchAndCode(name, adapter, "id");
+  const only = process.argv.slice(2);
+  const unknown = only.filter((id) => !ADAPTER_LIST.some((a) => a.id === id));
+  if (unknown.length) {
+    console.error(`Unknown source id(s): ${unknown.join(", ")}`);
+    process.exit(2);
   }
-
-  // Refero styles (public pages -> synthesized DESIGN.md/tokens)
-  await source("refero", async (check) => {
-    const res = await refero.search({ limit: 3 });
-    check("refero.search", res.length > 0, `${res.length} results, first="${res[0]?.title}"`);
-    if (res[0]) {
-      const d = await refero.getResource(res[0].id);
-      const hasMd = !!d?.code?.["design.md"];
-      check(
-        "refero.getResource+design.md",
-        !!d && hasMd,
-        `artifacts=${d?.code ? Object.keys(d.code).join(",") : "none"}`,
-      );
-    }
-  });
-
-  // Package sources: three.js (jsdelivr) + drei (GitHub) + the rest
-  for (const [name, adapter] of [
-    ["threejs", threejs],
-    ["drei", drei],
-    ["twojs", twojs],
-    ["scrollama", scrollama],
-    ["reactspring", reactspring],
-    ["zustand", zustand],
-    ["glyph", glyph],
-    ["postprocessing", postprocessing],
-    ["detectgpu", detectgpu],
-    ["shadergradient", shadergradient],
-    ["liquidlogo", liquidlogo],
-    ["liquidglass", liquidglass],
-    ["img2threejs", img2threejs],
-    ["gsap", gsap],
-    ["threeui", threeui],
-  ] as const) {
-    await searchAndCode(name, adapter, "title");
+  for (const a of ADAPTER_LIST) {
+    if (!only.length || only.includes(a.id)) await checkSource(a);
   }
-
-  // R3F (bundled offline skill markdown)
-  await source("r3f", async (check) => {
-    const cats = await r3f.listCategories();
-    check("r3f.listCategories", cats.length > 0, `${cats.length} categories`);
-    const res = await r3f.search({ query: "scroll", limit: 5 });
-    check("r3f.search", res.length > 0, `${res.length} results, first="${res[0]?.title}"`);
-    if (res[0]) {
-      const d = await r3f.getResource(res[0].id);
-      const hasCode = d?.code && Object.keys(d.code).length > 0;
-      check(
-        "r3f.getResource+code",
-        !!d && !!hasCode,
-        `code langs=${d?.code ? Object.keys(d.code).join(",") : "none"}`,
-      );
-    }
-  });
-
   printSummary();
   process.exit(results.every((r) => r.ok) ? 0 : 1);
 }

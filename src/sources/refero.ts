@@ -1,12 +1,13 @@
 // Refero styles adapter. Reads the public, server-rendered pages of
-// styles.refero.design (gallery `/` and detail `/style/<id>`), which embed the
-// design-system data in their Next.js flight payload, and synthesizes DESIGN.md,
-// Tailwind theme, CSS variables, and design tokens from it.
+// styles.refero.design (gallery `/` and `/?sort=popular|newest`, detail `/style/<id>`),
+// which embed the design-system data in their Next.js flight payload, and synthesizes
+// DESIGN.md, Tailwind theme, CSS variables, and design tokens from it.
 // ponytail: /api/* is disallowed by robots.txt and bot-protected (Vercel BotID),
 // so we deliberately do not use it. Upgrade path if the page layout changes:
 // the extractors below throw a "payload not found" error that the smoke test
 // reports as a HARD failure.
 import { FetchError, fetchText } from "../lib/fetch.js";
+import { rankByQuery } from "../lib/search.js";
 import type {
   Category,
   ResourceDetail,
@@ -14,13 +15,14 @@ import type {
   SearchArgs,
   SourceAdapter,
 } from "../lib/types.js";
+import { idSchema } from "../lib/validate.js";
 
 const BASE = "https://styles.refero.design";
 
 interface ReferoListItem {
   id: string;
   url: string;
-  siteName: string;
+  siteName?: string;
   screenshotUrl?: string;
   thumbnailUrl?: string;
   colorScheme?: string;
@@ -125,6 +127,29 @@ function toSummary(it: ReferoListItem): ResourceSummary {
     image: it.thumbnailUrl || it.screenshotUrl,
     tags: [it.colorScheme, it.industry].filter(Boolean) as string[],
   };
+}
+
+// --- Gallery pages and the index of styles seen -------------------------------
+
+/** The gallery's sort orders; "" is its default sort, Trending. */
+const SORTS = ["", "popular", "newest"];
+
+// ponytail: the gallery server-renders only the first 20 styles of each sort and reads no
+// paging or filter parameter besides ?sort= (?page=, ?q=, ?search=, ?industry=, ... are
+// ignored or rendered client-side from the disallowed /api/). So a search sees up to 60
+// styles (trending, popular, newest) plus every style seen earlier in this process, not
+// the ~1.3k of /sitemaps/styles.xml. The index is bounded by that catalog. Upgrade path:
+// the curated /design-styles/<slug> pages (about 20 styles each) as categories.
+const seen = new Map<string, ReferoListItem>();
+
+/** The styles one gallery sort server-renders (ids the tools accept only), now also in `seen`. */
+async function galleryPage(sort: string): Promise<ReferoListItem[]> {
+  const html = await fetchText(sort ? `${BASE}/?sort=${sort}` : `${BASE}/`);
+  const items = jsonAfter<ReferoListItem[]>(flightData(html), '"initialPage":{"styles":').filter(
+    (it) => idSchema.safeParse(it?.id).success,
+  );
+  for (const it of items) seen.set(it.id, it);
+  return items;
 }
 
 // --- Synthesizers: build the artifacts the Refero UI exposes ----------------
@@ -268,14 +293,17 @@ export const refero: SourceAdapter = {
   id: "refero",
   label: "Refero Styles",
   description:
-    "Design-system references extracted from real websites — DESIGN.md, Tailwind config, CSS variables, and design tokens. Uses Refero's public API (no subscription required).",
+    "Design-system references extracted from real websites — DESIGN.md, Tailwind config, CSS variables, and design tokens. Reads Refero's public, server-rendered pages (robots.txt disallows its API); no subscription required. Search covers the 20 trending, 20 popular and 20 newest styles of the gallery plus every style seen earlier in the session, not the whole ~1.3k catalog.",
   homepage: "https://styles.refero.design/",
   hasInlineCode: true,
+  stack: ["design-tokens"],
+  idFormat: "style id (uuid) from search_resources",
 
   async listCategories(): Promise<Category[]> {
-    // The public feed supports sort variants; expose those as "categories".
+    // The gallery's sort orders, as "categories". "featured" (kept as the id) is its default
+    // sort, which the site calls Trending.
     return [
-      { id: "featured", label: "Featured" },
+      { id: "featured", label: "Trending" },
       { id: "popular", label: "Popular" },
       { id: "newest", label: "Newest" },
     ];
@@ -284,19 +312,20 @@ export const refero: SourceAdapter = {
   async search(args: SearchArgs): Promise<ResourceSummary[]> {
     const limit = Math.min(Math.max(args.limit ?? 20, 1), 100);
     const sort = args.category === "popular" || args.category === "newest" ? args.category : "";
-    const html = await fetchText(sort ? `${BASE}/?sort=${sort}` : `${BASE}/`);
-    // ponytail: the gallery page server-renders only its first page (~20 styles),
-    // so `query` filters that page. Upgrade path: walk /sitemaps/styles.xml.
-    const items = jsonAfter<ReferoListItem[]>(flightData(html), '"initialPage":{"styles":');
-    const q = (args.query || "").toLowerCase();
-    const filtered = q
-      ? items.filter((i) =>
-          `${i.siteName} ${i.url} ${i.industry ?? ""} ${i.northStar ?? ""}`
-            .toLowerCase()
-            .includes(q),
-        )
-      : items;
-    return filtered.slice(0, limit).map(toSummary);
+    // A category is one sort page; otherwise every sort page, then every style seen before.
+    const items = args.category
+      ? await galleryPage(sort)
+      : [...(await Promise.all(SORTS.map(galleryPage))).flat(), ...seen.values()];
+    const unique = new Map<string, ReferoListItem>();
+    for (const it of items) if (!unique.has(it.id)) unique.set(it.id, it);
+    const fields = (i: ReferoListItem) => [
+      i.siteName,
+      i.url,
+      i.industry,
+      i.northStar,
+      i.colorScheme,
+    ];
+    return rankByQuery([...unique.values()], args.query, fields, limit).map(toSummary);
   },
 
   async getResource(id: string): Promise<ResourceDetail | null> {
@@ -312,6 +341,16 @@ export const refero: SourceAdapter = {
     const meta = jsonAfter<{ url: string; siteName?: string }>(data, '"result":{"meta":');
     const ds = jsonAfter<DesignSystem>(data, '"designSystem":');
     const name = meta.siteName || meta.url;
+    if (!seen.has(id)) {
+      seen.set(id, {
+        id,
+        url: meta.url,
+        siteName: meta.siteName,
+        colorScheme: ds.theme,
+        industry: ds.industry,
+        northStar: ds.northStar,
+      });
+    }
     return {
       source: "refero",
       id,

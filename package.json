@@ -1,11 +1,16 @@
 {
   "name": "frontend-inspo-mcp",
   "version": "0.3.0",
+  "mcpName": "io.github.notsointresting/frontend-inspo-mcp",
   "description": "Local MCP server that lets AI coding agents discover and pull real frontend code, UI components, and design mockups from shadcn, Magic UI, Aceternity, FreeFrontend, and more.",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
+    }
   },
   "bin": {
     "frontend-inspo-mcp": "dist/index.js"
@@ -22,6 +27,8 @@
     "test": "npm run build && node --test",
     "coverage": "npm run build && c8 node --test",
     "check:reproducible": "node scripts/check-reproducible.mjs",
+    "check:versions": "node scripts/check-versions.mjs",
+    "pack:mcpb": "npx -y @anthropic-ai/mcpb@2.1.2 pack . frontend-inspo-mcp.mcpb",
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "prepublishOnly": "npm run build"
@@ -57,7 +64,7 @@
   },
   "homepage": "https://github.com/notsointresting/frontend-inspo-mcp#readme",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.32.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "cheerio": "^1.0.0",
     "zod": "^4.6.5"
   },
@@ -68,6 +75,6 @@
     "typescript": "^7.0.2"
   },
   "engines": {
-    "node": ">=20.18.1"
+    "node": ">=22"
   }
 }

@@ -1,33 +1,30 @@
 // Shared types across all source adapters.
 
-export type SourceId =
-  | "freefrontend"
-  | "watermelon"
-  | "lsgraphics"
-  | "shadcn"
-  | "magicui"
-  | "aceternity"
-  | "reactbits"
-  | "refero"
-  | "threejs"
-  | "drei"
-  | "fancy"
-  | "twojs"
-  | "scrollama"
-  | "r3f"
-  | "reactspring"
-  | "zustand"
-  | "glyph"
-  | "postprocessing"
-  | "detectgpu"
-  | "shadergradient"
-  | "liquidlogo"
-  | "liquidglass"
-  | "img2threejs"
-  | "gsap"
-  | "vengeanceui"
-  | "threeui"
-  | "canvasui";
+/**
+ * A source id. The list in sources/index.ts is the only registry of valid ids: it rejects
+ * duplicates, and every tool's `source` enum is generated from it.
+ */
+export type SourceId = string;
+
+/** Stack tags a source can declare. `list_sources` shows them and `search_all` filters on them. */
+export const STACKS = [
+  "react",
+  "tailwind",
+  "css",
+  "html",
+  "javascript",
+  "3d",
+  "animation",
+  "design-tokens",
+  "icons",
+  "fonts",
+  "assets",
+  "mockups",
+  "guidance",
+  "accessibility",
+  "compat",
+] as const;
+export type Stack = (typeof STACKS)[number];
 
 /** A category or collection within a source (e.g. "css-hover-effects", "blocks/auth"). */
 export interface Category {
@@ -77,6 +74,12 @@ export interface SourceAdapter {
   homepage: string;
   /** Whether get_code returns meaningful inline source for this source. */
   hasInlineCode: boolean;
+  /** What the source covers, so agents and `search_all` can pick relevant sources. */
+  stack?: readonly Stack[];
+  /** How to write an id for get_resource / get_code, e.g. `registry item name, e.g. "button"`. */
+  idFormat?: string;
+  /** Costly to search (multi-MB download or a tight quota): `search_all` skips it unless named. */
+  heavy?: boolean;
   listCategories(): Promise<Category[]>;
   search(args: SearchArgs): Promise<ResourceSummary[]>;
   getResource(id: string): Promise<ResourceDetail | null>;

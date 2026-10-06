@@ -25,6 +25,7 @@ describe("idSchema", () => {
       "/packages/web/src/index.ts",
       "03e0e30c-4c0f-4879-948a-9b501e530207",
       "a@b+c~d.e_f",
+      "/packages/docs/src/routes/(routes)/components/button/+page.md",
     ]);
   });
 

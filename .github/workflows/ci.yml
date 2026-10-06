@@ -2,44 +2,72 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
-# Least privilege: the job only needs to read the repo.
+# Least privilege: the jobs only need to read the repo.
 permissions:
   contents: read
 
+# The tests run offline. The live smoke test runs nightly in smoke.yml instead, so a third-party
+# site being down cannot fail a pull request.
+# Actions are pinned to full commit SHAs; Dependabot (github-actions) keeps the pins current.
 jobs:
   build-and-test:
+    name: Node ${{ matrix.node }} (ubuntu)
     runs-on: ubuntu-latest
-    
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["22", "24", "26"]
     steps:
-    - uses: actions/checkout@v7
-    
-    - name: Use Node.js 20
-      uses: actions/setup-node@v7
-      with:
-        node-version: '20'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Lint and format check
-      run: npm run lint
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-    - name: Build
-      run: npm run build
-      
-    - name: Unit tests with coverage (fails below 85% statements)
-      run: npm run coverage
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: "npm"
 
-    - name: Reproducible build check
-      run: npm run check:reproducible
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Smoke Test (Verify all sources are live)
-      run: npm run smoke
-      env:
-        # Lifts the GitHub API rate limit for the drei source (shared runner IPs hit 60/hr fast).
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Lint and format check
+        run: npm run lint
+
+      - name: server.json and manifest.json match package.json
+        run: npm run check:versions
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests with coverage (thresholds in .c8rc.json)
+        run: npm run coverage
+
+      - name: Reproducible build check
+        run: npm run check:reproducible
+
+  windows:
+    name: Node 24 (windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint and format check
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests with coverage (thresholds in .c8rc.json)
+        run: npm run coverage

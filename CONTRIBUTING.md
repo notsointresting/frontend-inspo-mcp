@@ -11,7 +11,7 @@ Thanks for helping! This project is a small MCP server; most contributions are e
 
 ## Set up
 
-Requires Node 20.18.1 or newer (CI uses Node 20).
+Requires Node 22 or newer. CI tests Node 22, 24 and 26 on Linux, and Node 24 on Windows.
 
 ```bash
 git clone https://github.com/<your-fork>/frontend-inspo-mcp.git
@@ -22,20 +22,20 @@ npm run build
 
 ## Before you open a PR
 
-All of these must pass; CI runs the same steps.
+All of these must pass. CI runs lint, build and the tests with coverage on every push and pull request; the live smoke test runs nightly instead (see [Smoke test](#smoke-test)).
 
 ```bash
 npm run lint    # Biome: lint + format check (fix with `npm run lint:fix`)
 npm run build   # tsc in strict mode, must have no errors
 npm test        # offline unit tests (builds first); no network needed
-npm run smoke   # live check of every source (needs network)
+npm run smoke   # live check of every source (needs network); `npm run smoke -- <id>` checks one
 ```
 
 ## Tests
 
 The unit tests live in `tests/*.test.mjs` and use Node's built-in test runner (`node:test`), so there is nothing extra to install. They run offline: adapters are tested against small saved HTML/JSON samples by replacing `fetch` with a fake (see `tests/helpers.mjs`), so they are fast and do not depend on live websites.
 
-**Testing policy (mandatory):** new functionality and bug fixes MUST come with automated tests in `tests/`, and coverage must stay at or above the thresholds in `.c8rc.json` (85% statements, enforced by `npm run coverage` in CI). For a bug fix, add a test that fails without the fix. For a new source, add a test file with a representative sample of the site's HTML/JSON and assert on `search`, `getResource` and the error cases. A PR that adds behavior without tests will be asked to add them before merging.
+**Testing policy (mandatory):** new functionality and bug fixes MUST come with automated tests in `tests/`, and coverage must stay at or above the thresholds in `.c8rc.json` (85% of statements, lines and functions, 70% of branches; enforced by `npm run coverage` in CI). For a bug fix, add a test that fails without the fix. For a new source, add a test file with a representative sample of the site's HTML/JSON and assert on `search`, `getResource` and the error cases. A PR that adds behavior without tests will be asked to add them before merging.
 
 ## Smoke test
 
@@ -44,14 +44,21 @@ The unit tests live in `tests/*.test.mjs` and use Node's built-in test runner (`
 - **HARD** (0 results, missing code, HTTP 4xx, changed page format): a parser or contract is broken. Fix the adapter; do not loosen the assertion.
 - **TRANSIENT** (rate limit, network error): retried automatically. Set `GITHUB_TOKEN` to avoid GitHub's 60 requests/hour limit for the GitHub-backed sources.
 
+CI does not run it, so a site being down cannot fail a pull request. The [nightly smoke workflow](.github/workflows/smoke.yml) runs it every day, and on demand from the Actions tab: a failing run opens, or comments on, one issue labelled `smoke-failure` with the summary table, and the next passing run closes it. Before a PR, run `npm run smoke -- <id> <id>` for the sources it touches.
+
 ## Adding a source
 
-1. Add the id to the `SourceId` union in `src/lib/types.ts`.
-2. Create `src/sources/<name>.ts` exporting a `SourceAdapter` (see the contract in `src/lib/types.ts`): `id`, `label`, `description`, `homepage`, `hasInlineCode`, `listCategories()`, `search()` and `getResource()`. Shadcn-style registries can reuse the factory in `src/sources/registry.ts`.
-3. Register it in the `ADAPTERS` map in `src/server.ts`. The `source` argument of every tool is generated from that map, so no tool name or schema needs editing.
-4. Add a check in `src/smoke.ts` that covers `search` and, for code-bearing sources, `getResource` returning non-empty code.
-5. Add `tests/<name>.test.mjs` with an offline sample of the site's markup or JSON (see the existing files for the pattern).
-6. Add a row to the Sources table in the README.
+1. **Write the adapter.** Many sources are one config block for an existing factory: `makeRegistryAdapter` in `src/sources/registry.ts` for shadcn-schema registries, and `makeGithubSrcAdapter`, `makeJsdelivrSrcAdapter` or `makePackageAdapter` in `src/sources/packages.ts` for source trees on GitHub or npm. Anything else gets its own `src/sources/<name>.ts` exporting a `SourceAdapter` (the contract is in `src/lib/types.ts`). Fetch only through `src/lib/fetch.ts`, filter with `rankByQuery` from `src/lib/search.ts`, and cache parsed upstream data with `memoAsync` from `src/lib/memo.ts`.
+2. **Register it** in `src/sources/index.ts`: add it to `ADAPTER_LIST`, or to the group array it belongs to (`communityRegistries`, `collectionSources`, `librarySources`, `designApiSources` or `openDataSources`). That one entry puts it in every tool's `source` enum, `list_sources`, `search_all` and the smoke test; no tool or schema needs editing.
+3. **Describe it.** Give it a lowercase `id`, a `label`, a `description`, an https `homepage` and `hasInlineCode`, and set:
+   - `stack`: the tags from `STACKS` in `src/lib/types.ts` that fit, so agents and `search_all` can filter on them;
+   - `idFormat`: how to write an id for `get_resource` and `get_code`, unless it is simply a search result's id;
+   - `heavy: true` if a search downloads megabytes, makes several rate-limited calls or has a tight quota (`search_all` then skips it unless it is named).
+
+   Record the content's license in each result's `license` (the factories take a `license` option), and return only ids that pass `idSchema` in `src/lib/validate.ts`.
+4. **Add offline tests** in `tests/<name>.test.mjs`: small samples captured from the live site, served with `mockFetch` from `tests/helpers.mjs`, covering `search`, `getResource` and the error cases. `tests/sources.test.mjs` checks the metadata contract of every registered source.
+5. **Check it live.** The smoke test covers every registered source automatically: run `npm run build`, then `npm run smoke -- <id>`. Add an entry to `HINTS` in `src/smoke.ts` only if the default check (search, then get the first result, then non-empty code) does not fit the source.
+6. **Add a row** to the Sources table in the README.
 
 ## Code standards
 

@@ -3,6 +3,7 @@
 // Detail:  https://www.ls.graphics/assets/<slug>
 import * as cheerio from "cheerio";
 import { fetchText, isTransient } from "../lib/fetch.js";
+import { rankByQuery } from "../lib/search.js";
 import type {
   Category,
   ResourceDetail,
@@ -63,6 +64,8 @@ export const lsgraphics: SourceAdapter = {
   description: "Free high-quality design mockups in PSD, Figma, and Sketch formats.",
   homepage: "https://www.ls.graphics/free-mockups",
   hasInlineCode: false,
+  stack: ["mockups"],
+  idFormat: 'asset slug from search_resources, e.g. "envelope-mail-mockup"',
 
   async listCategories(): Promise<Category[]> {
     return CATEGORIES;
@@ -78,12 +81,8 @@ export const lsgraphics: SourceAdapter = {
     } catch {
       html = await fetchText(LISTING); // fall back to the main free listing
     }
-    let items = parseListing(html);
-    const q = (args.query || "").toLowerCase();
-    if (q) {
-      items = items.filter((i) => i.title.toLowerCase().includes(q));
-    }
-    return items.slice(0, limit);
+    const items = parseListing(html);
+    return rankByQuery(items, args.query, (i) => [i.title, i.id], limit);
   },
 
   async getResource(id: string): Promise<ResourceDetail | null> {

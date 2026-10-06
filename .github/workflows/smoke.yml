@@ -1,0 +1,99 @@
+name: Nightly smoke test
+
+# Checks every source against the live sites (`npm run smoke`). It runs here instead of in CI,
+# so a third-party outage cannot fail a pull request. A failing run opens, or comments on, one
+# issue labelled smoke-failure; the next passing run closes it.
+on:
+  schedule:
+    - cron: "23 3 * * *" # every day at 03:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One run at a time, so two failing runs cannot open two tracking issues.
+concurrency: smoke
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      summary: ${{ steps.summary.outputs.summary }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Smoke test (every source, live)
+        id: smoke
+        env:
+          # Lifts GitHub's 60 requests/hour limit for the GitHub-backed sources.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -o pipefail
+          npm run smoke 2>&1 | tee smoke.log
+
+      - name: Hand the summary table to the report job
+        id: summary
+        if: failure() && steps.smoke.outcome == 'failure'
+        run: |
+          # The log holds third-party text, so the delimiter is random rather than guessable.
+          eof="EOF_$(openssl rand -hex 16)"
+          {
+            echo "summary<<${eof}"
+            if grep -q '^SUMMARY$' smoke.log; then
+              sed -n '/^SUMMARY$/,/sources passed/p' smoke.log
+            else
+              tail -n 40 smoke.log
+            fi
+            echo "${eof}"
+          } >> "$GITHUB_OUTPUT"
+
+  # A separate job, so the token that can write issues never runs next to npm install scripts
+  # or the downloaded content.
+  report:
+    needs: smoke
+    if: always() && (needs.smoke.result == 'success' || needs.smoke.outputs.summary != '')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Open or update the tracking issue
+        if: needs.smoke.result == 'failure'
+        env:
+          SUMMARY: ${{ needs.smoke.outputs.summary }} # passed as data, never inlined into the script
+        run: |
+          gh label create smoke-failure --color B60205 \
+            --description "The nightly smoke test is failing" --force
+          {
+            echo "The nightly smoke test failed on $(date -u +%F): ${RUN_URL}"
+            echo
+            echo '```text'
+            printf '%s\n' "${SUMMARY}"
+            echo '```'
+          } > body.md
+          number="$(gh issue list --label smoke-failure --state open --limit 1 --json number --jq '.[].number')"
+          if [ -n "${number}" ]; then
+            gh issue comment "${number}" --body-file body.md
+          else
+            gh issue create --title "Nightly smoke test is failing" --label smoke-failure --body-file body.md
+          fi
+
+      - name: Close the tracking issue
+        if: needs.smoke.result == 'success'
+        run: |
+          number="$(gh issue list --label smoke-failure --state open --limit 1 --json number --jq '.[].number')"
+          if [ -n "${number}" ]; then
+            gh issue close "${number}" --comment "The nightly smoke test passes again: ${RUN_URL}"
+          fi

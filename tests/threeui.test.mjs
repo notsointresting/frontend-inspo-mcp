@@ -35,6 +35,11 @@ mockFetch((url) => {
 });
 
 describe("threeui", () => {
+  it("shares one manifest download between concurrent first calls", async () => {
+    await Promise.all([threeui.search({}), threeui.listCategories(), threeui.getResource("plain")]);
+    assert.equal(manifestRequests, 1);
+  });
+
   it("derives titles and categories from ids and runtimes", async () => {
     const res = await threeui.search({ limit: 10 });
     assert.deepEqual(
@@ -60,6 +65,21 @@ describe("threeui", () => {
       ["kage-landing-page"],
     );
     assert.equal((await threeui.search({ limit: 1 })).length, 1);
+  });
+
+  it("ranks matches: title and category before tags, any word order", async () => {
+    const ids = async (query) => (await threeui.search({ query })).map((r) => r.id);
+    assert.deepEqual(await ids("page landing kage"), ["kage-landing-page"]);
+    assert.deepEqual(await ids("orb glow"), ["glow_orb"]);
+    // Every component is tagged webgl; the one whose category names it ranks first.
+    assert.deepEqual(await ids("webgl"), ["glow_orb", "kage-landing-page", "plain"]);
+    assert.deepEqual(await ids("css"), ["kage-landing-page"], "file languages are tags");
+  });
+
+  it("is heavy (one ~30 MB manifest) and declares its stack and id format", () => {
+    assert.equal(threeui.heavy, true);
+    assert.deepEqual(threeui.stack, ["3d", "javascript", "html"]);
+    assert.match(threeui.idFormat, /component id/);
   });
 
   it("merges component and shared files, keeping same-language files apart", async () => {

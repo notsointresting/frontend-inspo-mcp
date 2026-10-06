@@ -1,0 +1,2117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>frontend-inspo-mcp — Real Frontend Code for AI Coding Agents</title>
+<meta name="description" content="A local MCP server giving AI coding agents access to 65 public sources of production frontend code, design tokens, 3D shaders, and accessibility guidance.">
+<meta property="og:title" content="frontend-inspo-mcp — Supercharge Your Coding Agent">
+<meta property="og:description" content="Stop letting your AI agent hallucinate UI code. 65 public sources of real React, Tailwind, 3D, and ARIA components directly on your machine.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#003362">
+<script>document.documentElement.classList.add("js")</script>
+<style>
+/* ==========================================================================
+   Typography: Served directly via Fontsource CDN (OFL-1.1)
+   ========================================================================== */
+@font-face {
+  font-family: "Big Shoulders Display";
+  font-weight: 800;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/big-shoulders-display@latest/latin-800-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Big Shoulders Display";
+  font-weight: 600;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/big-shoulders-display@latest/latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Big Shoulders Display";
+  font-weight: 500;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/big-shoulders-display@latest/latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible-next@latest/latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible-next@latest/latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Mono";
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible-mono@latest/latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Mono";
+  font-weight: 600;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible-mono@latest/latin-600-normal.woff2") format("woff2");
+}
+
+/* ==========================================================================
+   Design Tokens: Radix Colors blue-dark + paper & emulsion accents
+   ========================================================================== */
+:root {
+  --blue-1: #0d1520;
+  --blue-2: #111c2d;
+  --blue-3: #0d2847;       /* deep background */
+  --blue-4: #003362;       /* prussian brand */
+  --blue-5: #003e78;
+  --blue-6: #094b8f;
+  --blue-7: #1759a7;
+  --blue-8: #2870bd;       /* border & subtle lines */
+  --blue-9: #0090ff;       /* electric highlight */
+  --blue-10: #3b9eff;
+  --blue-11: #70b8ff;
+  --blue-12: #c2e6ff;      /* pale text */
+
+  --bg-main: var(--blue-4);
+  --bg-deep: var(--blue-3);
+  --bg-darkest: var(--blue-1);
+  --border-line: var(--blue-8);
+  --border-subtle: rgb(40 112 189 / 0.35);
+  --text-pale: var(--blue-12);
+  --paper: #f4f6f2;
+  --paper-card: #ffffff;
+  --emulsion: #e6df5b;     /* warm acid yellow */
+  --cyan-bright: #38bdf8;
+  --emerald-bright: #34d399;
+
+  --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --body: "Atkinson Hyperlegible Next", system-ui, -apple-system, sans-serif;
+  --mono: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --measure: 78rem;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; color-scheme: dark; }
+body {
+  margin: 0;
+  background-color: var(--bg-main);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgb(40 112 189 / 0.25), transparent),
+    radial-gradient(circle at 100% 100%, rgb(13 40 71 / 0.5), transparent);
+  color: var(--text-pale);
+  font: 400 1.0625rem/1.6 var(--body);
+  min-height: 100vh;
+}
+a { color: inherit; text-underline-offset: .2em; text-decoration-thickness: 1px; }
+:focus-visible { outline: 3px solid var(--emulsion); outline-offset: 3px; }
+.wrap { max-width: var(--measure); margin-inline: auto; padding-inline: var(--gutter); }
+.skip {
+  position: absolute; left: 1rem; top: -4rem; padding: .6rem 1.2rem;
+  background: var(--emulsion); color: var(--bg-deep); font-weight: 700; z-index: 100;
+  border-radius: var(--radius-sm); transition: top .2s;
+}
+.skip:focus { top: 1rem; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+code, pre, .mono { font-family: var(--mono); }
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: .92;
+  letter-spacing: .01em;
+  margin: 0;
+}
+h2 { font-size: clamp(2.5rem, 6.5vw, 5.25rem); }
+h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: .02em; }
+.eyebrow {
+  font: 600 .8125rem/1.4 var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--emulsion);
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  margin: 0 0 1rem;
+}
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: .5rem;
+  height: .5rem;
+  background: currentColor;
+  border-radius: 50%;
+}
+.badge-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: .2rem .55rem;
+  font: 600 .75rem/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   Header & Topbar
+   ========================================================================== */
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 1.5rem;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  font: .875rem var(--mono);
+}
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.brand-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--emerald-bright);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--emerald-bright);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .6; transform: scale(.85); }
+}
+.brand-name {
+  color: #ffffff;
+  font-size: 1rem;
+  letter-spacing: .02em;
+}
+.brand-version {
+  color: var(--emulsion);
+  background: rgb(230 223 91 / 0.15);
+  padding: .15rem .45rem;
+  border-radius: var(--radius-sm);
+  font-size: .75rem;
+}
+.topbar nav {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.topbar nav a {
+  text-decoration: none;
+  opacity: .85;
+  transition: opacity .2s, color .2s;
+}
+.topbar nav a:hover {
+  opacity: 1;
+  color: var(--emulsion);
+}
+.nav-cta {
+  background: var(--emulsion);
+  color: var(--bg-deep) !important;
+  font-weight: 700;
+  padding: .35rem .75rem;
+  border-radius: var(--radius-sm);
+  opacity: 1 !important;
+}
+.nav-cta:hover {
+  background: #ffffff;
+}
+
+/* ==========================================================================
+   Hero Section
+   ========================================================================== */
+.hero {
+  padding-block: clamp(3rem, 7vw, 6rem) 2.5rem;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 3rem;
+  align-items: center;
+}
+.hero h1 {
+  font-size: clamp(3.5rem, 10vw, 8rem);
+  line-height: .86;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+}
+.hero h1 .highlight {
+  display: block;
+  color: var(--emulsion);
+}
+.hero .lede {
+  font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+  max-width: 44rem;
+  line-height: 1.55;
+  margin: 0 0 2rem;
+  opacity: .95;
+}
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin-bottom: 2rem;
+  font: .8125rem var(--mono);
+}
+.hero-badges span {
+  padding: .25rem .65rem;
+  background: rgb(13 40 71 / 0.85);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-sm);
+  color: var(--text-pale);
+}
+.hero-badges span strong {
+  color: var(--emulsion);
+}
+.install-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .85rem;
+  margin-bottom: 2rem;
+}
+.install-box {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .75rem 1.15rem;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-sm);
+  font: .9375rem var(--mono);
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.4);
+}
+.install-box span.prompt-char {
+  color: var(--emulsion);
+  user-select: none;
+}
+.install-box code {
+  color: #ffffff;
+}
+
+/* Uiverse Button (calm-tiger-42 adaptation) */
+.btn-uiverse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 12px 24px;
+  border: 1px solid var(--text-pale);
+  border-radius: 4px;
+  transition: all .2s ease-in;
+  position: relative;
+  overflow: hidden;
+  font: 700 1rem var(--body);
+  color: var(--text-pale);
+  background: transparent;
+  z-index: 1;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-uiverse::before, .btn-uiverse::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  display: block;
+  z-index: -1;
+  transition: all .5s .1s cubic-bezier(.55, 0, .1, 1);
+}
+.btn-uiverse::before {
+  left: 50%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.25);
+  top: 100%;
+  width: 140%;
+  height: 180%;
+  background: rgb(255 255 255 / .08);
+}
+.btn-uiverse::after {
+  left: 55%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.45);
+  top: 180%;
+  width: 160%;
+  height: 190%;
+  background: var(--emulsion);
+}
+.btn-uiverse:hover, .btn-uiverse:focus-visible {
+  color: var(--bg-deep);
+  border-color: var(--emulsion);
+}
+.btn-uiverse:hover::before, .btn-uiverse:focus-visible::before {
+  top: -35%;
+  background: var(--emulsion);
+  transform: translateX(-50%) scaleY(1.3) scaleX(.8);
+}
+.btn-uiverse:hover::after, .btn-uiverse:focus-visible::after {
+  top: -45%;
+  transform: translateX(-50%) scaleY(1.3) scaleX(.8);
+}
+.btn-uiverse.btn-solid {
+  background: var(--emulsion);
+  color: var(--bg-deep);
+  border-color: var(--emulsion);
+}
+.btn-uiverse.btn-solid:hover {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+/* Hero Terminal Card */
+.terminal-card {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 36px rgb(0 0 0 / 0.45);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .65rem 1rem;
+  background: rgb(13 21 32 / 0.8);
+  border-bottom: 1px solid var(--border-subtle);
+  font: .75rem var(--mono);
+}
+.terminal-dots {
+  display: flex;
+  gap: .4rem;
+}
+.terminal-dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot-red { background: #ef4444; }
+.dot-yellow { background: #f59e0b; }
+.dot-green { background: #10b981; }
+.terminal-title {
+  color: var(--text-pale);
+  opacity: .8;
+}
+.terminal-body {
+  padding: 1.25rem;
+  font: .8125rem/1.65 var(--mono);
+  overflow-x: auto;
+}
+.agent-step {
+  margin-bottom: .85rem;
+}
+.agent-step .step-user {
+  color: var(--emulsion);
+}
+.agent-step .step-tool {
+  color: var(--cyan-bright);
+}
+.agent-step .step-reply {
+  color: #a5f3fc;
+  padding-left: 1rem;
+  border-left: 2px solid var(--border-line);
+  margin-top: .35rem;
+}
+
+/* ==========================================================================
+   Continuous Marquee Strip (Rendered from search_all results)
+   ========================================================================== */
+.marquee-container {
+  margin-top: 3.5rem;
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+.marquee-track {
+  display: flex;
+  gap: 1.25rem;
+  width: max-content;
+  animation: marquee-scroll 40s linear infinite;
+  padding-block: .5rem;
+}
+.marquee-container:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-50% - 0.625rem)); }
+}
+.marquee-card {
+  flex: 0 0 20rem;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  transition: transform .2s, border-color .2s;
+  text-decoration: none;
+}
+.marquee-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--emulsion);
+}
+.marquee-card .source-badge {
+  font: 800 1.25rem/1 var(--display);
+  color: var(--emulsion);
+  text-transform: uppercase;
+}
+.marquee-card .item-title {
+  font: 700 1rem var(--body);
+  color: #ffffff;
+}
+.marquee-card .item-desc {
+  font-size: .8125rem;
+  color: var(--text-pale);
+  opacity: .85;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.marquee-card .item-meta {
+  margin-top: auto;
+  font: .6875rem var(--mono);
+  color: var(--cyan-bright);
+}
+
+/* ==========================================================================
+   Section: Machine Potential Comparison (The "Before / After")
+   ========================================================================== */
+.potential-section {
+  background: var(--bg-deep);
+  padding-block: clamp(4rem, 8vw, 6.5rem);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.potential-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-top: 2.5rem;
+}
+.diff-card {
+  padding: 2rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+}
+.diff-card.before {
+  background: rgb(239 68 68 / 0.08);
+  border: 1px solid rgb(239 68 68 / 0.4);
+}
+.diff-card.after {
+  background: rgb(16 185 129 / 0.08);
+  border: 1px solid rgb(16 185 129 / 0.5);
+}
+.diff-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.diff-status {
+  font: 800 1.5rem var(--display);
+  letter-spacing: .03em;
+}
+.diff-card.before .diff-status { color: #f87171; }
+.diff-card.after .diff-status { color: #34d399; }
+.diff-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: .95rem;
+}
+.diff-list li {
+  display: flex;
+  gap: .75rem;
+  align-items: flex-start;
+}
+.diff-icon {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.diff-card.before .diff-icon { color: #f87171; }
+.diff-card.after .diff-icon { color: #34d399; }
+
+/* 3 Core Pillars */
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.pillar-card {
+  background: rgb(0 51 98 / 0.6);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+}
+.pillar-card h4 {
+  font-size: 1.4rem;
+  color: #ffffff;
+  margin-bottom: .6rem;
+}
+.pillar-card p {
+  font-size: .925rem;
+  margin: 0;
+  opacity: .9;
+}
+
+/* ==========================================================================
+   Section: Live Component Showcase (Printed Sheet On Paper)
+   ========================================================================== */
+.sheet {
+  background: var(--paper);
+  color: var(--bg-deep);
+  padding-block: clamp(4rem, 8vw, 7rem);
+}
+.sheet h2 {
+  color: var(--bg-deep);
+}
+.sheet .intro {
+  max-width: 44rem;
+  margin: 1.5rem 0 3rem;
+  font-size: 1.125rem;
+  color: rgb(13 40 71 / 0.9);
+}
+.frames {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1.5rem;
+}
+.frame {
+  grid-column: span 2;
+  border: 1px solid var(--bg-deep);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  background: var(--paper-card);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.06);
+}
+.frame.wide { grid-column: span 3; }
+.frame .body {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.frame .label {
+  font: 700 .75rem var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--blue-7);
+  margin: 0 0 .75rem;
+}
+.frame figcaption {
+  border-top: 1px solid rgb(13 40 71 / 0.15);
+  background: #f8faf7;
+  padding: .75rem 1.25rem;
+  font: .75rem/1.5 var(--mono);
+  color: rgb(13 40 71 / 0.85);
+}
+.frame figcaption b {
+  font-weight: 700;
+  color: var(--blue-7);
+}
+
+/* Type Specimen */
+.specimen-type .big {
+  font: 800 clamp(3.5rem, 7vw, 5.5rem)/.85 var(--display);
+  text-transform: uppercase;
+  color: var(--bg-deep);
+  margin-bottom: .75rem;
+}
+.specimen-type .body-sample {
+  font-size: 1.125rem;
+  margin: 0 0 .5rem;
+  font-weight: 700;
+}
+.specimen-type .mono-sample {
+  font: .875rem var(--mono);
+  color: var(--blue-6);
+  margin: 0;
+}
+
+/* Radix Color Swatches */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 3px;
+  margin: .75rem 0;
+}
+.swatches div {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: flex-end;
+  padding: .3rem;
+  font: 700 .6875rem var(--mono);
+  cursor: pointer;
+  transition: transform .15s;
+  border-radius: 2px;
+}
+.swatches div:hover {
+  transform: scale(1.08);
+  z-index: 2;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
+}
+.swatches .used {
+  box-shadow: inset 0 0 0 3px var(--emulsion);
+}
+.swatch-tip {
+  font: .75rem var(--mono);
+  color: var(--blue-6);
+  margin: .25rem 0 0;
+}
+
+/* Shadcn Button Showcase */
+.btn-matrix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin: 1rem 0;
+}
+.sc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font: 600 .875rem var(--body);
+  padding: .5rem .9rem;
+  cursor: pointer;
+  transition: all .15s;
+  border: 1px solid transparent;
+}
+.sc-btn-primary {
+  background: var(--bg-deep);
+  color: #ffffff;
+}
+.sc-btn-primary:hover { background: #000; }
+.sc-btn-secondary {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.sc-btn-secondary:hover { background: #cbd5e1; }
+.sc-btn-outline {
+  border-color: #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+}
+.sc-btn-outline:hover { background: #f1f5f9; }
+.sc-btn-destructive {
+  background: #ef4444;
+  color: #ffffff;
+}
+.sc-btn-destructive:hover { background: #dc2626; }
+.sc-btn-ghost {
+  background: transparent;
+  color: #0f172a;
+}
+.sc-btn-ghost:hover { background: #f1f5f9; }
+
+/* WebFeatures Baseline Radar */
+.baseline-radar {
+  margin-top: .75rem;
+}
+.baseline-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .3rem .6rem;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #10b981;
+  border-radius: var(--radius-sm);
+  font: 700 .8125rem var(--mono);
+}
+.baseline-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .5rem;
+  margin: .75rem 0 0;
+  padding: 0;
+  list-style: none;
+  font: .8125rem var(--mono);
+}
+.baseline-list li {
+  border: 1px solid #cbd5e1;
+  padding: .35rem .6rem;
+  border-radius: var(--radius-sm);
+  background: #f8fafc;
+}
+
+/* Gradient Chip */
+.gradient-chip {
+  height: 5.5rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(to right, #536976, #292e49);
+  margin-bottom: .75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font: 700 .875rem var(--mono);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
+}
+
+/* Refero Tokens Grid */
+.tokens-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+  margin: .75rem 0;
+}
+.tokens-grid div {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: transform .15s;
+}
+.tokens-grid div:hover {
+  transform: scale(1.15);
+  z-index: 2;
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.3);
+}
+
+/* ==========================================================================
+   Section: The 6 MCP Tools & Agent Simulator
+   ========================================================================== */
+.tools-section {
+  padding-block: clamp(4rem, 8vw, 7rem);
+}
+.tools-section .intro {
+  max-width: 44rem;
+  margin: 1.5rem 0 2.5rem;
+  font-size: 1.125rem;
+}
+
+/* W3C APG Tablist */
+[role="tablist"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-bottom: 2px solid var(--border-line);
+}
+[role="tab"] {
+  font: 600 .9375rem var(--mono);
+  color: var(--text-pale);
+  background: none;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  padding: .85rem 1.25rem;
+  cursor: pointer;
+  margin-bottom: -2px;
+  transition: color .2s, background .2s;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+[role="tab"][aria-selected="true"] {
+  background: var(--bg-deep);
+  border-color: var(--border-line);
+  color: var(--emulsion);
+  border-bottom: 2px solid var(--bg-deep);
+}
+[role="tab"]:hover {
+  color: var(--emulsion);
+}
+[role="tabpanel"] {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-line);
+  border-top: 0;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.85fr);
+  gap: 2rem;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  box-shadow: 0 16px 36px rgb(0 0 0 / 0.3);
+}
+[role="tabpanel"].is-hidden { display: none; }
+.panel-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.panel-side h3 {
+  color: var(--emulsion);
+}
+.tool-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.tool-request-box {
+  background: rgb(0 51 98 / 0.5);
+  border: 1px dashed var(--border-line);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+}
+.tool-request-box .req-label {
+  font: 700 .75rem var(--mono);
+  text-transform: uppercase;
+  color: var(--cyan-bright);
+  margin-bottom: .4rem;
+}
+.tool-request-box code {
+  font: .875rem/1.5 var(--mono);
+  color: #ffffff;
+  word-break: break-all;
+}
+
+/* Agent Reasoning Box */
+.reasoning-box {
+  background: rgb(13 21 32 / 0.85);
+  border-left: 3px solid var(--emulsion);
+  padding: .85rem 1rem;
+  font: .8125rem/1.5 var(--mono);
+  color: #d1fae5;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.reasoning-box strong {
+  color: var(--emulsion);
+  text-transform: uppercase;
+  font-size: .75rem;
+  display: block;
+  margin-bottom: .25rem;
+}
+
+/* Response Code Panel */
+.panel-code-wrap {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .65rem 1rem;
+  background: rgb(17 28 45 / 0.9);
+  border-bottom: 1px solid var(--border-subtle);
+  font: .75rem var(--mono);
+}
+.code-meta {
+  color: var(--cyan-bright);
+}
+.code-actions {
+  display: flex;
+  gap: .5rem;
+}
+.btn-copy-code {
+  background: transparent;
+  border: 1px solid var(--border-line);
+  color: var(--text-pale);
+  font: .75rem var(--mono);
+  padding: .25rem .6rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-copy-code:hover {
+  border-color: var(--emulsion);
+  color: var(--emulsion);
+}
+.response-pre {
+  margin: 0;
+  font: .8125rem/1.55 var(--mono);
+  max-height: 28rem;
+  overflow: auto;
+  padding: 1.25rem;
+  color: #e2e8f0;
+  white-space: pre;
+}
+
+/* MCP Extensions Grid */
+.mcp-capabilities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+.cap-card {
+  border-top: 2px solid var(--border-line);
+  padding-top: 1.25rem;
+}
+.cap-card code {
+  color: var(--emulsion);
+  font-size: 1rem;
+  font-weight: 600;
+}
+.cap-card p {
+  font-size: .9375rem;
+  margin: .5rem 0 0;
+  opacity: .9;
+}
+
+/* ==========================================================================
+   Section: The 65-Source Atlas & Interactive Filter Engine
+   ========================================================================== */
+.atlas {
+  background: var(--paper);
+  color: var(--bg-deep);
+  padding-block: clamp(4rem, 8vw, 7rem);
+}
+.atlas h2 {
+  color: var(--bg-deep);
+}
+.atlas .intro {
+  max-width: 44rem;
+  margin: 1.5rem 0 2rem;
+  font-size: 1.125rem;
+  color: rgb(13 40 71 / 0.9);
+}
+.atlas-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.filters legend {
+  font: 700 .75rem var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: .6rem;
+  color: var(--blue-7);
+}
+.filters input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.filters label {
+  font: 600 .8125rem var(--mono);
+  border: 1px solid var(--bg-deep);
+  padding: .35rem .75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .15s;
+  background: #ffffff;
+}
+.filters input:checked + label {
+  background: var(--bg-deep);
+  color: var(--emulsion);
+  border-color: var(--bg-deep);
+}
+.filters input:focus-visible + label {
+  outline: 3px solid var(--blue-8);
+  outline-offset: 2px;
+}
+.search-bar-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+.search-input-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 32rem;
+}
+.search-input-wrap input {
+  width: 100%;
+  font: 1rem var(--body);
+  padding: .75rem 1rem .75rem 2.5rem;
+  border: 1px solid var(--bg-deep);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  color: var(--bg-deep);
+}
+.search-input-wrap svg {
+  position: absolute;
+  left: .85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--blue-7);
+  pointer-events: none;
+}
+.shown-count {
+  font: 600 .875rem var(--mono);
+  color: var(--blue-7);
+}
+
+/* Cards Grid */
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+.cards li {
+  background: var(--paper-card);
+  border: 1px solid rgb(13 40 71 / 0.15);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.04);
+}
+.cards li:hover {
+  transform: translateY(-2px);
+  border-color: var(--blue-7);
+  box-shadow: 0 8px 16px rgb(0 0 0 / 0.08);
+}
+.cards li[hidden] { display: none; }
+.cards .card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.cards a.source-link {
+  font: 800 1.5rem/1.1 var(--display);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--bg-deep);
+}
+.cards a.source-link:hover {
+  text-decoration: underline;
+  color: var(--blue-7);
+}
+.cards .id-pill {
+  font: .75rem var(--mono);
+  color: var(--blue-7);
+}
+.cards .desc {
+  font-size: .875rem;
+  color: rgb(13 40 71 / 0.85);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: .25rem 0;
+}
+.cards .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+  margin-top: auto;
+  padding-top: .6rem;
+  font: .6875rem var(--mono);
+}
+.cards .tags span {
+  border: 1px solid #cbd5e1;
+  padding: .1rem .4rem;
+  border-radius: var(--radius-sm);
+  background: #f8fafc;
+}
+.cards .tags .flag-code {
+  background: var(--bg-deep);
+  color: var(--emulsion);
+  border-color: var(--bg-deep);
+  font-weight: 600;
+}
+.cards .tags .flag-heavy {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+/* ==========================================================================
+   Section: Install & Setup Guides (All Coding Agents)
+   ========================================================================== */
+.setup {
+  background: linear-gradient(135deg, #1b2838 0%, #0d2847 50%, #003362 100%);
+  color: #ffffff;
+  padding-block: clamp(4rem, 8vw, 7rem);
+  border-top: 1px solid var(--border-line);
+}
+.setup h2 { color: #ffffff; }
+.setup-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 3rem;
+  align-items: start;
+}
+.setup-tabs {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.setup-tab-btn {
+  font: 600 .8125rem var(--mono);
+  background: rgb(0 0 0 / 0.35);
+  border: 1px solid var(--border-line);
+  color: var(--text-pale);
+  padding: .5rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .15s;
+}
+.setup-tab-btn.active {
+  background: var(--emulsion);
+  color: var(--bg-deep);
+  border-color: var(--emulsion);
+  font-weight: 700;
+}
+.config-pane {
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  position: relative;
+}
+.config-pane pre {
+  margin: 0;
+  font: .875rem/1.6 var(--mono);
+  overflow-x: auto;
+  color: #7dd3fc;
+}
+.config-instructions {
+  margin-top: 1.25rem;
+  font: .8125rem var(--mono);
+  color: var(--text-pale);
+  opacity: .9;
+}
+.env-notes {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  background: rgb(0 51 98 / 0.5);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-sm);
+}
+.env-notes h4 {
+  font-size: 1.2rem;
+  color: var(--emulsion);
+  margin-bottom: .5rem;
+}
+.env-notes ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: .9375rem;
+}
+.env-notes li {
+  margin-bottom: .4rem;
+}
+
+/* ==========================================================================
+   Footer & Provenance
+   ========================================================================== */
+footer {
+  background: var(--bg-darkest);
+  border-top: 1px solid var(--border-subtle);
+  padding-block: 3.5rem 4.5rem;
+  font-size: .9375rem;
+}
+footer h3 {
+  font-size: 1.8rem;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+}
+footer ul {
+  padding-left: 1.2rem;
+  columns: 2 22rem;
+  margin-bottom: 2.5rem;
+}
+footer li {
+  margin-bottom: .45rem;
+  break-inside: avoid;
+  color: var(--text-pale);
+}
+footer li a {
+  color: #ffffff;
+  text-decoration: underline;
+}
+footer .provenance-box {
+  background: rgb(0 51 98 / 0.35);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  font: .8125rem/1.6 var(--mono);
+  color: var(--text-pale);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+footer .provenance-box strong {
+  color: var(--emulsion);
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--emulsion);
+  color: var(--bg-deep);
+  font: 700 .875rem var(--mono);
+  padding: .75rem 1.25rem;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.4);
+  z-index: 1000;
+  transform: translateY(150%);
+  transition: transform .25s ease-out;
+  pointer-events: none;
+}
+.toast.show {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 68rem) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .potential-grid { grid-template-columns: 1fr; }
+  .frame, .frame.wide { grid-column: span 3; }
+  [role="tabpanel"] { grid-template-columns: 1fr; }
+  .setup-grid { grid-template-columns: 1fr; }
+  .pillars-grid { grid-template-columns: 1fr; }
+  .mcp-capabilities-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 48rem) {
+  .frames { grid-template-columns: 1fr; }
+  .frame, .frame.wide { grid-column: auto; }
+  [role="tab"] { flex: 1 1 45%; }
+  footer ul { columns: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<!-- Topbar Navigation -->
+<header class="wrap">
+  <div class="topbar">
+    <a href="#" class="brand-lockup">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <span class="brand-name">frontend-inspo-mcp</span>
+      <span class="brand-version" id="version">v0.3.0</span>
+    </a>
+    <nav aria-label="Main Navigation">
+      <a href="#potential">Machine Potential</a>
+      <a href="#showcase">Living Components</a>
+      <a href="#tools">MCP Tools</a>
+      <a href="#atlas">65 Sources</a>
+      <a href="#setup" class="nav-cta">Install in 10s</a>
+      <a href="https://github.com/notsointresting/frontend-inspo-mcp" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Hero Section -->
+  <section class="hero wrap" aria-labelledby="hero-title">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Local MCP Superpower for AI Coding Agents</p>
+        <h1 id="hero-title">Real frontend code. <span class="highlight">Zero hallucinations.</span></h1>
+        <p class="lede">
+          Connect your coding agent to <strong>65 public sources</strong> of production React, Tailwind CSS, Framer Motion,
+          Three.js shaders, design tokens, and ARIA patterns. It runs locally over stdio, fetches exact source files, and arms your AI with real design systems.
+        </p>
+        <div class="hero-badges">
+          <span><strong id="hero-source-count">65</strong> Curated Sources</span>
+          <span><strong>6</strong> Read-Only Tools</span>
+          <span><strong>100%</strong> Local Stdio</span>
+          <span><strong>O(1)</strong> Direct Code Retrieval</span>
+        </div>
+        <div class="install-row">
+          <div class="install-box">
+            <span class="prompt-char">$</span>
+            <code id="install-cmd">npx -y frontend-inspo-mcp</code>
+          </div>
+          <button class="btn-uiverse btn-solid" type="button" id="copy-install-btn">
+            Copy Install Command
+          </button>
+        </div>
+      </div>
+
+      <!-- Agent Simulation Terminal Card -->
+      <div class="terminal-card" aria-label="AI Agent MCP execution simulation">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="dot-red"></span>
+            <span class="dot-yellow"></span>
+            <span class="dot-green"></span>
+          </div>
+          <span class="terminal-title">Agent Execution Trace (Stdio)</span>
+          <span style="color: var(--emulsion);">LIVE</span>
+        </div>
+        <div class="terminal-body">
+          <div class="agent-step">
+            <span class="step-user">User:</span> "Build me a high-converting marquee with hover-pause."
+          </div>
+          <div class="agent-step">
+            <span class="step-tool">Agent:</span> calling <code>search_all { query: "marquee", limit: 3 }</code>...
+          </div>
+          <div class="agent-step">
+            <span class="step-reply">↳ 21st.dev · magicui/marquee (score: 9.2)<br>↳ aceternity · review-marquee (score: 8.7)</span>
+          </div>
+          <div class="agent-step">
+            <span class="step-tool">Agent:</span> calling <code>get_code { source: "magicui", id: "marquee" }</code>...
+          </div>
+          <div class="agent-step">
+            <span class="step-reply">✓ Retrieved <code>marquee.tsx</code> (1,956 chars, MIT license).<br>✓ Implementing into project without hallucinated CSS.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Continuous Marquee Showcase (Populated from search_all) -->
+    <div class="marquee-container" aria-label="Component discoveries marquee">
+      <div class="marquee-track" id="marquee-track">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Machine Potential (Why Local MCP Changes Everything) -->
+  <section class="potential-section" id="potential" aria-labelledby="potential-title">
+    <div class="wrap">
+      <p class="eyebrow">The Machine Transformation</p>
+      <h2 id="potential-title">What this brings to your machine</h2>
+      <p style="max-width: 44rem; font-size: 1.125rem; opacity: .9; margin-top: 1rem;">
+        Without this MCP, even the smartest models hallucinate outdated CSS classes, imagine unsupported animation props, and build brittle UI from memory. Here is how your agent behaves when grounded in reality:
+      </p>
+
+      <div class="potential-grid">
+        <div class="diff-card before">
+          <div class="diff-header">
+            <span class="diff-status">❌ Without frontend-inspo-mcp</span>
+            <span class="badge-tag" style="color: #f87171; border-color: #f87171;">Hallucinating</span>
+          </div>
+          <ul class="diff-list">
+            <li>
+              <span class="diff-icon">✕</span>
+              <span><strong>Guessed CSS & Tailwind:</strong> Generates non-existent Tailwind utility classes and awkward keyframe animations that break on reload.</span>
+            </li>
+            <li>
+              <span class="diff-icon">✕</span>
+              <span><strong>Broken ARIA Semantics:</strong> Implements custom tabs and modals without keyboard bindings, failing WCAG compliance.</span>
+            </li>
+            <li>
+              <span class="diff-icon">✕</span>
+              <span><strong>Generic 2021 Aesthetics:</strong> Defaults to bland blue gradient cards with inconsistent paddings and discordant color palettes.</span>
+            </li>
+            <li>
+              <span class="diff-icon">✕</span>
+              <span><strong>Silent 3D/Shader Failures:</strong> Writes Three.js code that fails due to outdated matrix methods or broken GLSL vertex shaders.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="diff-card after">
+          <div class="diff-header">
+            <span class="diff-status">✓ With frontend-inspo-mcp</span>
+            <span class="badge-tag" style="color: #34d399; border-color: #34d399;">Grounded In Real Source</span>
+          </div>
+          <ul class="diff-list">
+            <li>
+              <span class="diff-icon">✓</span>
+              <span><strong>Exact TSX & CSS Source:</strong> Fetches verified code directly from shadcn, Magic UI, Aceternity, and Uiverse with 100% correct imports.</span>
+            </li>
+            <li>
+              <span class="diff-icon">✓</span>
+              <span><strong>W3C Authoring Standards:</strong> Uses canonical W3C ARIA implementations (keyboard focus loops, Home/End keys, tabindexes).</span>
+            </li>
+            <li>
+              <span class="diff-icon">✓</span>
+              <span><strong>Systematic Color Harmony:</strong> Employs Radix 12-step color scales and real-world brand token systems extracted via Refero.</span>
+            </li>
+            <li>
+              <span class="diff-icon">✓</span>
+              <span><strong>Safe Security Boundary:</strong> Every payload is wrapped in untrusted data delimiters to prevent prompt injection from third-party code.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <h4>⚡ Zero Overhead Stdio</h4>
+          <p>Runs as a lightweight subprocess on your machine. No background HTTP ports opened, zero cloud dependencies, and fast sub-millisecond local queries.</p>
+        </div>
+        <div class="pillar-card">
+          <h4>🛡️ Memory & Disk Caching</h4>
+          <p>Polite HTTPS client with automated 10-minute in-memory caching and optional persistent disk cache via <code>FRONTEND_INSPO_CACHE_DIR</code>.</p>
+        </div>
+        <div class="pillar-card">
+          <h4>📜 Clean Licensing</h4>
+          <p>Every resource carries its upstream license (MIT, Apache-2.0, OFL-1.1), author attribution, and origin repository links.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Living Components (Rendered from MCP Output) -->
+  <section class="sheet" id="showcase" aria-labelledby="showcase-title">
+    <div class="wrap">
+      <p class="eyebrow" style="color: var(--blue-7);">Living Verification</p>
+      <h2 id="showcase-title">Rendered from real MCP tool calls</h2>
+      <p class="intro">
+        Every component on this sheet is alive, interactive, and styled directly with assets supplied by the server. No mock data: each frame below documents the tool call, the upstream source, and the verified license.
+      </p>
+
+      <div class="frames">
+        <!-- Frame 1: Fontsource -->
+        <figure class="frame wide specimen-type">
+          <div class="body">
+            <p class="label">Typography · Fontsource get_resource</p>
+            <div class="big" aria-hidden="true">Aa 65</div>
+            <p class="body-sample">Big Shoulders Display + Atkinson Hyperlegible Next.</p>
+            <p class="mono-sample">Atkinson Hyperlegible Mono handles formatted tool calls.</p>
+          </div>
+          <figcaption><b>get_resource</b> fontsource · big-shoulders-display → OFL-1.1</figcaption>
+        </figure>
+
+        <!-- Frame 2: Radix Colors -->
+        <figure class="frame wide">
+          <div class="body">
+            <p class="label">Palette · Radix Colors get_code</p>
+            <div class="swatches" id="swatches" role="img" aria-label="Radix blue-dark scale, steps 1 to 12"></div>
+            <p style="margin: .5rem 0 0; font-size: .9375rem;">
+              Click any swatch to inspect its step, luminance, and hex value. Radix 12-step scales provide mathematically balanced contrast.
+            </p>
+            <p class="swatch-tip" id="swatch-active-info">Active: Step 4 (--blue-4: #003362)</p>
+          </div>
+          <figcaption><b>get_code</b> radixcolors · /blue-dark.css → MIT</figcaption>
+        </figure>
+
+        <!-- Frame 3: shadcn/ui Buttons -->
+        <figure class="frame">
+          <div class="body">
+            <p class="label">Registry · shadcn/ui get_code</p>
+            <div class="btn-matrix">
+              <button class="sc-btn sc-btn-primary" type="button">Default</button>
+              <button class="sc-btn sc-btn-secondary" type="button">Secondary</button>
+              <button class="sc-btn sc-btn-outline" type="button">Outline</button>
+              <button class="sc-btn sc-btn-destructive" type="button">Destructive</button>
+              <button class="sc-btn sc-btn-ghost" type="button">Ghost</button>
+            </div>
+            <p style="font-size: .875rem; margin-top: auto;">
+              Clean CVA (Class Variance Authority) button variants fetched directly as <code>button.tsx</code>.
+            </p>
+          </div>
+          <figcaption><b>get_code</b> shadcn · button.tsx → MIT</figcaption>
+        </figure>
+
+        <!-- Frame 4: Uiverse Micro-Interaction Button -->
+        <figure class="frame">
+          <div class="body">
+            <p class="label">Micro-Interaction · Uiverse get_code</p>
+            <div style="padding: 1.5rem 0; display: flex; justify-content: center;">
+              <button class="btn-uiverse" type="button" id="test-uiverse-btn" style="color: var(--bg-deep); border-color: var(--bg-deep);">
+                Hover / Focus Wave
+              </button>
+            </div>
+            <p style="font-size: .875rem; margin-top: auto;">
+              Adapted from <code>calm-tiger-42</code>. Dual-bezier radial fill responding to pointer and keyboard focus.
+            </p>
+          </div>
+          <figcaption><b>get_code</b> uiverse · calm-tiger-42.html → MIT</figcaption>
+        </figure>
+
+        <!-- Frame 5: WebFeatures Baseline Radar -->
+        <figure class="frame">
+          <div class="body">
+            <p class="label">Browser Baseline · webfeatures get_resource</p>
+            <div class="baseline-radar">
+              <div class="baseline-status-badge">
+                <span>●</span> <span id="baseline-feature-title">:has() selector · Widely Available</span>
+              </div>
+              <ul class="baseline-list" id="baseline-browser-list">
+                <li>Chrome: 105+</li>
+                <li>Safari: 15.4+</li>
+                <li>Firefox: 121+</li>
+                <li>Edge: 105+</li>
+              </ul>
+            </div>
+            <p style="font-size: .875rem; margin-top: 1rem;">
+              The source atlas filter below uses CSS <code>:has()</code>. We validated Baseline compatibility before writing a single rule.
+            </p>
+          </div>
+          <figcaption><b>get_resource</b> webfeatures · has → Apache-2.0</figcaption>
+        </figure>
+
+        <!-- Frame 6: uiGradients Background Band -->
+        <figure class="frame wide">
+          <div class="body">
+            <p class="label">Atmosphere · uiGradients get_resource</p>
+            <div class="gradient-chip" id="royal-gradient-chip" role="img" aria-label="Royal Blue gradient">
+              linear-gradient(to right, #536976, #292E49)
+            </div>
+            <p style="font-size: .875rem; margin: .5rem 0 0;">
+              Curated linear & radial CSS gradients ready for instant application in hero sections and CTAs.
+            </p>
+          </div>
+          <figcaption><b>get_resource</b> uigradients · royal-blue → MIT</figcaption>
+        </figure>
+
+        <!-- Frame 7: Refero Design Tokens -->
+        <figure class="frame wide">
+          <div class="body">
+            <p class="label">Token Extraction · refero get_code</p>
+            <p style="font-size: .9375rem; margin: 0 0 .5rem;">
+              <strong>Linear Midnight Palette:</strong> Design system tokens extracted from live web platforms into machine-readable JSON:
+            </p>
+            <div class="tokens-grid" id="refero-tokens-grid" role="img" aria-label="Linear tokens extracted via Refero"></div>
+            <p style="font-size: .8125rem; color: var(--blue-7); margin: 0;">
+              Extracted for design reference without needing a proprietary subscription.
+            </p>
+          </div>
+          <figcaption><b>get_code</b> refero · tokens.json → Reference Only</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: The 6 MCP Tools & Agent Simulator -->
+  <section class="tools-section wrap" id="tools" aria-labelledby="tools-title">
+    <p class="eyebrow">Interactive Tool Inspector</p>
+    <h2 id="tools-title">What your agent can call</h2>
+    <p class="intro">
+      Six read-only tools designed specifically for AI agent context windows. Inspect live requests and trimmed server replies captured directly from the built server.
+    </p>
+
+    <!-- W3C APG Tablist -->
+    <div role="tablist" aria-label="MCP tools explorer" id="tablist"></div>
+    <div id="panels"></div>
+
+    <div class="mcp-capabilities-grid">
+      <div class="cap-card">
+        <code>inspo://{source}/{+id}</code>
+        <p>Direct Resource URI Template. Read any component as metadata and code parts natively inside Claude Desktop or Cursor.</p>
+      </div>
+      <div class="cap-card">
+        <code>find_component</code>
+        <p>A guided workflow prompt that transitions from natural language query to multi-source ranking to clean adapted code.</p>
+      </div>
+      <div class="cap-card">
+        <code>design_system_from_site</code>
+        <p>A prompt that transforms real-world URL tokens into a full DESIGN.md specification and Tailwind configuration.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: The 65-Source Atlas & Search Engine -->
+  <section class="atlas" id="atlas" aria-labelledby="atlas-title">
+    <div class="wrap">
+      <p class="eyebrow" style="color: var(--blue-7);">Comprehensive Catalog</p>
+      <h2 id="atlas-title"><span id="atlas-count">65</span> Curated Sources</h2>
+      <p class="intro">
+        Every source is public, respects <code>robots.txt</code>, and is tagged with its stack. Sources marked <em>heavy</em> require explicit naming in <code>search_all</code> to preserve agent response latency.
+      </p>
+
+      <div class="atlas-controls">
+        <fieldset class="filters" id="filters">
+          <legend>Filter by technology stack</legend>
+        </fieldset>
+
+        <div class="search-bar-row">
+          <div class="search-input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input id="q" type="search" placeholder="Search by name, ID, or keyword (e.g. shader, tailwind, 3d, buttons)..." autocomplete="off">
+          </div>
+          <span class="shown-count" id="shown" aria-live="polite">Showing 65 of 65 sources</span>
+        </div>
+      </div>
+
+      <ul class="cards" id="cards"></ul>
+    </div>
+  </section>
+
+  <!-- Section: Install & Configuration Wizard -->
+  <section class="setup" id="setup" aria-labelledby="setup-title">
+    <div class="wrap setup-grid">
+      <div>
+        <p class="eyebrow">Zero Setup Hassle</p>
+        <h2 id="setup-title">Add it to your agent in seconds</h2>
+        <p style="font-size: 1.125rem; line-height: 1.6; margin: 1.5rem 0;">
+          Runs on your local machine using Node 22+. Talks to any MCP client over standard I/O (stdio). Opens no network ports and requires zero accounts.
+        </p>
+        <div class="env-notes">
+          <h4>💡 Pro Tips</h4>
+          <ul>
+            <li><strong>Disk Cache:</strong> Set <code>FRONTEND_INSPO_CACHE_DIR=/path/to/cache</code> to persist fetched components across editor restarts.</li>
+            <li><strong>GitHub Token:</strong> Set <code>GITHUB_TOKEN</code> to raise GitHub's rate limit from 60 to 5,000 requests per hour.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="setup-tabs" id="setup-tabs">
+          <button class="setup-tab-btn active" data-client="claude-code" type="button">Claude Code CLI</button>
+          <button class="setup-tab-btn" data-client="cursor" type="button">Cursor</button>
+          <button class="setup-tab-btn" data-client="claude-desktop" type="button">Claude Desktop</button>
+          <button class="setup-tab-btn" data-client="windsurf" type="button">Windsurf</button>
+          <button class="setup-tab-btn" data-client="cline" type="button">Cline / VS Code</button>
+        </div>
+
+        <div class="config-pane">
+          <button class="btn-copy-code" id="copy-config-btn" style="position: absolute; right: 1rem; top: 1rem;" type="button">Copy Config</button>
+          <pre id="config-code-pre"><code>claude mcp add frontend-inspo -- npx -y frontend-inspo-mcp</code></pre>
+          <div class="config-instructions" id="config-instructions">
+            Run directly in your terminal to enable frontend-inspo across all sessions.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="wrap">
+  <h3>Third-Party Credits & Open Source Licenses</h3>
+  <ul>
+    <li>Big Shoulders Display, Atkinson Hyperlegible Next & Mono by <a href="https://fontsource.org/" target="_blank" rel="noopener noreferrer">Fontsource</a> (OFL-1.1)</li>
+    <li><a href="https://www.radix-ui.com/colors" target="_blank" rel="noopener noreferrer">Radix Colors</a> by WorkOS (MIT)</li>
+    <li>Button animation by cssbuttons-io on <a href="https://uiverse.io/" target="_blank" rel="noopener noreferrer">Uiverse.io</a> (MIT)</li>
+    <li>Accessible Tabs script from <a href="https://www.w3.org/WAI/ARIA/apg/" target="_blank" rel="noopener noreferrer">W3C ARIA Authoring Practices Guide</a> (W3C License)</li>
+    <li>Baseline compatibility metrics by <a href="https://github.com/web-platform-dx/web-features" target="_blank" rel="noopener noreferrer">web-features</a> (Apache-2.0)</li>
+    <li>“Royal Blue” palette by Indrashish Ghosh on <a href="https://uigradients.com/" target="_blank" rel="noopener noreferrer">uiGradients</a> (MIT)</li>
+    <li>shadcn/ui registry by <a href="https://ui.shadcn.com/" target="_blank" rel="noopener noreferrer">shadcn</a> (MIT)</li>
+    <li>Design tokens extracted via <a href="https://styles.refero.design/" target="_blank" rel="noopener noreferrer">Refero</a> (Reference Only)</li>
+  </ul>
+  <div class="provenance-box">
+    <span id="provenance">Captured live from frontend-inspo-mcp by demo/capture.mjs.</span>
+    <span>MIT License · <a href="https://github.com/notsointresting/frontend-inspo-mcp" target="_blank" rel="noopener noreferrer">GitHub Repository</a></span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Data File Generated by MCP Server Capture -->
+<script src="data.js"></script>
+
+<!-- Tabs Implementation from W3C ARIA Authoring Practices Guide (tabs-automatic.js) -->
+<script>
+'use strict';
+class TabsAutomatic {
+  constructor(groupNode) {
+    this.tablistNode = groupNode;
+    this.tabs = Array.from(this.tablistNode.querySelectorAll('[role=tab]'));
+    this.tabpanels = [];
+    this.firstTab = this.tabs[0] || null;
+    this.lastTab = this.tabs[this.tabs.length - 1] || null;
+
+    for (let i = 0; i < this.tabs.length; i++) {
+      const tab = this.tabs[i];
+      const tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+      tab.tabIndex = -1;
+      tab.setAttribute('aria-selected', 'false');
+      this.tabpanels.push(tabpanel);
+      tab.addEventListener('keydown', this.onKeydown.bind(this));
+      tab.addEventListener('click', this.onClick.bind(this));
+    }
+    if (this.firstTab) {
+      this.setSelectedTab(this.firstTab, false);
+    }
+  }
+  setSelectedTab(currentTab, setFocus = true) {
+    for (let i = 0; i < this.tabs.length; i++) {
+      const tab = this.tabs[i];
+      if (currentTab === tab) {
+        tab.setAttribute('aria-selected', 'true');
+        tab.removeAttribute('tabindex');
+        this.tabpanels[i]?.classList.remove('is-hidden');
+        if (setFocus) tab.focus();
+      } else {
+        tab.setAttribute('aria-selected', 'false');
+        tab.tabIndex = -1;
+        this.tabpanels[i]?.classList.add('is-hidden');
+      }
+    }
+  }
+  setSelectedToPreviousTab(currentTab) {
+    const index = this.tabs.indexOf(currentTab);
+    this.setSelectedTab(index === 0 ? this.lastTab : this.tabs[index - 1]);
+  }
+  setSelectedToNextTab(currentTab) {
+    const index = this.tabs.indexOf(currentTab);
+    this.setSelectedTab(index === this.tabs.length - 1 ? this.firstTab : this.tabs[index + 1]);
+  }
+  onKeydown(event) {
+    const tgt = event.currentTarget;
+    let flag = false;
+    switch (event.key) {
+      case 'ArrowLeft': this.setSelectedToPreviousTab(tgt); flag = true; break;
+      case 'ArrowRight': this.setSelectedToNextTab(tgt); flag = true; break;
+      case 'Home': this.setSelectedTab(this.firstTab); flag = true; break;
+      case 'End': this.setSelectedTab(this.lastTab); flag = true; break;
+    }
+    if (flag) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  }
+  onClick(event) {
+    this.setSelectedTab(event.currentTarget);
+  }
+}
+</script>
+
+<!-- Application Logic -->
+<script>
+(() => {
+  const { calls, version, capturedAt } = window.INSPO || { calls: {}, version: "0.3.0", capturedAt: "2026-10-06" };
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+  const HEX = /^#[0-9a-f]{6}$/i;
+
+  const showToast = (msg) => {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2200);
+  };
+
+  const copyText = async (text, successMsg = "Copied to clipboard!") => {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(successMsg);
+    } catch {
+      showToast("Select and copy manually");
+    }
+  };
+
+  // Header and version information
+  $("version").textContent = `v${version}`;
+  const sources = calls.sources?.reply || [];
+  $("hero-source-count").textContent = String(sources.length);
+  $("atlas-count").textContent = String(sources.length);
+  $("provenance").textContent =
+    `Every tool reply on this page was captured from frontend-inspo-mcp v${version} on ${capturedAt} by demo/capture.mjs.`;
+
+  // Quick install button
+  $("copy-install-btn").addEventListener("click", () => {
+    copyText($("install-cmd").textContent, "Install command copied!");
+  });
+
+  // Hero Marquee generator (From searchAll results)
+  const marqueeTrack = $("marquee-track");
+  const marqueeResults = calls.searchAll?.reply?.results || [];
+  // Duplicate array for seamless infinite marquee loop
+  const marqueeItems = [...marqueeResults, ...marqueeResults];
+  marqueeItems.forEach((r, i) => {
+    const card = el("a", "marquee-card");
+    card.href = r.url || "#";
+    card.target = "_blank";
+    card.rel = "noopener noreferrer";
+
+    const badge = el("div", "source-badge", r.source);
+    const title = el("div", "item-title", r.title);
+    const desc = el("div", "item-desc", r.description || "Production ready component with clean source code.");
+    const meta = el("div", "item-meta", `get_code · ${r.id}`);
+
+    card.append(badge, title, desc, meta);
+    marqueeTrack.append(card);
+  });
+
+  // Radix Palette Swatches
+  const swatchesEl = $("swatches");
+  const swatchInfo = $("swatch-active-info");
+  const USED_STEPS = new Set([3, 4, 8, 12]);
+  const paletteCss = calls.palette?.reply?.code?.css || "";
+
+  for (const [, step, hex] of paletteCss.matchAll(/--blue-(\d+):\s*(#[0-9a-f]{6});/gi)) {
+    if (!HEX.test(hex)) continue;
+    const n = Number(step);
+    const swatch = el("div", USED_STEPS.has(n) ? "used" : "", String(n));
+    swatch.style.background = hex;
+    swatch.style.color = n < 9 ? "#c2e6ff" : "#0d2847";
+    swatch.title = `Step ${n}: ${hex} (Click to copy)`;
+    swatch.addEventListener("click", () => {
+      copyText(`var(--blue-${n})`, `Copied --blue-${n} (${hex})`);
+      swatchInfo.textContent = `Selected: Step ${n} (--blue-${n}: ${hex})`;
+    });
+    swatchesEl.append(swatch);
+  }
+
+  // WebFeatures Baseline Status
+  try {
+    const hasData = JSON.parse(calls.resource?.reply?.code?.["baseline.json"] || "{}");
+    if (hasData.name) {
+      $("baseline-feature-title").textContent =
+        `${hasData.name} · Baseline ${hasData.baseline === "high" ? "Widely Available" : hasData.baseline}`;
+      const browserList = $("baseline-browser-list");
+      browserList.innerHTML = "";
+      const names = { chrome: "Chrome", safari: "Safari", firefox: "Firefox", edge: "Edge" };
+      for (const [k, label] of Object.entries(names)) {
+        if (hasData.support?.[k]) {
+          browserList.append(el("li", "", `${label}: ${hasData.support[k]}+`));
+        }
+      }
+    }
+  } catch (err) {
+    // Keep defaults
+  }
+
+  // Gradient Chip Click-to-copy
+  const gradientChip = $("royal-gradient-chip");
+  const gradientCss = calls.gradient?.reply?.code?.css?.trim() || "linear-gradient(to right, #536976, #292E49)";
+  gradientChip.addEventListener("click", () => {
+    copyText(`background: ${gradientCss};`, "Gradient CSS copied!");
+  });
+
+  // Refero Tokens Grid
+  const borrowedCode = calls.borrowed?.reply?.code?.["tokens.json"] || "";
+  const tokensGrid = $("refero-tokens-grid");
+  for (const [, name, hex] of borrowedCode.matchAll(/"([\w-]+)":\s*\{\s*"value":\s*"(#[0-9a-f]{6})"/gi)) {
+    if (!HEX.test(hex)) continue;
+    const tokenChip = el("div");
+    tokenChip.style.background = hex;
+    tokenChip.title = `${name}: ${hex} (Click to copy)`;
+    tokenChip.addEventListener("click", () => {
+      copyText(hex, `Copied ${name} (${hex})`);
+    });
+    tokensGrid.append(tokenChip);
+  }
+
+  // MCP Tools Explorer Tabs
+  const toolSpecs = [
+    {
+      key: "searchAll",
+      tool: "search_all",
+      headline: "Parallel cross-source search with relevance scoring",
+      description: "Searches all non-heavy sources in parallel. Returns top matches ranked by relevance. Sources that fail or time out are reported gracefully without failing the call.",
+      reasoning: "Agent needs an accessible marquee component. Calling search_all across 65 sources to compare implementations from Magic UI, Aceternity, and FreeFrontend."
+    },
+    {
+      key: "code",
+      tool: "get_code",
+      headline: "Raw source code retrieval with safety size caps",
+      description: "Returns clean source code files (.tsx, .jsx, .css, .html, .glsl, .json). Capped at safety limits to protect the agent context window.",
+      reasoning: "Selected calm-tiger-42 from Uiverse. Fetching the exact CSS and HTML files for local project integration."
+    },
+    {
+      key: "shadcnButton",
+      tool: "get_code (shadcn)",
+      headline: "Complete React + Tailwind v4 components",
+      description: "Fetches full production TSX components with CVA definitions directly from the official shadcn registry schema.",
+      reasoning: "Fetching official shadcn/ui button component with Radix slot integration for high-accessibility button variants."
+    },
+    {
+      key: "resource",
+      tool: "get_resource",
+      headline: "Full metadata, licensing, and installation instructions",
+      description: "Returns comprehensive details including documentation links, package dependencies, Baseline availability, and upstream licenses.",
+      reasoning: "Checking Baseline web-features to confirm CSS :has() browser support before generating style rules."
+    },
+    {
+      key: "sources",
+      tool: "list_sources",
+      headline: "Complete catalog of 65 permitted frontend sources",
+      description: "Lists every source with its supported stacks, ID format rules, inline code availability, and heavy flags.",
+      reasoning: "Discovering active registry capabilities to check whether 3D shaders or mockup assets are available."
+    },
+    {
+      key: "categories",
+      tool: "list_categories",
+      headline: "Source-specific category taxonomy",
+      description: "Returns all categories for a given source, ready to pass into search_resources for targeted browsing.",
+      reasoning: "Listing all shadcn/ui categories to narrow search to blocks and marketing templates."
+    }
+  ];
+
+  const tablist = $("tablist");
+  const panelsContainer = $("panels");
+
+  toolSpecs.forEach((spec, i) => {
+    const c = calls[spec.key] || { tool: spec.tool, args: {}, reply: {} };
+    const tab = el("button", "", spec.tool);
+    tab.type = "button";
+    tab.id = `tab-${i}`;
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-controls", `panel-${i}`);
+    tablist.append(tab);
+
+    const panel = el("div");
+    panel.id = `panel-${i}`;
+    panel.setAttribute("role", "tabpanel");
+    panel.setAttribute("aria-labelledby", tab.id);
+    panel.tabIndex = 0;
+
+    const side = el("div", "panel-side");
+    side.append(
+      el("h3", "", spec.headline),
+      el("p", "tool-desc", spec.description)
+    );
+
+    const reasonBox = el("div", "reasoning-box");
+    reasonBox.innerHTML = `<strong>Agent Reasoning</strong>${spec.reasoning}`;
+    side.append(reasonBox);
+
+    const reqBox = el("div", "tool-request-box");
+    reqBox.append(
+      el("div", "req-label", "MCP Tool Request (Stdio JSON-RPC)"),
+      el("code", "", `${c.tool} ${JSON.stringify(c.args, null, 2)}`)
+    );
+    side.append(reqBox);
+
+    const codeWrap = el("div", "panel-code-wrap");
+    const codeHeader = el("div", "code-header");
+    codeHeader.append(
+      el("span", "code-meta", `Response · ${c.reply.license ? 'License: ' + c.reply.license : 'JSON Payload'}`)
+    );
+
+    const copyBtn = el("button", "btn-copy-code", "Copy JSON");
+    copyBtn.type = "button";
+    const jsonStr = JSON.stringify(c.reply, null, 2);
+    copyBtn.addEventListener("click", () => copyText(jsonStr, "Tool response copied!"));
+    codeHeader.append(copyBtn);
+
+    const pre = el("pre", "response-pre", jsonStr);
+    codeWrap.append(codeHeader, pre);
+
+    panel.append(side, codeWrap);
+    panelsContainer.append(panel);
+  });
+
+  new TabsAutomatic(tablist);
+
+  // 65-Source Atlas & Search
+  const stacks = [...new Set(sources.flatMap((s) => s.stack || []))].sort();
+  const filtersFieldset = $("filters");
+
+  const createFilterRadio = (value, label, checked = false) => {
+    const id = `stack-${value || "all"}`;
+    const input = Object.assign(el("input"), { type: "radio", name: "stack", id, value, checked });
+    const lbl = el("label", "", label);
+    lbl.htmlFor = id;
+    filtersFieldset.append(input, lbl);
+  };
+
+  createFilterRadio("", "All (65)", true);
+  for (const s of stacks) {
+    createFilterRadio(s, s);
+  }
+
+  const cardsContainer = $("cards");
+  for (const s of sources) {
+    const li = el("li");
+    li.dataset.stack = (s.stack || []).join(" ");
+    li.dataset.text = `${s.id} ${s.label} ${s.description} ${(s.stack || []).join(" ")}`.toLowerCase();
+
+    const titleRow = el("div", "card-title");
+    const a = el("a", "source-link", s.label);
+    if (/^https?:\/\//.test(s.homepage)) {
+      a.href = s.homepage;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+    }
+    const idSpan = el("span", "id-pill", s.id);
+    titleRow.append(a, idSpan);
+
+    const desc = el("div", "desc", s.description);
+
+    const tags = el("div", "tags");
+    for (const t of s.stack || []) tags.append(el("span", "", t));
+    if (s.hasInlineCode) tags.append(el("span", "flag-code", "Inline Code"));
+    if (s.heavy) tags.append(el("span", "flag-heavy", "Heavy"));
+
+    li.append(titleRow, desc, tags);
+    cardsContainer.append(li);
+  }
+
+  const allCards = [...cardsContainer.children];
+  const updateAtlas = () => {
+    const query = $("q").value.trim().toLowerCase();
+    const selectedStack = document.querySelector("input[name=stack]:checked")?.value || "";
+    let visibleCount = 0;
+
+    for (const card of allCards) {
+      const matchesQuery = !query || card.dataset.text.includes(query);
+      const matchesStack = !selectedStack || card.dataset.stack.split(" ").includes(selectedStack);
+      const isVisible = matchesQuery && matchesStack;
+      card.hidden = !isVisible;
+      if (isVisible) visibleCount++;
+    }
+    $("shown").textContent = `Showing ${visibleCount} of ${allCards.length} sources`;
+  };
+
+  $("q").addEventListener("input", updateAtlas);
+  filtersFieldset.addEventListener("change", updateAtlas);
+  updateAtlas();
+
+  // Setup / Install Tab Configurations
+  const clientConfigs = {
+    "claude-code": {
+      code: `claude mcp add frontend-inspo -- npx -y frontend-inspo-mcp`,
+      note: "Execute directly in your terminal. Available across all Claude Code sessions."
+    },
+    "cursor": {
+      code: `{\n  "mcpServers": {\n    "frontend-inspo": {\n      "command": "npx",\n      "args": ["-y", "frontend-inspo-mcp"]\n    }\n  }\n}`,
+      note: "Add to Cursor Settings → Features → MCP, or save to .cursor/mcp.json in your workspace root."
+    },
+    "claude-desktop": {
+      code: `{\n  "mcpServers": {\n    "frontend-inspo": {\n      "command": "npx",\n      "args": ["-y", "frontend-inspo-mcp"]\n    }\n  }\n}`,
+      note: "Add to ~/Library/Application Support/Claude/claude_desktop_config.json (macOS) or %APPDATA%\\Claude\\claude_desktop_config.json (Windows)."
+    },
+    "windsurf": {
+      code: `{\n  "mcpServers": {\n    "frontend-inspo": {\n      "command": "npx",\n      "args": ["-y", "frontend-inspo-mcp"]\n    }\n  }\n}`,
+      note: "Add to ~/.codeium/windsurf/mcp_config.json, then restart Windsurf."
+    },
+    "cline": {
+      code: `{\n  "mcpServers": {\n    "frontend-inspo": {\n      "command": "npx",\n      "args": ["-y", "frontend-inspo-mcp"]\n    }\n  }\n}`,
+      note: "Add to Cline / Roo Code MCP settings JSON in VS Code."
+    }
+  };
+
+  const setupTabBtns = document.querySelectorAll(".setup-tab-btn");
+  const configPre = $("config-code-pre");
+  const configInstructions = $("config-instructions");
+
+  setupTabBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setupTabBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const cfg = clientConfigs[btn.dataset.client];
+      if (cfg) {
+        configPre.textContent = cfg.code;
+        configInstructions.textContent = cfg.note;
+      }
+    });
+  });
+
+  $("copy-config-btn").addEventListener("click", () => {
+    copyText(configPre.textContent, "Configuration snippet copied!");
+  });
+})();
+</script>
+</body>
+</html>

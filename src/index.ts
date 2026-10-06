@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // frontend-inspo-mcp: local stdio MCP server that discovers frontend/design resources
-// (components, code, mockups, design tokens) across 27 sources. Tools live in server.ts.
+// (components, code, mockups, design tokens) across every source registered in
+// sources/index.ts. Tools, resources and prompts live in server.ts.
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { createServer } from "./server.js";
 

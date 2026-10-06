@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 coverage/
+*.mcpb
 
 # Scratch / tool artifacts
 .playwright-mcp/

@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { ADAPTER_LIST } from "../dist/sources/index.js";
 
 describe("stdio launcher (dist/index.js)", () => {
   it("has the CLI shebang as its first line", () => {
@@ -25,7 +26,8 @@ describe("stdio launcher (dist/index.js)", () => {
       await client.connect(transport);
       assert.equal(client.getServerVersion()?.name, "frontend-inspo-mcp");
       const r = await client.callTool({ name: "list_sources", arguments: {} });
-      assert.equal(JSON.parse(r.content[0].text).length, 27);
+      assert.equal(JSON.parse(r.content[0].text).length, ADAPTER_LIST.length);
+      assert.equal(r.structuredContent.sources.length, ADAPTER_LIST.length);
     } finally {
       await client.close();
     }

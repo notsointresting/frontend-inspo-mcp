@@ -1,0 +1,10 @@
+# What `npm run pack:mcpb` leaves out of the MCP Bundle (gitignore syntax): everything except
+# the files below. Run `npm ci --omit=dev` first, so node_modules holds production dependencies
+# only. mcpb also drops *.d.ts, *.map, lockfiles and node_modules/.bin by itself.
+/*
+!/manifest.json
+!/package.json
+!/dist
+!/node_modules
+!/LICENSE
+!/README.md

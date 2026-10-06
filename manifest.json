@@ -1,0 +1,54 @@
+{
+  "manifest_version": "0.3",
+  "name": "frontend-inspo-mcp",
+  "display_name": "Frontend Inspo",
+  "version": "0.3.0",
+  "description": "Lets AI agents search and fetch real UI components, frontend code, design tokens and mockups.",
+  "author": {
+    "name": "notsointresting",
+    "url": "https://github.com/notsointresting"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/notsointresting/frontend-inspo-mcp.git"
+  },
+  "homepage": "https://github.com/notsointresting/frontend-inspo-mcp#readme",
+  "support": "https://github.com/notsointresting/frontend-inspo-mcp/issues",
+  "license": "MIT",
+  "keywords": [
+    "frontend",
+    "ui-components",
+    "react",
+    "tailwindcss",
+    "shadcn",
+    "design-tokens",
+    "threejs",
+    "mockups"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "GITHUB_TOKEN": "${user_config.github_token}"
+      }
+    }
+  },
+  "user_config": {
+    "github_token": {
+      "type": "string",
+      "title": "GitHub token (optional)",
+      "description": "Lifts GitHub's 60 requests/hour limit for the GitHub-backed sources. Sent only to api.github.com; a token with no scopes is enough.",
+      "sensitive": true,
+      "required": false,
+      "default": ""
+    }
+  },
+  "compatibility": {
+    "runtimes": {
+      "node": ">=22.0.0"
+    }
+  }
+}
