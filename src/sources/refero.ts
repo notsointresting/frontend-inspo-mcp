@@ -1,8 +1,12 @@
-// Refero styles adapter — reads the PUBLIC styles.refero.design API (no subscription
-// needed) and synthesizes DESIGN.md, Tailwind theme, CSS variables, and design tokens
-// from the returned design-system data. This mirrors what the Refero UI shows behind its
-// "Connect via MCP" panel, built from openly served JSON.
-import { fetchJson } from "../lib/fetch.js";
+// Refero styles adapter. Reads the public, server-rendered pages of
+// styles.refero.design (gallery `/` and detail `/style/<id>`), which embed the
+// design-system data in their Next.js flight payload, and synthesizes DESIGN.md,
+// Tailwind theme, CSS variables, and design tokens from it.
+// ponytail: /api/* is disallowed by robots.txt and bot-protected (Vercel BotID),
+// so we deliberately do not use it. Upgrade path if the page layout changes:
+// the extractors below throw a "payload not found" error that the smoke test
+// reports as a HARD failure.
+import { FetchError, fetchText } from "../lib/fetch.js";
 import type {
   Category,
   ResourceDetail,
@@ -49,11 +53,37 @@ interface DesignSystem {
   dos?: string[];
   donts?: string[];
 }
-interface StyleDetail {
-  style: ReferoListItem & { fullResult?: { designSystem?: DesignSystem } };
-  similar?: ReferoListItem[];
+// --- Flight-payload extraction ----------------------------------------------
+
+/** Concatenate the Next.js RSC chunks (`self.__next_f.push([1,"..."])`) of a page. */
+function flightData(html: string): string {
+  let out = "";
+  for (const m of html.matchAll(/self\.__next_f\.push\(\[1,("(?:[^"\\]|\\.)*")\]\)/g)) {
+    out += JSON.parse(m[1]) as string;
+  }
+  return out;
 }
 
+/** Parse the JSON value (object/array) that starts right after `marker`. */
+function jsonAfter<T>(data: string, marker: string): T {
+  const at = data.indexOf(marker);
+  if (at < 0) throw new Error(`refero: payload "${marker}" not found (page format changed?)`);
+  const start = at + marker.length;
+  let depth = 0, inStr = false, esc = false;
+  for (let i = start; i < data.length; i++) {
+    const c = data[i];
+    if (inStr) {
+      if (esc) esc = false;
+      else if (c === "\\") esc = true;
+      else if (c === '"') inStr = false;
+    } else if (c === '"') inStr = true;
+    else if (c === "{" || c === "[") depth++;
+    else if ((c === "}" || c === "]") && --depth === 0) {
+      return JSON.parse(data.slice(start, i + 1)) as T;
+    }
+  }
+  throw new Error(`refero: payload "${marker}" is truncated`);
+}
 const slugName = (s: string) =>
   (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
@@ -64,7 +94,7 @@ function toSummary(it: ReferoListItem): ResourceSummary {
     title: it.siteName || it.url,
     description: it.northStar,
     category: it.industry,
-    url: `${BASE}/styles/${slugName(it.siteName)}`,
+    url: `${BASE}/style/${it.id}`,
     image: it.thumbnailUrl || it.screenshotUrl,
     tags: [it.colorScheme, it.industry].filter(Boolean) as string[],
   };
@@ -198,9 +228,10 @@ export const refero: SourceAdapter = {
   async search(args: SearchArgs): Promise<ResourceSummary[]> {
     const limit = Math.min(Math.max(args.limit ?? 20, 1), 100);
     const sort = args.category === "popular" || args.category === "newest" ? args.category : "";
-    const url = sort ? `${BASE}/api/styles?sort=${sort}` : `${BASE}/api/styles`;
-    const payload = await fetchJson<ReferoListItem[] | { styles?: ReferoListItem[] }>(url);
-    const items = Array.isArray(payload) ? payload : payload.styles ?? [];
+    const html = await fetchText(sort ? `${BASE}/?sort=${sort}` : `${BASE}/`);
+    // ponytail: the gallery page server-renders only its first page (~20 styles),
+    // so `query` filters that page. Upgrade path: walk /sitemaps/styles.xml.
+    const items = jsonAfter<ReferoListItem[]>(flightData(html), '"initialPage":{"styles":');
     const q = (args.query || "").toLowerCase();
     const filtered = q
       ? items.filter((i) => `${i.siteName} ${i.url} ${i.industry ?? ""} ${i.northStar ?? ""}`.toLowerCase().includes(q))
@@ -209,32 +240,38 @@ export const refero: SourceAdapter = {
   },
 
   async getResource(id: string): Promise<ResourceDetail | null> {
-    let data: StyleDetail;
+    let html: string;
     try {
-      data = await fetchJson<StyleDetail>(`${BASE}/api/styles/${encodeURIComponent(id)}`);
-    } catch {
-      return null;
+      html = await fetchText(`${BASE}/style/${encodeURIComponent(id)}`);
+    } catch (e) {
+      if (e instanceof FetchError && e.status === 404) return null; // unknown id
+      throw e;
     }
-    const st = data?.style;
-    const ds = st?.fullResult?.designSystem;
-    if (!st || !ds) return null;
-    const name = st.siteName || st.url;
-    const summary = toSummary(st);
+    const data = flightData(html);
+    if (!data.includes('"designSystem":')) return null; // unknown id renders a 200 "not found" shell
+    const meta = jsonAfter<{ url: string; siteName?: string }>(data, '"result":{"meta":');
+    const ds = jsonAfter<DesignSystem>(data, '"designSystem":');
+    const name = meta.siteName || meta.url;
     return {
-      ...summary,
+      source: "refero",
+      id,
+      title: name,
+      description: ds.northStar,
+      category: ds.industry,
+      url: `${BASE}/style/${id}`,
+      tags: [ds.theme, ds.industry].filter(Boolean) as string[],
       license:
         "Design-system data extracted from a public website via Refero. Reference/inspiration only — the source site owns its brand and assets.",
       code: {
-        "design.md": buildDesignMd(name, st.url, ds),
+        "design.md": buildDesignMd(name, meta.url, ds),
         "css": buildCssVariables(ds),
         "tailwind.js": buildTailwind(ds),
         "tokens.json": buildTokens(ds),
       },
       extra: {
-        sourceUrl: st.url,
+        sourceUrl: meta.url,
         theme: ds.theme,
         industry: ds.industry,
-        similar: (data.similar ?? []).slice(0, 8).map((s) => ({ id: s.id, siteName: s.siteName })),
       },
     };
   },

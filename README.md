@@ -56,7 +56,7 @@ directly into your project.
 | **[GSAP Skills](https://github.com/greensock/gsap-skills)** | Official GSAP agent guidance + runnable examples | ✅ | GitHub source |
 | **[Two.js](https://two.js.org/)** | 2D drawing / animation library source | ✅ | jsdelivr CDN |
 | **[scrollama](https://github.com/russellsamora/scrollama)** | Scrollytelling / scroll-storytelling library source | ✅ | jsdelivr CDN |
-| **[Watermelon UI](https://ui.watermelon.sh/)** | React blocks, dashboards, templates, showcases | — | Official JSON API |
+| **[Watermelon UI](https://ui.watermelon.sh/)** | React components, blocks, dashboards, templates | — | Official JSON API |
 | **[LS.GRAPHICS](https://www.ls.graphics/free-mockups)** | Free design mockups (Figma / Sketch / PSD) | — | HTML parse |
 
 ## 🚀 Quick start

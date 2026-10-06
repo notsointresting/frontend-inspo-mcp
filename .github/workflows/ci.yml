@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: Use Node.js 20
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v7
       with:
         node-version: '20'
         cache: 'npm'
@@ -25,5 +25,11 @@ jobs:
     - name: Build
       run: npm run build
       
+    - name: Fetch retry self-check
+      run: node scripts/check-fetch.mjs
+
     - name: Smoke Test (Verify all sources are live)
       run: npm run smoke
+      env:
+        # Lifts the GitHub API rate limit for the drei source (shared runner IPs hit 60/hr fast).
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

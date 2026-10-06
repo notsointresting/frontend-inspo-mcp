@@ -1,7 +1,7 @@
 // Adapter factory for shadcn-schema component registries.
 // These sites expose a registry index (list of items) and per-item JSON that
 // contains the actual component source in `files[].content`.
-import { fetchJson } from "../lib/fetch.js";
+import { fetchJson, isTransient } from "../lib/fetch.js";
 import type {
   Category,
   ResourceDetail,
@@ -143,7 +143,8 @@ export function makeRegistryAdapter(cfg: RegistryConfig): SourceAdapter {
       let item: RegistryItem;
       try {
         item = await fetchJson<RegistryItem>(cfg.itemUrl(cfg.base, id));
-      } catch {
+      } catch (e) {
+        if (isTransient(e)) throw e; // keep rate limits/network errors visible
         return null;
       }
       if (!item || !item.name) return null;

@@ -33,42 +33,39 @@ function parseCards(html: string, collection: string): ResourceDetail[] {
 
   $("article.snippet-card").each((_, el) => {
     const $el = $(el);
-    const title = $el.find(".card-header h3").first().text().trim();
+    const title = $el.find(".card-title").first().text().replace(/\s+/g, " ").trim();
     if (!title) return;
 
-    const popoverId = $el.find("button.demo").attr("popovertarget") || "";
+    // The preview/code popover is a *sibling* of the card, keyed by this id.
+    const popoverId =
+      $el.find(".card-media-wrapper").attr("popovertarget") ||
+      $el.find("button.btn-card-demo-cta").attr("popovertarget") ||
+      "";
     const id = popoverId || title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const popover = popoverId ? $(`[id="${popoverId}"]`) : $();
 
-    const image = $el.find("> img").attr("src");
-    const description = $el.find(".card-content p").first().text().trim();
+    const image = $el.find(".card-media-wrapper > img").attr("src");
+    const description = $el.find(".card-description p").first().text().trim();
 
     const tags: string[] = [];
-    $el.find(".meta-row").each((_, row) => {
-      const label = $(row).find(".meta-label").text().trim();
-      if (/Technologies|Features/i.test(label)) {
-        $(row)
-          .find(".meta-value")
-          .each((_, v) => {
-            const t = $(v).text().trim();
-            if (t) tags.push(t);
-          });
+    $el.find(".meta-tech").each((_, t) => {
+      const v = $(t).text().trim();
+      if (v) tags.push(v);
+    });
+    $el.find(".readout-row").each((_, row) => {
+      if (/Features/i.test($(row).find("dt").text())) {
+        for (const v of $(row).find("dd").text().split("·")) {
+          if (v.trim()) tags.push(v.trim());
+        }
       }
     });
 
-    const license = $el
-      .find(".meta-row:contains('License') .meta-value")
-      .first()
-      .text()
-      .trim();
-    const author = $el
-      .find(".meta-row:contains('Code by') .author-name-link")
-      .first()
-      .text()
-      .trim();
+    const author = $el.find(".author-link").first().text().trim();
 
-    // Inline code: decode every <pre data-original> in this card.
+    // Inline code: decode every <pre data-original> in the popover. Only some
+    // cards ship it; the rest are CodePen embeds with no inline source.
     const code: Record<string, string> = {};
-    $el.find("pre.code-editor[data-original]").each((_, pre) => {
+    popover.find("pre.code-editor[data-original]").each((_, pre) => {
       const b64 = $(pre).attr("data-original");
       const lang = ($(pre).attr("data-lang") || "code").toLowerCase();
       if (b64) {
@@ -80,11 +77,9 @@ function parseCards(html: string, collection: string): ResourceDetail[] {
       }
     });
 
-    const aiPrompt = $el
-      .find("textarea[id^='prompt-']")
-      .first()
-      .text()
-      .trim();
+    const aiPrompt = popoverId
+      ? $(`textarea[id="prompt-${popoverId}"]`).first().text().trim()
+      : "";
 
     out.push({
       source: "freefrontend",
@@ -95,13 +90,11 @@ function parseCards(html: string, collection: string): ResourceDetail[] {
       url: `${BASE}/${collection}/`,
       image: image ? (image.startsWith("http") ? image : `${BASE}${image}`) : undefined,
       tags: tags.length ? tags : undefined,
-      license: license || undefined,
       author: author || undefined,
       code: Object.keys(code).length ? code : undefined,
       aiPrompt: aiPrompt || undefined,
     });
   });
-
   return out;
 }
 
@@ -120,8 +113,9 @@ async function fetchCollection(
     let html: string;
     try {
       html = await fetchText(url);
-    } catch {
-      break; // 404 / network — no more pages
+    } catch (e) {
+      if (page === 1) throw e; // a failing first page is an error, not "0 results"
+      break; // later pages: 404 means no more pages
     }
     const cards = parseCards(html, collection);
     if (cards.length === 0) break;

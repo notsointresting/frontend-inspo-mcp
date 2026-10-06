@@ -81,17 +81,83 @@ async function throttle(host: string): Promise<void> {
   setTimeout(release, 0);
 }
 
-async function rawFetch(url: string, timeoutMs = 15000): Promise<string> {
+/** HTTP/network failure. `transient` = worth retrying (rate limit, gateway, network). */
+export class FetchError extends Error {
+  constructor(
+    message: string,
+    readonly transient: boolean,
+    readonly status?: number,
+    readonly retryAfterMs?: number,
+  ) {
+    super(message);
+    this.name = "FetchError";
+  }
+}
+
+export interface FetchOptions {
+  /** Non-2xx statuses whose body should still be returned (e.g. ls.graphics
+   *  serves a complete page with HTTP 500). */
+  okStatuses?: number[];
+}
+
+const MAX_ATTEMPTS = 3;
+const BACKOFF_BASE_MS = 1000;
+const MAX_WAIT_MS = 30_000; // never stall a tool call longer than this per retry
+const RETRY_STATUS = new Set([403, 429, 502, 503, 504]);
+
+/** How long the server asked us to wait (Retry-After, else X-RateLimit-Reset). */
+export function serverWaitMs(h: Headers, now = Date.now()): number | undefined {
+  const ra = h.get("retry-after");
+  if (ra) {
+    const secs = Number(ra);
+    if (Number.isFinite(secs)) return Math.max(0, secs * 1000);
+    const date = Date.parse(ra);
+    if (!Number.isNaN(date)) return Math.max(0, date - now);
+  }
+  const reset = Number(h.get("x-ratelimit-reset"));
+  if (h.get("x-ratelimit-remaining") === "0" && Number.isFinite(reset) && reset > 0) {
+    return Math.max(0, reset * 1000 - now);
+  }
+  return undefined;
+}
+
+/** Exponential backoff (1s, 2s, ...) unless the server told us how long to wait. */
+export function retryDelayMs(attempt: number, serverMs?: number): number {
+  return Math.min(serverMs ?? BACKOFF_BASE_MS * 2 ** attempt, MAX_WAIT_MS);
+}
+
+function requestHeaders(url: string): Record<string, string> {
+  const headers: Record<string, string> = { "user-agent": USER_AGENT, accept: "*/*" };
+  // Token goes to the GitHub API host only, never to third-party sites.
+  if (hostOf(url) === "api.github.com") {
+    headers.accept = "application/vnd.github+json";
+    if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  }
+  return headers;
+}
+
+async function rawFetch(url: string, opts: FetchOptions, timeoutMs = 15000): Promise<string> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(url, {
-      headers: { "user-agent": USER_AGENT, accept: "*/*" },
-      signal: controller.signal,
-      redirect: "follow",
-    });
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status} for ${url}`);
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        headers: requestHeaders(url),
+        signal: controller.signal,
+        redirect: "follow",
+      });
+    } catch (e) {
+      // DNS/connect/reset/timeout: no HTTP response at all -> transient.
+      throw new FetchError(`Network error for ${url}: ${(e as Error).message}`, true);
+    }
+    if (!res.ok && !opts.okStatuses?.includes(res.status)) {
+      throw new FetchError(
+        `HTTP ${res.status} for ${url}`,
+        RETRY_STATUS.has(res.status),
+        res.status,
+        serverWaitMs(res.headers),
+      );
     }
     return await res.text();
   } finally {
@@ -99,8 +165,8 @@ async function rawFetch(url: string, timeoutMs = 15000): Promise<string> {
   }
 }
 
-/** Fetch text with cache + throttle. */
-export async function fetchText(url: string): Promise<string> {
+/** Fetch text with cache + throttle + retry (3 attempts, exponential backoff). */
+export async function fetchText(url: string, opts: FetchOptions = {}): Promise<string> {
   const cached = cache.get(url);
   if (cached && cached.expires > Date.now()) return cached.body;
 
@@ -111,13 +177,22 @@ export async function fetchText(url: string): Promise<string> {
     return fromDisk;
   }
 
-  await throttle(hostOf(url));
-  const body = await rawFetch(url);
-  const entry = { body, expires: Date.now() + CACHE_TTL_MS };
-  cache.set(url, entry);
-  diskWrite(url, entry);
-  return body;
+  for (let attempt = 0; ; attempt++) {
+    await throttle(hostOf(url));
+    try {
+      const body = await rawFetch(url, opts);
+      const entry = { body, expires: Date.now() + CACHE_TTL_MS };
+      cache.set(url, entry);
+      diskWrite(url, entry);
+      return body;
+    } catch (e) {
+      if (!(e instanceof FetchError) || !e.transient || attempt >= MAX_ATTEMPTS - 1) throw e;
+      await new Promise((r) => setTimeout(r, retryDelayMs(attempt, e.retryAfterMs)));
+    }
+  }
 }
+/** True for failures worth retrying/reporting as "upstream flaky" (vs. not-found/format errors). */
+export const isTransient = (e: unknown): boolean => e instanceof FetchError && e.transient;
 
 /** Fetch and parse JSON. */
 export async function fetchJson<T = unknown>(url: string): Promise<T> {

@@ -10,12 +10,13 @@ import type {
 } from "../lib/types.js";
 
 const BASE = "https://ui.watermelon.sh";
+// Must match the API's `hint` list: it 400s on unknown kinds ("showcases" was removed upstream).
 const KINDS = [
+  "components",
   "animated-components",
   "blocks",
   "dashboards",
   "templates",
-  "showcases",
 ] as const;
 type Kind = (typeof KINDS)[number];
 
