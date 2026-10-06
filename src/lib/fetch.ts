@@ -32,7 +32,7 @@ if (DISK_CACHE_DIR) {
 }
 const diskPath = (url: string): string | null => {
   if (!DISK_CACHE_DIR) return null;
-  const key = createHash("sha1").update(url).digest("hex");
+  const key = createHash("sha256").update(url).digest("hex");
   return join(DISK_CACHE_DIR, `${key}.json`);
 };
 function diskRead(url: string): string | null {
