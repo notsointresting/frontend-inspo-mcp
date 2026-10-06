@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/frontend-inspo-mcp.svg)](https://www.npmjs.com/package/frontend-inspo-mcp)
 [![MCP](https://img.shields.io/badge/Model_Context_Protocol-server-blue)](https://modelcontextprotocol.io)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178c6)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7.0-3178c6)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/badge/Node-18%2B-339933)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
@@ -50,7 +50,7 @@ Most component galleries are built for humans clicking around a browser. This se
 them **agent-readable**, so your AI assistant can search, compare, and paste real code
 directly into your project.
 
-- 🔍 **Search 25 sources** through one consistent set of tools
+- 🔍 **Search 27 sources** through one consistent set of tools
 - 📋 **Get real code** — React/TSX, Tailwind, vanilla HTML/CSS/JS
 - 🎭 **Free design mockups** with direct, un-gated download links (Figma / Sketch / PSD)
 - ⚡ **Fast** — in-memory caching + polite per-host rate limiting
@@ -102,7 +102,7 @@ Requires **Node 18+** (uses the built-in `fetch`).
 Verify every source is live:
 
 ```bash
-npm run smoke   # hits all 25 sources and asserts parsing → prints ALL PASS
+npm run smoke   # hits all 27 sources and asserts parsing → prints ALL PASS
 ```
 
 ## 🔌 Add it to your MCP client
