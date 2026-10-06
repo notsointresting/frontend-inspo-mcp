@@ -26,11 +26,17 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
+    - name: Lint and format check
+      run: npm run lint
+
     - name: Build
       run: npm run build
       
     - name: Unit tests
       run: npm test
+
+    - name: Reproducible build check
+      run: npm run check:reproducible
 
     - name: Smoke Test (Verify all sources are live)
       run: npm run smoke

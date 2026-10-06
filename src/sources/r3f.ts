@@ -4,8 +4,9 @@
 // provides curated R3F *guidance*: stack-selection, scene/geometry patterns,
 // scroll storytelling, and a performance/architecture checklist.
 // ponytail: content is read from disk once and cached in-process; no network.
-import { readFile } from "node:fs/promises";
+
 import { existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type {
@@ -19,17 +20,37 @@ import type {
 const HERE = dirname(fileURLToPath(import.meta.url));
 // Built code lives in dist/sources; content is copied alongside on build.
 // Fall back to the src copy so unbuilt/dev runs also work.
-const CONTENT_DIR = [
-  join(HERE, "r3f-content"),
-  join(HERE, "..", "..", "src", "sources", "r3f-content"),
-].find((p) => existsSync(p)) ?? join(HERE, "r3f-content");
+const CONTENT_DIR =
+  [join(HERE, "r3f-content"), join(HERE, "..", "..", "src", "sources", "r3f-content")].find((p) =>
+    existsSync(p),
+  ) ?? join(HERE, "r3f-content");
 
 // Bundled docs, in reading order. `category` groups them for list_categories.
 const DOCS: { id: string; file: string; title: string; category: string }[] = [
-  { id: "skill", file: "SKILL.md", title: "React Three Fiber — overview & core concepts", category: "overview" },
-  { id: "geometry-and-scenes", file: "references/geometry-and-scenes.md", title: "Geometry, materials, lighting & animation", category: "reference" },
-  { id: "scroll-storytelling", file: "references/scroll-storytelling.md", title: "Scroll-driven 3D storytelling", category: "reference" },
-  { id: "architecture-decisions", file: "references/architecture-decisions.md", title: "Architecture decisions, performance & declarative scenes", category: "reference" },
+  {
+    id: "skill",
+    file: "SKILL.md",
+    title: "React Three Fiber — overview & core concepts",
+    category: "overview",
+  },
+  {
+    id: "geometry-and-scenes",
+    file: "references/geometry-and-scenes.md",
+    title: "Geometry, materials, lighting & animation",
+    category: "reference",
+  },
+  {
+    id: "scroll-storytelling",
+    file: "references/scroll-storytelling.md",
+    title: "Scroll-driven 3D storytelling",
+    category: "reference",
+  },
+  {
+    id: "architecture-decisions",
+    file: "references/architecture-decisions.md",
+    title: "Architecture decisions, performance & declarative scenes",
+    category: "reference",
+  },
 ];
 
 const HOMEPAGE = "https://r3f.docs.pmnd.rs/";
@@ -45,7 +66,7 @@ async function readDoc(file: string): Promise<string> {
 
 /** First `##`/`###` heading title in a markdown blob, else fall back. */
 function headingTitles(md: string): string[] {
-  return [...md.matchAll(/^#{2,3}\s+(.+?)\s*$/gm)].map((m) => m[1]);
+  return [...md.matchAll(/^#{2,3}\s+(.+?)\s*$/gm)].map((m) => m[1] ?? "");
 }
 
 function summaryOf(doc: (typeof DOCS)[number], md: string): ResourceSummary {
@@ -63,7 +84,15 @@ function summaryOf(doc: (typeof DOCS)[number], md: string): ResourceSummary {
     description: firstProse?.slice(0, 200),
     category: doc.category,
     url: HOMEPAGE,
-    tags: ["react-three-fiber", "r3f", "three.js", "webgl", "react", doc.category, ...sections.slice(0, 6)],
+    tags: [
+      "react-three-fiber",
+      "r3f",
+      "three.js",
+      "webgl",
+      "react",
+      doc.category,
+      ...sections.slice(0, 6),
+    ],
   };
 }
 
@@ -89,7 +118,7 @@ export const r3f: SourceAdapter = {
     for (const doc of DOCS) {
       if (cat && doc.category.toLowerCase() !== cat) continue;
       const md = await readDoc(doc.file);
-      if (q && !(`${doc.title}\n${md}`.toLowerCase().includes(q))) continue;
+      if (q && !`${doc.title}\n${md}`.toLowerCase().includes(q)) continue;
       out.push(summaryOf(doc, md));
       if (out.length >= limit) break;
     }
@@ -109,7 +138,7 @@ export const r3f: SourceAdapter = {
     return {
       ...summary,
       license: "See react-three-fiber skill bundle",
-      code: { "md": md },
+      code: { md: md },
       extra: { file: doc.file, sections: headingTitles(md) },
     };
   },

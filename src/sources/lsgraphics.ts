@@ -41,13 +41,9 @@ function parseListing(html: string): ResourceSummary[] {
     const slug = href.replace("/assets/", "").replace(/\/+$/, "");
     if (!slug || seen.has(slug)) return;
     const img = $a.find("img").first();
-    const title =
-      (img.attr("alt") || "").trim() ||
-      $a.text().trim() ||
-      slug.replace(/-/g, " ");
+    const title = (img.attr("alt") || "").trim() || $a.text().trim() || slug.replace(/-/g, " ");
     // Next.js images may use data-src or srcset; fall back gracefully.
-    const image =
-      img.attr("src") || img.attr("data-src") || undefined;
+    const image = img.attr("src") || img.attr("data-src") || undefined;
     seen.add(slug);
     out.push({
       source: "lsgraphics",
@@ -64,8 +60,7 @@ function parseListing(html: string): ResourceSummary[] {
 export const lsgraphics: SourceAdapter = {
   id: "lsgraphics",
   label: "LS.GRAPHICS",
-  description:
-    "Free high-quality design mockups in PSD, Figma, and Sketch formats.",
+  description: "Free high-quality design mockups in PSD, Figma, and Sketch formats.",
   homepage: "https://www.ls.graphics/free-mockups",
   hasInlineCode: false,
 
@@ -75,9 +70,7 @@ export const lsgraphics: SourceAdapter = {
 
   async search(args: SearchArgs): Promise<ResourceSummary[]> {
     const limit = Math.min(Math.max(args.limit ?? 20, 1), 100);
-    const cat = args.category && args.category !== "free-mockups"
-      ? args.category
-      : "free-mockups";
+    const cat = args.category && args.category !== "free-mockups" ? args.category : "free-mockups";
     const url = cat === "free-mockups" ? LISTING : `${BASE}/${cat}`;
     let html: string;
     try {
@@ -107,7 +100,9 @@ export const lsgraphics: SourceAdapter = {
     const $ = cheerio.load(html);
     const title =
       $("h1").first().text().trim() ||
-      $('meta[property="og:title"]').attr("content")?.replace(/\s*\|\s*LS\.GRAPHICS$/i, "") ||
+      $('meta[property="og:title"]')
+        .attr("content")
+        ?.replace(/\s*\|\s*LS\.GRAPHICS$/i, "") ||
       id.replace(/-/g, " ");
     const description =
       $('meta[name="description"]').attr("content") ||
@@ -131,13 +126,12 @@ export const lsgraphics: SourceAdapter = {
       xd_link: "xd",
     };
     for (const [field, fmt] of Object.entries(linkFields)) {
-      const m = unescaped.match(
-        new RegExp(`"${field}"\\s*:\\s*"(https?://[^"]+)"`, "i"),
-      );
-      if (m) {
-        downloads.push({ label: fmt, url: m[1] });
+      const m = unescaped.match(new RegExp(`"${field}"\\s*:\\s*"(https?://[^"]+)"`, "i"));
+      const link = m?.[1];
+      if (link) {
+        downloads.push({ label: fmt, url: link });
         // the zip/psd file's real extension is the true format signal
-        const ext = m[1].split(".").pop()?.toLowerCase();
+        const ext = link.split(".").pop()?.toLowerCase();
         formats.add(ext && /^(zip|psd|fig|sketch|ai|svg|xd)$/.test(ext) ? ext : fmt);
       }
     }
@@ -171,9 +165,7 @@ export const lsgraphics: SourceAdapter = {
   },
 };
 
-function dedupeDownloads(
-  d: { label: string; url: string }[],
-): { label: string; url: string }[] {
+function dedupeDownloads(d: { label: string; url: string }[]): { label: string; url: string }[] {
   const seen = new Set<string>();
   return d.filter((x) => {
     if (seen.has(x.url)) return false;

@@ -75,20 +75,10 @@ export function makeRegistryAdapter(cfg: RegistryConfig): SourceAdapter {
     if (indexCache) return indexCache;
     const payload = await fetchJson<unknown>(cfg.indexUrl);
     // Keep only real components: named, and not registry meta (style/theme/index).
-    const META_TYPES = new Set([
-      "registry:style",
-      "registry:theme",
-      "registry:file",
-    ]);
+    const META_TYPES = new Set(["registry:style", "registry:theme", "registry:file"]);
     indexCache = cfg
       .indexItems(payload)
-      .filter(
-        (i) =>
-          i &&
-          i.name &&
-          i.name !== "index" &&
-          !META_TYPES.has(i.type || ""),
-      );
+      .filter((i) => i?.name && i.name !== "index" && !META_TYPES.has(i.type || ""));
     return indexCache;
   }
 
@@ -127,9 +117,7 @@ export function makeRegistryAdapter(cfg: RegistryConfig): SourceAdapter {
         }
         if (
           q &&
-          !`${it.name} ${it.title ?? ""} ${it.description ?? ""}`
-            .toLowerCase()
-            .includes(q)
+          !`${it.name} ${it.title ?? ""} ${it.description ?? ""}`.toLowerCase().includes(q)
         ) {
           continue;
         }
@@ -147,7 +135,7 @@ export function makeRegistryAdapter(cfg: RegistryConfig): SourceAdapter {
         if (isTransient(e)) throw e; // keep rate limits/network errors visible
         return null;
       }
-      if (!item || !item.name) return null;
+      if (!item?.name) return null;
       const code: Record<string, string> = {};
       for (const f of item.files || []) {
         if (f.content && f.path) {
@@ -199,7 +187,7 @@ export const magicui = makeRegistryAdapter({
   homepage: "https://magicui.design/",
   base: "https://magicui.design",
   indexUrl: "https://magicui.design/r/registry.json",
-  indexItems: (p) => ((p as { items?: RegistryItem[] })?.items ?? []),
+  indexItems: (p) => (p as { items?: RegistryItem[] })?.items ?? [],
   itemUrl: (base, name) => `${base}/r/${name}.json`,
   license: "MIT",
 });
@@ -212,7 +200,7 @@ export const aceternity = makeRegistryAdapter({
   homepage: "https://ui.aceternity.com/",
   base: "https://ui.aceternity.com",
   indexUrl: "https://ui.aceternity.com/registry.json",
-  indexItems: (p) => ((p as { items?: RegistryItem[] })?.items ?? []),
+  indexItems: (p) => (p as { items?: RegistryItem[] })?.items ?? [],
   itemUrl: (base, name) => `${base}/registry/${name}.json`,
   license: "See ui.aceternity.com (free components are MIT)",
 });
@@ -225,7 +213,7 @@ export const reactbits = makeRegistryAdapter({
   homepage: "https://reactbits.dev/",
   base: "https://reactbits.dev",
   indexUrl: "https://reactbits.dev/r/registry.json",
-  indexItems: (p) => ((p as { items?: RegistryItem[] })?.items ?? []),
+  indexItems: (p) => (p as { items?: RegistryItem[] })?.items ?? [],
   itemUrl: (base, name) => `${base}/r/${name}.json`,
   license: "MIT",
 });
@@ -251,7 +239,7 @@ export const canvasui = makeRegistryAdapter({
   homepage: "https://canvasui.dev/",
   base: "https://canvasui.dev",
   indexUrl: "https://canvasui.dev/r/registry.json",
-  indexItems: (p) => ((p as { items?: RegistryItem[] })?.items ?? []),
+  indexItems: (p) => (p as { items?: RegistryItem[] })?.items ?? [],
   itemUrl: (base, name) => `${base}/r/${name}.json`,
   license: "MIT",
 });
@@ -264,7 +252,7 @@ export const fancy = makeRegistryAdapter({
   homepage: "https://fancycomponents.dev/",
   base: "https://fancycomponents.dev",
   indexUrl: "https://fancycomponents.dev/r/registry.json",
-  indexItems: (p) => ((p as { items?: RegistryItem[] })?.items ?? []),
+  indexItems: (p) => (p as { items?: RegistryItem[] })?.items ?? [],
   itemUrl: (base, name) => `${base}/r/${name}.json`,
   license: "MIT",
 });

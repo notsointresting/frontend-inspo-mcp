@@ -5,17 +5,26 @@ import { watermelon } from "../dist/sources/watermelon.js";
 import { mockFetch } from "./helpers.mjs";
 
 const SUPPORTED = ["components", "animated-components", "blocks", "dashboards", "templates"];
-const entry = (kind, slug = "s") => ({ kind, title: `T ${kind}`, slug, description: "d", path: `/p/${slug}` });
+const entry = (kind, slug = "s") => ({
+  kind,
+  title: `T ${kind}`,
+  slug,
+  description: "d",
+  path: `/p/${slug}`,
+});
 
 const calls = mockFetch((url) => {
   const u = new URL(url);
   if (u.pathname === "/api/v1/catalog/summary") {
-    return { body: JSON.stringify({ counts: Object.fromEntries(SUPPORTED.map((k, i) => [k, i + 1])) }) };
+    return {
+      body: JSON.stringify({ counts: Object.fromEntries(SUPPORTED.map((k, i) => [k, i + 1])) }),
+    };
   }
   if (u.pathname === "/api/v1/catalog/entries") {
     const kind = u.searchParams.get("kind");
     // Same behavior as the real API: unknown kinds are a 400.
-    if (!SUPPORTED.includes(kind)) return { status: 400, body: JSON.stringify({ error: "invalid_kind" }) };
+    if (!SUPPORTED.includes(kind))
+      return { status: 400, body: JSON.stringify({ error: "invalid_kind" }) };
     return { body: JSON.stringify({ entries: [entry(kind)] }) };
   }
   const m = u.pathname.match(/\/entries\/([^/]+)\/([^/]+)$/);
@@ -26,7 +35,10 @@ const calls = mockFetch((url) => {
 describe("watermelon", () => {
   it("lists exactly the kinds the API supports", async () => {
     const cats = await watermelon.listCategories();
-    assert.deepEqual(cats.map((c) => c.id), SUPPORTED);
+    assert.deepEqual(
+      cats.map((c) => c.id),
+      SUPPORTED,
+    );
     assert.equal(cats[0].label, "Components");
   });
 

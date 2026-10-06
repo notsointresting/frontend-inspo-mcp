@@ -6,8 +6,7 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const USER_AGENT =
-  "frontend-inspo-mcp/0.1 (+https://github.com/) local discovery agent";
+const USER_AGENT = "frontend-inspo-mcp/0.1 (+https://github.com/) local discovery agent";
 
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 const MIN_GAP_MS = 400; // min delay between requests to the same host

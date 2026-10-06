@@ -24,6 +24,7 @@ npm run build
 All of these must pass; CI runs the same steps.
 
 ```bash
+npm run lint    # Biome: lint + format check (fix with `npm run lint:fix`)
 npm run build   # tsc in strict mode, must have no errors
 npm test        # offline unit tests (builds first); no network needed
 npm run smoke   # live check of every source (needs network)
@@ -52,6 +53,8 @@ The unit tests live in `tests/*.test.mjs` and use Node's built-in test runner (`
 6. Add a row to the Sources table in the README.
 
 ## Code standards
+
+The coding style is enforced automatically, not by review: **[Biome](https://biomejs.dev/)** (configured in `biome.json`) checks lint rules and formatting, and CI fails if `npm run lint` reports anything. Run `npm run lint:fix` to format your changes. The compiler is also stricter than `strict` (`noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, `noImplicitOverride`).
 
 - **TypeScript strict mode** must stay clean. No `any` in new code without a reason.
 - **ESM only**, using `.js` extensions in relative imports (NodeNext resolution).

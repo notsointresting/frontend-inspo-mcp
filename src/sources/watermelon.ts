@@ -11,13 +11,7 @@ import type {
 
 const BASE = "https://ui.watermelon.sh";
 // Must match the API's `hint` list: it 400s on unknown kinds ("showcases" was removed upstream).
-const KINDS = [
-  "components",
-  "animated-components",
-  "blocks",
-  "dashboards",
-  "templates",
-] as const;
+const KINDS = ["components", "animated-components", "blocks", "dashboards", "templates"] as const;
 type Kind = (typeof KINDS)[number];
 
 interface ApiEntry {
@@ -71,14 +65,12 @@ export const watermelon: SourceAdapter = {
   hasInlineCode: false,
 
   async listCategories(): Promise<Category[]> {
-    const summary = await fetchJson<SummaryResp>(
-      `${BASE}/api/v1/catalog/summary`,
-    );
+    const summary = await fetchJson<SummaryResp>(`${BASE}/api/v1/catalog/summary`);
     return KINDS.map((k) => ({
       id: k,
       label: k
         .split("-")
-        .map((w) => w[0].toUpperCase() + w.slice(1))
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
         .join(" "),
       count: summary.counts?.[k],
     }));

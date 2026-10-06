@@ -67,22 +67,17 @@ const titleOf = (c: ManifestComponent): string =>
     .join(" ");
 
 const categoryOf = (c: ManifestComponent): string =>
-  c.category ||
-  (c.id.includes("landing-page") ? "landing-pages" : c.runtime || "component");
+  c.category || (c.id.includes("landing-page") ? "landing-pages" : c.runtime || "component");
 
 function summaryOf(c: ManifestComponent): ResourceSummary {
-  const langs = [
-    ...new Set((c.files || []).map((f) => f.language).filter(Boolean)),
-  ] as string[];
+  const langs = [...new Set((c.files || []).map((f) => f.language).filter(Boolean))] as string[];
   return {
     source: "threeui",
     id: c.id,
     title: titleOf(c),
     category: categoryOf(c),
     url: HOMEPAGE,
-    tags: ["threejs", "webgl", ...(c.runtime ? [c.runtime] : []), ...langs].filter(
-      Boolean,
-    ),
+    tags: ["threejs", "webgl", ...(c.runtime ? [c.runtime] : []), ...langs].filter(Boolean),
   };
 }
 

@@ -32,10 +32,27 @@ interface PackageConfig {
 
 const langFromPath = (p: string): string => {
   const ext = p.split(".").pop()?.toLowerCase() || "";
-  return { tsx: "tsx", ts: "ts", jsx: "jsx", js: "js", glsl: "glsl", frag: "glsl", vert: "glsl", css: "css" }[ext] || ext || "code";
+  return (
+    {
+      tsx: "tsx",
+      ts: "ts",
+      jsx: "jsx",
+      js: "js",
+      glsl: "glsl",
+      frag: "glsl",
+      vert: "glsl",
+      css: "css",
+    }[ext] ||
+    ext ||
+    "code"
+  );
 };
 
-const baseName = (p: string): string => p.split("/").pop()?.replace(/\.[^.]+$/, "") || p;
+const baseName = (p: string): string =>
+  p
+    .split("/")
+    .pop()
+    ?.replace(/\.[^.]+$/, "") || p;
 
 function makePackageAdapter(cfg: PackageConfig): SourceAdapter {
   let treeCache: FileEntry[] | null = null;
@@ -58,7 +75,9 @@ function makePackageAdapter(cfg: PackageConfig): SourceAdapter {
         const c = cfg.categoryOf(f.path);
         counts.set(c, (counts.get(c) || 0) + 1);
       }
-      return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([id, count]) => ({ id, label: id, count }));
+      return [...counts.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .map(([id, count]) => ({ id, label: id, count }));
     },
 
     async search(args: SearchArgs): Promise<ResourceSummary[]> {
@@ -109,7 +128,9 @@ function makePackageAdapter(cfg: PackageConfig): SourceAdapter {
 
 // --- three.js via jsdelivr --------------------------------------------------
 
-interface JsdelivrFlat { files: { name: string }[] }
+interface JsdelivrFlat {
+  files: { name: string }[];
+}
 let threeVer: string | null = null;
 async function threeVersion(): Promise<string> {
   if (threeVer) return threeVer;
@@ -146,7 +167,9 @@ export const threejs: SourceAdapter = makePackageAdapter({
 
 // --- drei via GitHub --------------------------------------------------------
 
-interface GhTree { tree: { path: string; type: string }[] }
+interface GhTree {
+  tree: { path: string; type: string }[];
+}
 
 // Goes through fetchJson so GitHub 403/429 rate limits get retried with backoff;
 // fetch.ts attaches GITHUB_TOKEN for api.github.com.
@@ -164,9 +187,7 @@ export const drei: SourceAdapter = makePackageAdapter({
     const t = await githubJson<GhTree>(
       "https://api.github.com/repos/pmndrs/drei/git/trees/master?recursive=1",
     );
-    return (t.tree || [])
-      .filter((n) => n.type === "blob")
-      .map((n) => ({ path: `/${n.path}` }));
+    return (t.tree || []).filter((n) => n.type === "blob").map((n) => ({ path: `/${n.path}` }));
   },
   rawUrl(path: string) {
     return `https://raw.githubusercontent.com/pmndrs/drei/master${path}`;
@@ -251,9 +272,7 @@ function makeGithubSrcAdapter(opts: {
       const t = await githubJson<GhTree>(
         `https://api.github.com/repos/${opts.repo}/git/trees/${opts.branch}?recursive=1`,
       );
-      return (t.tree || [])
-        .filter((n) => n.type === "blob")
-        .map((n) => ({ path: `/${n.path}` }));
+      return (t.tree || []).filter((n) => n.type === "blob").map((n) => ({ path: `/${n.path}` }));
     },
     rawUrl(path: string) {
       return `https://raw.githubusercontent.com/${opts.repo}/${opts.branch}${path}`;

@@ -13,13 +13,22 @@ describe("retry helpers", () => {
   });
 
   it("honors X-RateLimit-Reset only when the quota is exhausted", () => {
-    assert.equal(serverWaitMs(H({ "x-ratelimit-remaining": "0", "x-ratelimit-reset": "100" }), 90_000), 10_000);
-    assert.equal(serverWaitMs(H({ "x-ratelimit-remaining": "5", "x-ratelimit-reset": "100" })), undefined);
+    assert.equal(
+      serverWaitMs(H({ "x-ratelimit-remaining": "0", "x-ratelimit-reset": "100" }), 90_000),
+      10_000,
+    );
+    assert.equal(
+      serverWaitMs(H({ "x-ratelimit-remaining": "5", "x-ratelimit-reset": "100" })),
+      undefined,
+    );
     assert.equal(serverWaitMs(H({})), undefined);
   });
 
   it("backs off exponentially and caps the wait", () => {
-    assert.deepEqual([0, 1, 2].map((a) => retryDelayMs(a)), [1000, 2000, 4000]);
+    assert.deepEqual(
+      [0, 1, 2].map((a) => retryDelayMs(a)),
+      [1000, 2000, 4000],
+    );
     assert.equal(retryDelayMs(0, 3_600_000), 30_000);
   });
 });
@@ -55,12 +64,18 @@ describe("fetchText against a local server", () => {
   });
 
   it("gives up after 3 attempts with a transient FetchError", async () => {
-    await assert.rejects(fetchText(`${base}/always429`), (e) => e instanceof FetchError && e.transient && e.status === 429);
+    await assert.rejects(
+      fetchText(`${base}/always429`),
+      (e) => e instanceof FetchError && e.transient && e.status === 429,
+    );
     assert.equal(hits["/always429"], 3);
   });
 
   it("does not retry 404", async () => {
-    await assert.rejects(fetchText(`${base}/missing`), (e) => e instanceof FetchError && !e.transient && e.status === 404);
+    await assert.rejects(
+      fetchText(`${base}/missing`),
+      (e) => e instanceof FetchError && !e.transient && e.status === 404,
+    );
     assert.equal(hits["/missing"], 1);
   });
 

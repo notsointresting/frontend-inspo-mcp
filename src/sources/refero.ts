@@ -27,13 +27,32 @@ interface ReferoListItem {
   industry?: string;
   northStar?: string;
 }
-interface ColorTok { hex: string; name?: string; role?: string; group?: string }
-interface TypographyTok {
-  role?: string; family?: string; sizes?: string; weight?: string;
-  lineHeight?: string; substitute?: string; letterSpacing?: string;
+interface ColorTok {
+  hex: string;
+  name?: string;
+  role?: string;
+  group?: string;
 }
-interface SurfaceTok { hex: string; name?: string; level?: number; purpose?: string }
-interface ComponentTok { name: string; role?: string; description?: string }
+interface TypographyTok {
+  role?: string;
+  family?: string;
+  sizes?: string;
+  weight?: string;
+  lineHeight?: string;
+  substitute?: string;
+  letterSpacing?: string;
+}
+interface SurfaceTok {
+  hex: string;
+  name?: string;
+  level?: number;
+  purpose?: string;
+}
+interface ComponentTok {
+  name: string;
+  role?: string;
+  description?: string;
+}
 interface DesignSystem {
   theme?: string;
   description?: string;
@@ -48,7 +67,10 @@ interface DesignSystem {
   components?: ComponentTok[];
   spacing?: {
     radius?: Record<string, string>;
-    elementGap?: string; sectionGap?: string; cardPadding?: string; pageMaxWidth?: string;
+    elementGap?: string;
+    sectionGap?: string;
+    cardPadding?: string;
+    pageMaxWidth?: string;
   };
   dos?: string[];
   donts?: string[];
@@ -59,7 +81,7 @@ interface DesignSystem {
 function flightData(html: string): string {
   let out = "";
   for (const m of html.matchAll(/self\.__next_f\.push\(\[1,("(?:[^"\\]|\\.)*")\]\)/g)) {
-    out += JSON.parse(m[1]) as string;
+    out += JSON.parse(m[1] ?? '""') as string;
   }
   return out;
 }
@@ -69,7 +91,9 @@ function jsonAfter<T>(data: string, marker: string): T {
   const at = data.indexOf(marker);
   if (at < 0) throw new Error(`refero: payload "${marker}" not found (page format changed?)`);
   const start = at + marker.length;
-  let depth = 0, inStr = false, esc = false;
+  let depth = 0,
+    inStr = false,
+    esc = false;
   for (let i = start; i < data.length; i++) {
     const c = data[i];
     if (inStr) {
@@ -85,7 +109,10 @@ function jsonAfter<T>(data: string, marker: string): T {
   throw new Error(`refero: payload "${marker}" is truncated`);
 }
 const slugName = (s: string) =>
-  (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  (s || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
 function toSummary(it: ReferoListItem): ResourceSummary {
   return {
@@ -110,7 +137,10 @@ function buildDesignMd(name: string, url: string, ds: DesignSystem): string {
   if (ds.theme) L.push(`**Theme:** ${ds.theme}`);
   L.push(`**Source:** ${url}`);
   L.push("");
-  if (ds.description) { L.push(ds.description); L.push(""); }
+  if (ds.description) {
+    L.push(ds.description);
+    L.push("");
+  }
 
   if (ds.colors?.length) {
     L.push("## Colors");
@@ -121,13 +151,16 @@ function buildDesignMd(name: string, url: string, ds: DesignSystem): string {
   }
   if (ds.surfaces?.length) {
     L.push("## Surfaces");
-    for (const s of ds.surfaces) L.push(`- \`${s.hex}\` **${s.name ?? "surface"}** (level ${s.level ?? 0}) — ${s.purpose ?? ""}`);
+    for (const s of ds.surfaces)
+      L.push(
+        `- \`${s.hex}\` **${s.name ?? "surface"}** (level ${s.level ?? 0}) — ${s.purpose ?? ""}`,
+      );
     L.push("");
   }
   if (ds.typography?.length) {
     L.push("## Typography");
     for (const t of ds.typography) {
-      L.push(`### ${t.family ?? "Font"}${t.role ? " — " + t.role : ""}`);
+      L.push(`### ${t.family ?? "Font"}${t.role ? ` — ${t.role}` : ""}`);
       if (t.substitute) L.push(`- **Fallback:** ${t.substitute}`);
       if (t.weight) L.push(`- **Weights:** ${t.weight}`);
       if (t.sizes) L.push(`- **Sizes:** ${t.sizes}`);
@@ -146,15 +179,32 @@ function buildDesignMd(name: string, url: string, ds: DesignSystem): string {
     if (sp.radius) for (const [k, v] of Object.entries(sp.radius)) L.push(`- Radius (${k}): ${v}`);
     L.push("");
   }
-  if (ds.layout) { L.push("## Layout"); L.push(ds.layout); L.push(""); }
-  if (ds.imagery) { L.push("## Imagery"); L.push(ds.imagery); L.push(""); }
-  if (ds.components?.length) {
-    L.push("## Components");
-    for (const c of ds.components) L.push(`- **${c.name}**${c.role ? " (" + c.role + ")" : ""}: ${c.description ?? ""}`);
+  if (ds.layout) {
+    L.push("## Layout");
+    L.push(ds.layout);
     L.push("");
   }
-  if (ds.dos?.length) { L.push("## Do"); ds.dos.forEach((d) => L.push(`- ${d}`)); L.push(""); }
-  if (ds.donts?.length) { L.push("## Don't"); ds.donts.forEach((d) => L.push(`- ${d}`)); L.push(""); }
+  if (ds.imagery) {
+    L.push("## Imagery");
+    L.push(ds.imagery);
+    L.push("");
+  }
+  if (ds.components?.length) {
+    L.push("## Components");
+    for (const c of ds.components)
+      L.push(`- **${c.name}**${c.role ? ` (${c.role})` : ""}: ${c.description ?? ""}`);
+    L.push("");
+  }
+  if (ds.dos?.length) {
+    L.push("## Do");
+    for (const d of ds.dos) L.push(`- ${d}`);
+    L.push("");
+  }
+  if (ds.donts?.length) {
+    L.push("## Don't");
+    for (const d of ds.donts) L.push(`- ${d}`);
+    L.push("");
+  }
   return L.join("\n");
 }
 
@@ -166,11 +216,13 @@ function cssVarName(name: string, fallback: string): string {
 function buildCssVariables(ds: DesignSystem): string {
   const lines = [":root {"];
   for (const c of ds.colors ?? []) lines.push(`  ${cssVarName(c.name ?? "", "brand")}: ${c.hex};`);
-  for (const s of ds.surfaces ?? []) lines.push(`  --surface-${slugName(s.name ?? "surface")}: ${s.hex};`);
+  for (const s of ds.surfaces ?? [])
+    lines.push(`  --surface-${slugName(s.name ?? "surface")}: ${s.hex};`);
   if (ds.spacing?.sectionGap) lines.push(`  --section-gap: ${ds.spacing.sectionGap};`);
   if (ds.spacing?.elementGap) lines.push(`  --element-gap: ${ds.spacing.elementGap};`);
   if (ds.spacing?.cardPadding) lines.push(`  --card-padding: ${ds.spacing.cardPadding};`);
-  for (const [k, v] of Object.entries(ds.spacing?.radius ?? {})) lines.push(`  --radius-${k}: ${v};`);
+  for (const [k, v] of Object.entries(ds.spacing?.radius ?? {}))
+    lines.push(`  --radius-${k}: ${v};`);
   lines.push("}");
   return lines.join("\n");
 }
@@ -195,8 +247,12 @@ function buildTailwind(ds: DesignSystem): string {
 
 function buildTokens(ds: DesignSystem): string {
   const tokens = {
-    color: Object.fromEntries((ds.colors ?? []).map((c) => [slugName(c.name ?? "brand"), { value: c.hex, role: c.role }])),
-    surface: Object.fromEntries((ds.surfaces ?? []).map((s) => [slugName(s.name ?? "surface"), { value: s.hex }])),
+    color: Object.fromEntries(
+      (ds.colors ?? []).map((c) => [slugName(c.name ?? "brand"), { value: c.hex, role: c.role }]),
+    ),
+    surface: Object.fromEntries(
+      (ds.surfaces ?? []).map((s) => [slugName(s.name ?? "surface"), { value: s.hex }]),
+    ),
     radius: ds.spacing?.radius ?? {},
     spacing: {
       section: ds.spacing?.sectionGap,
@@ -234,7 +290,11 @@ export const refero: SourceAdapter = {
     const items = jsonAfter<ReferoListItem[]>(flightData(html), '"initialPage":{"styles":');
     const q = (args.query || "").toLowerCase();
     const filtered = q
-      ? items.filter((i) => `${i.siteName} ${i.url} ${i.industry ?? ""} ${i.northStar ?? ""}`.toLowerCase().includes(q))
+      ? items.filter((i) =>
+          `${i.siteName} ${i.url} ${i.industry ?? ""} ${i.northStar ?? ""}`
+            .toLowerCase()
+            .includes(q),
+        )
       : items;
     return filtered.slice(0, limit).map(toSummary);
   },
@@ -264,7 +324,7 @@ export const refero: SourceAdapter = {
         "Design-system data extracted from a public website via Refero. Reference/inspiration only — the source site owns its brand and assets.",
       code: {
         "design.md": buildDesignMd(name, meta.url, ds),
-        "css": buildCssVariables(ds),
+        css: buildCssVariables(ds),
         "tailwind.js": buildTailwind(ds),
         "tokens.json": buildTokens(ds),
       },

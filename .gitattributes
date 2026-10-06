@@ -1,0 +1,2 @@
+# Pin line endings so builds (and the bundled r3f markdown copied into dist) are byte-identical on every OS.
+* text=auto eol=lf

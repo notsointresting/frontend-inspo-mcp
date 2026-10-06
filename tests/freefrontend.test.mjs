@@ -47,7 +47,10 @@ mockFetch((url) => {
 describe("freefrontend", () => {
   it("parses cards: title, id, tags, author, and keeps code out of summaries", async () => {
     const res = await freefrontend.search({ tech: "css", limit: 5 });
-    assert.deepEqual(res.map((r) => r.title), ["Alpha Card", "Beta Embed"]);
+    assert.deepEqual(
+      res.map((r) => r.title),
+      ["Alpha Card", "Beta Embed"],
+    );
     const [alpha] = res;
     assert.equal(alpha.id, "2026-01-01-alpha");
     assert.equal(alpha.description, "An alpha card.");
@@ -73,7 +76,13 @@ describe("freefrontend", () => {
     const ids = (await freefrontend.listCategories()).map((c) => c.id);
     assert.ok(ids.includes("css-glow-effects"), "relative link accepted");
     assert.ok(ids.includes("js-fancy-things"), "www host accepted");
-    assert.ok(!ids.includes("css-bad-one"), "host containing freefrontend.com as a prefix must be rejected");
-    assert.ok(!ids.includes("css-bad-two"), "protocol-relative link to another host must be rejected");
+    assert.ok(
+      !ids.includes("css-bad-one"),
+      "host containing freefrontend.com as a prefix must be rejected",
+    );
+    assert.ok(
+      !ids.includes("css-bad-two"),
+      "protocol-relative link to another host must be rejected",
+    );
   });
 });

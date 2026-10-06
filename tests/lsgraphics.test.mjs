@@ -27,7 +27,10 @@ mockFetch((url) => {
 describe("lsgraphics", () => {
   it("parses asset cards and de-duplicates by slug", async () => {
     const res = await lsgraphics.search({ limit: 10 });
-    assert.deepEqual(res.map((r) => r.id), ["foo-mockup", "bar-mockup"]);
+    assert.deepEqual(
+      res.map((r) => r.id),
+      ["foo-mockup", "bar-mockup"],
+    );
     assert.equal(res[0].title, "Foo Mockup");
   });
 

@@ -5,11 +5,9 @@ import { readFileSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import type { SourceAdapter, SourceId } from "./lib/types.js";
 import { freefrontend } from "./sources/freefrontend.js";
 import { lsgraphics } from "./sources/lsgraphics.js";
-import { watermelon } from "./sources/watermelon.js";
-import { aceternity, canvasui, fancy, magicui, reactbits, shadcn, vengeanceui } from "./sources/registry.js";
-import { refero } from "./sources/refero.js";
 import {
   detectgpu,
   drei,
@@ -26,9 +24,19 @@ import {
   twojs,
   zustand,
 } from "./sources/packages.js";
-import { threeui } from "./sources/threeui.js";
 import { r3f } from "./sources/r3f.js";
-import type { SourceAdapter, SourceId } from "./lib/types.js";
+import { refero } from "./sources/refero.js";
+import {
+  aceternity,
+  canvasui,
+  fancy,
+  magicui,
+  reactbits,
+  shadcn,
+  vengeanceui,
+} from "./sources/registry.js";
+import { threeui } from "./sources/threeui.js";
+import { watermelon } from "./sources/watermelon.js";
 
 const ADAPTERS: Record<SourceId, SourceAdapter> = {
   freefrontend,
@@ -75,7 +83,11 @@ function err(message: string) {
 const server = new McpServer({
   name: "frontend-inspo-mcp",
   // dist/index.js -> ../package.json, so the reported version can never drift from the package.
-  version: (JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf-8")) as { version: string }).version,
+  version: (
+    JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf-8")) as {
+      version: string;
+    }
+  ).version,
 });
 
 // --- list_sources -----------------------------------------------------------
@@ -152,7 +164,7 @@ server.tool(
       .describe("Max results per source (default 5)."),
   },
   async ({ query, sources, perSource }) => {
-    const targets = sources && sources.length ? sources : SOURCE_IDS;
+    const targets = sources?.length ? sources : SOURCE_IDS;
     const limit = perSource ?? 5;
     const settled = await Promise.allSettled(
       targets.map(async (id) => ({
@@ -163,8 +175,10 @@ server.tool(
     const merged: unknown[] = [];
     const errors: { source: string; error: string }[] = [];
     settled.forEach((r, i) => {
+      const source = targets[i];
+      if (!source) return; // settled is index-parallel to targets
       if (r.status === "fulfilled") merged.push(...r.value.results);
-      else errors.push({ source: targets[i], error: (r.reason as Error).message });
+      else errors.push({ source, error: (r.reason as Error).message });
     });
     return json({
       query,

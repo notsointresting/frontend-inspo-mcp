@@ -74,9 +74,7 @@ function parseCards(html: string, collection: string): ResourceDetail[] {
       }
     });
 
-    const aiPrompt = popoverId
-      ? $(`textarea[id="prompt-${popoverId}"]`).first().text().trim()
-      : "";
+    const aiPrompt = popoverId ? $(`textarea[id="prompt-${popoverId}"]`).first().text().trim() : "";
 
     out.push({
       source: "freefrontend",
@@ -96,17 +94,11 @@ function parseCards(html: string, collection: string): ResourceDetail[] {
 }
 
 /** Fetch cards across pages until `limit` reached or a page repeats/empties. */
-async function fetchCollection(
-  collection: string,
-  limit: number,
-): Promise<ResourceDetail[]> {
+async function fetchCollection(collection: string, limit: number): Promise<ResourceDetail[]> {
   const all: ResourceDetail[] = [];
   const seen = new Set<string>();
   for (let page = 1; page <= 25 && all.length < limit; page++) {
-    const url =
-      page === 1
-        ? `${BASE}/${collection}/`
-        : `${BASE}/${collection}/page/${page}/`;
+    const url = page === 1 ? `${BASE}/${collection}/` : `${BASE}/${collection}/page/${page}/`;
     let html: string;
     try {
       html = await fetchText(url);
@@ -205,9 +197,7 @@ export const freefrontend: SourceAdapter = {
       for (const c of cards) {
         if (
           q &&
-          !`${c.title} ${c.description ?? ""} ${(c.tags ?? []).join(" ")}`
-            .toLowerCase()
-            .includes(q)
+          !`${c.title} ${c.description ?? ""} ${(c.tags ?? []).join(" ")}`.toLowerCase().includes(q)
         ) {
           continue;
         }
@@ -225,6 +215,7 @@ export const freefrontend: SourceAdapter = {
     // Preferred form: "collection::snippetId" (exact + fast).
     if (id.includes("::")) {
       const [collection, snippetId] = id.split("::");
+      if (!collection) return null;
       const cards = await fetchCollection(collection, 100);
       return cards.find((c) => c.id === snippetId) ?? null;
     }
