@@ -4,11 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>frontend-inspo-mcp — Real Frontend Code for AI Coding Agents</title>
-<meta name="description" content="A local MCP server giving AI coding agents access to 65 public sources of production frontend code, design tokens, 3D shaders, and accessibility guidance.">
-<meta property="og:title" content="frontend-inspo-mcp — Supercharge Your Coding Agent">
-<meta property="og:description" content="Stop letting your AI agent hallucinate UI code. 65 public sources of real React, Tailwind, 3D, and ARIA components directly on your machine.">
+<meta name="description" content="A local MCP server giving AI coding agents access to 65 public sources of production React, Tailwind CSS, 3D shaders, design tokens, and W3C accessibility patterns.">
+<meta property="og:title" content="frontend-inspo-mcp — The Ultimate UI Superpower for AI Agents">
+<meta property="og:description" content="Stop letting your AI agent hallucinate UI code. 65 public sources of real React, Tailwind, Framer Motion, 3D, and ARIA components directly on your machine.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://notsointresting.github.io/frontend-inspo-mcp/">
 <meta name="theme-color" content="#003362">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
 <script>document.documentElement.classList.add("js")</script>
 <style>
 /* ==========================================================================
@@ -85,15 +87,16 @@
   --emulsion: #e6df5b;     /* warm acid yellow */
   --cyan-bright: #38bdf8;
   --emerald-bright: #34d399;
+  --purple-neon: #c084fc;
 
   --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
   --body: "Atkinson Hyperlegible Next", system-ui, -apple-system, sans-serif;
   --mono: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
-  --measure: 78rem;
+  --measure: 82rem;
   --radius-sm: 4px;
   --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-lg: 14px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -102,15 +105,16 @@ body {
   margin: 0;
   background-color: var(--bg-main);
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgb(40 112 189 / 0.25), transparent),
-    radial-gradient(circle at 100% 100%, rgb(13 40 71 / 0.5), transparent);
+    radial-gradient(ellipse 90% 60% at 50% -20%, rgb(40 112 189 / 0.3), transparent),
+    radial-gradient(circle at 100% 100%, rgb(13 40 71 / 0.6), transparent);
   color: var(--text-pale);
   font: 400 1.0625rem/1.6 var(--body);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 a { color: inherit; text-underline-offset: .2em; text-decoration-thickness: 1px; }
 :focus-visible { outline: 3px solid var(--emulsion); outline-offset: 3px; }
-.wrap { max-width: var(--measure); margin-inline: auto; padding-inline: var(--gutter); }
+.wrap { max-width: var(--measure); margin-inline: auto; padding-inline: var(--gutter); position: relative; }
 .skip {
   position: absolute; left: 1rem; top: -4rem; padding: .6rem 1.2rem;
   background: var(--emulsion); color: var(--bg-deep); font-weight: 700; z-index: 100;
@@ -131,7 +135,7 @@ h2 { font-size: clamp(2.5rem, 6.5vw, 5.25rem); }
 h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: .02em; }
 .eyebrow {
   font: 600 .8125rem/1.4 var(--mono);
-  letter-spacing: .1em;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--emulsion);
   display: inline-flex;
@@ -146,6 +150,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   height: .5rem;
   background: currentColor;
   border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
 }
 .badge-tag {
   display: inline-flex;
@@ -170,6 +175,8 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   padding-block: 1.25rem;
   border-bottom: 1px solid var(--border-subtle);
   font: .875rem var(--mono);
+  position: relative;
+  z-index: 20;
 }
 .brand-lockup {
   display: flex;
@@ -188,16 +195,17 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 }
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .6; transform: scale(.85); }
+  50% { opacity: .5; transform: scale(.85); }
 }
 .brand-name {
   color: #ffffff;
-  font-size: 1rem;
+  font-size: 1.05rem;
   letter-spacing: .02em;
 }
 .brand-version {
   color: var(--emulsion);
   background: rgb(230 223 91 / 0.15);
+  border: 1px solid rgb(230 223 91 / 0.3);
   padding: .15rem .45rem;
   border-radius: var(--radius-sm);
   font-size: .75rem;
@@ -221,28 +229,43 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   background: var(--emulsion);
   color: var(--bg-deep) !important;
   font-weight: 700;
-  padding: .35rem .75rem;
+  padding: .4rem .9rem;
   border-radius: var(--radius-sm);
   opacity: 1 !important;
+  transition: transform .15s, background .15s !important;
 }
 .nav-cta:hover {
   background: #ffffff;
+  transform: translateY(-1px);
 }
 
 /* ==========================================================================
-   Hero Section
+   Hero Section & Interactive Background Canvas
    ========================================================================== */
 .hero {
   padding-block: clamp(3rem, 7vw, 6rem) 2.5rem;
+  position: relative;
+}
+#hero-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.45;
+  z-index: 0;
 }
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  gap: 3rem;
+  gap: 3.5rem;
   align-items: center;
+  position: relative;
+  z-index: 2;
 }
 .hero h1 {
-  font-size: clamp(3.5rem, 10vw, 8rem);
+  font-size: clamp(3.5rem, 9.5vw, 7.8rem);
   line-height: .86;
   color: #ffffff;
   margin-bottom: 1.5rem;
@@ -250,6 +273,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 .hero h1 .highlight {
   display: block;
   color: var(--emulsion);
+  text-shadow: 0 0 40px rgb(230 223 91 / 0.3);
 }
 .hero .lede {
   font-size: clamp(1.125rem, 1.8vw, 1.375rem);
@@ -266,11 +290,12 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   font: .8125rem var(--mono);
 }
 .hero-badges span {
-  padding: .25rem .65rem;
+  padding: .3rem .75rem;
   background: rgb(13 40 71 / 0.85);
   border: 1px solid var(--border-line);
   border-radius: var(--radius-sm);
   color: var(--text-pale);
+  backdrop-filter: blur(8px);
 }
 .hero-badges span strong {
   color: var(--emulsion);
@@ -280,7 +305,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   flex-wrap: wrap;
   align-items: center;
   gap: .85rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 .install-box {
   display: inline-flex;
@@ -299,6 +324,20 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 }
 .install-box code {
   color: #ffffff;
+}
+.quick-key-tip {
+  font: .8125rem var(--mono);
+  color: var(--cyan-bright);
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.key-cap {
+  border: 1px solid var(--border-line);
+  padding: .1rem .4rem;
+  border-radius: 3px;
+  background: var(--bg-deep);
+  color: var(--emulsion);
 }
 
 /* Uiverse Button (calm-tiger-42 adaptation) */
@@ -367,22 +406,23 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   border-color: #ffffff;
 }
 
-/* Hero Terminal Card */
+/* Hero Terminal Cockpit Card */
 .terminal-card {
   background: var(--bg-deep);
   border: 1px solid var(--border-line);
   border-radius: var(--radius-md);
-  box-shadow: 0 16px 36px rgb(0 0 0 / 0.45);
+  box-shadow: 0 20px 48px rgb(0 0 0 / 0.55);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  backdrop-filter: blur(12px);
 }
 .terminal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: .65rem 1rem;
-  background: rgb(13 21 32 / 0.8);
+  padding: .75rem 1.15rem;
+  background: rgb(13 21 32 / 0.85);
   border-bottom: 1px solid var(--border-subtle);
   font: .75rem var(--mono);
 }
@@ -401,7 +441,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 .dot-green { background: #10b981; }
 .terminal-title {
   color: var(--text-pale);
-  opacity: .8;
+  opacity: .85;
 }
 .terminal-body {
   padding: 1.25rem;
@@ -413,6 +453,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 }
 .agent-step .step-user {
   color: var(--emulsion);
+  font-weight: 600;
 }
 .agent-step .step-tool {
   color: var(--cyan-bright);
@@ -438,7 +479,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   display: flex;
   gap: 1.25rem;
   width: max-content;
-  animation: marquee-scroll 40s linear infinite;
+  animation: marquee-scroll 42s linear infinite;
   padding-block: .5rem;
 }
 .marquee-container:hover .marquee-track {
@@ -457,12 +498,13 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   display: flex;
   flex-direction: column;
   gap: .4rem;
-  transition: transform .2s, border-color .2s;
+  transition: transform .2s, border-color .2s, box-shadow .2s;
   text-decoration: none;
 }
 .marquee-card:hover {
   transform: translateY(-3px);
   border-color: var(--emulsion);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.4);
 }
 .marquee-card .source-badge {
   font: 800 1.25rem/1 var(--display);
@@ -489,7 +531,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 }
 
 /* ==========================================================================
-   Section: Machine Potential Comparison (The "Before / After")
+   Section: Machine Potential Comparison (Before / After)
    ========================================================================== */
 .potential-section {
   background: var(--bg-deep);
@@ -535,17 +577,18 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.15rem;
   font-size: .95rem;
 }
 .diff-list li {
   display: flex;
-  gap: .75rem;
+  gap: .85rem;
   align-items: flex-start;
 }
 .diff-icon {
   font-weight: 700;
   flex-shrink: 0;
+  margin-top: .1rem;
 }
 .diff-card.before .diff-icon { color: #f87171; }
 .diff-card.after .diff-icon { color: #34d399; }
@@ -562,6 +605,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   border: 1px solid var(--border-line);
   border-radius: var(--radius-md);
   padding: 1.5rem;
+  backdrop-filter: blur(8px);
 }
 .pillar-card h4 {
   font-size: 1.4rem;
@@ -572,6 +616,158 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   font-size: .925rem;
   margin: 0;
   opacity: .9;
+}
+
+/* ==========================================================================
+   Section: Interactive Sandbox Studio (Ultra Component Playground)
+   ========================================================================== */
+.studio-section {
+  padding-block: clamp(4rem, 8vw, 7rem);
+  background: radial-gradient(circle at 50% 0%, rgb(40 112 189 / 0.2), transparent);
+}
+.studio-box {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.5);
+  margin-top: 2rem;
+}
+.studio-tabs {
+  display: flex;
+  overflow-x: auto;
+  background: rgb(13 21 32 / 0.95);
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 0;
+}
+.studio-tab-btn {
+  font: 600 .875rem var(--mono);
+  color: var(--text-pale);
+  background: transparent;
+  border: none;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.studio-tab-btn:hover {
+  color: var(--emulsion);
+  background: rgb(255 255 255 / 0.03);
+}
+.studio-tab-btn.active {
+  color: var(--emulsion);
+  border-bottom-color: var(--emulsion);
+  background: rgb(0 51 98 / 0.4);
+}
+.studio-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.15fr);
+  min-height: 28rem;
+}
+.studio-stage {
+  padding: clamp(1.5rem, 4vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background: radial-gradient(circle at center, rgb(0 62 120 / 0.4), transparent);
+}
+.studio-controls-bar {
+  display: flex;
+  gap: .6rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 1.5rem;
+  background: rgb(13 21 32 / 0.7);
+  padding: .5rem .85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  font: .8125rem var(--mono);
+}
+.studio-controls-bar label {
+  color: var(--cyan-bright);
+}
+.studio-code-side {
+  background: var(--bg-darkest);
+  border-left: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+}
+.code-tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .75rem 1.25rem;
+  background: rgb(17 28 45 / 0.95);
+  border-bottom: 1px solid var(--border-subtle);
+  font: .75rem var(--mono);
+}
+.code-tab-header .filename {
+  color: var(--emulsion);
+  font-weight: 600;
+}
+.code-pre-box {
+  margin: 0;
+  padding: 1.25rem;
+  font: .8125rem/1.6 var(--mono);
+  color: #bae6fd;
+  overflow: auto;
+  max-height: 28rem;
+  flex: 1;
+}
+
+/* 3D Tilt Card Component (Aceternity UI Simulation) */
+.tilt-card-wrapper {
+  perspective: 1000px;
+}
+.tilt-card {
+  width: 20rem;
+  height: 12.5rem;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgb(40 112 189 / 0.35) 0%, rgb(13 40 71 / 0.8) 100%);
+  border: 1px solid var(--border-line);
+  box-shadow: 0 20px 40px rgb(0 0 0 / 0.5);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform-style: preserve-3d;
+  transition: transform .1s ease-out;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.tilt-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgb(255 255 255 / 0.15), transparent 60%);
+  pointer-events: none;
+}
+.tilt-card h4 {
+  font: 800 1.6rem var(--display);
+  color: #ffffff;
+  transform: translateZ(30px);
+}
+.tilt-card p {
+  font-size: .875rem;
+  color: var(--text-pale);
+  margin: 0;
+  transform: translateZ(20px);
+}
+.tilt-card .chip {
+  align-self: flex-start;
+  padding: .2rem .5rem;
+  background: var(--emulsion);
+  color: var(--bg-deep);
+  font: 700 .6875rem var(--mono);
+  border-radius: 3px;
+  transform: translateZ(25px);
 }
 
 /* ==========================================================================
@@ -769,6 +965,11 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   color: #ffffff;
   font: 700 .875rem var(--mono);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
+  cursor: pointer;
+  transition: transform .15s;
+}
+.gradient-chip:hover {
+  transform: scale(1.02);
 }
 
 /* Refero Tokens Grid */
@@ -791,7 +992,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 }
 
 /* ==========================================================================
-   Section: The 6 MCP Tools & Agent Simulator
+   Section: The 6 MCP Tools Explorer (W3C APG Tabs)
    ========================================================================== */
 .tools-section {
   padding-block: clamp(4rem, 8vw, 7rem);
@@ -961,7 +1162,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 }
 
 /* ==========================================================================
-   Section: The 65-Source Atlas & Interactive Filter Engine
+   Section: The 65-Source Atlas & Search Engine
    ========================================================================== */
 .atlas {
   background: var(--paper);
@@ -1259,10 +1460,40 @@ footer .provenance-box strong {
   color: var(--emulsion);
 }
 
+/* Floating Quick Navigation Dock */
+.quick-dock {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgb(13 21 32 / 0.85);
+  border: 1px solid var(--border-line);
+  backdrop-filter: blur(12px);
+  padding: .4rem .75rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.4);
+  z-index: 90;
+}
+.quick-dock a {
+  font: 600 .75rem var(--mono);
+  color: var(--text-pale);
+  text-decoration: none;
+  padding: .35rem .65rem;
+  border-radius: 9999px;
+  transition: all .15s;
+}
+.quick-dock a:hover {
+  background: var(--emulsion);
+  color: var(--bg-deep);
+}
+
 /* Toast */
 .toast {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 4.5rem;
   right: 1.5rem;
   background: var(--emulsion);
   color: var(--bg-deep);
@@ -1285,6 +1516,7 @@ footer .provenance-box strong {
 @media (max-width: 68rem) {
   .hero-grid { grid-template-columns: 1fr; }
   .potential-grid { grid-template-columns: 1fr; }
+  .studio-content-grid { grid-template-columns: 1fr; }
   .frame, .frame.wide { grid-column: span 3; }
   [role="tabpanel"] { grid-template-columns: 1fr; }
   .setup-grid { grid-template-columns: 1fr; }
@@ -1296,6 +1528,7 @@ footer .provenance-box strong {
   .frame, .frame.wide { grid-column: auto; }
   [role="tab"] { flex: 1 1 45%; }
   footer ul { columns: 1; }
+  .quick-dock { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -1315,8 +1548,9 @@ footer .provenance-box strong {
       <span class="brand-version" id="version">v0.3.0</span>
     </a>
     <nav aria-label="Main Navigation">
-      <a href="#potential">Machine Potential</a>
-      <a href="#showcase">Living Components</a>
+      <a href="#potential">Transformation</a>
+      <a href="#studio">Component Studio</a>
+      <a href="#showcase">Living Artifacts</a>
       <a href="#tools">MCP Tools</a>
       <a href="#atlas">65 Sources</a>
       <a href="#setup" class="nav-cta">Install in 10s</a>
@@ -1328,13 +1562,14 @@ footer .provenance-box strong {
 <main id="main">
   <!-- Hero Section -->
   <section class="hero wrap" aria-labelledby="hero-title">
+    <canvas id="hero-canvas"></canvas>
     <div class="hero-grid">
       <div>
         <p class="eyebrow">Local MCP Superpower for AI Coding Agents</p>
         <h1 id="hero-title">Real frontend code. <span class="highlight">Zero hallucinations.</span></h1>
         <p class="lede">
           Connect your coding agent to <strong>65 public sources</strong> of production React, Tailwind CSS, Framer Motion,
-          Three.js shaders, design tokens, and ARIA patterns. It runs locally over stdio, fetches exact source files, and arms your AI with real design systems.
+          Three.js shaders, design tokens, and ARIA patterns. Runs locally over stdio, fetches exact source files, and arms your AI with real design systems.
         </p>
         <div class="hero-badges">
           <span><strong id="hero-source-count">65</strong> Curated Sources</span>
@@ -1351,6 +1586,9 @@ footer .provenance-box strong {
             Copy Install Command
           </button>
         </div>
+        <div class="quick-key-tip">
+          <span>Press <span class="key-cap">/</span> to search sources · Press <span class="key-cap">1-4</span> to switch sandbox</span>
+        </div>
       </div>
 
       <!-- Agent Simulation Terminal Card -->
@@ -1362,9 +1600,9 @@ footer .provenance-box strong {
             <span class="dot-green"></span>
           </div>
           <span class="terminal-title">Agent Execution Trace (Stdio)</span>
-          <span style="color: var(--emulsion);">LIVE</span>
+          <span style="color: var(--emulsion);">ACTIVE</span>
         </div>
-        <div class="terminal-body">
+        <div class="terminal-body" id="agent-terminal-trace">
           <div class="agent-step">
             <span class="step-user">User:</span> "Build me a high-converting marquee with hover-pause."
           </div>
@@ -1372,7 +1610,7 @@ footer .provenance-box strong {
             <span class="step-tool">Agent:</span> calling <code>search_all { query: "marquee", limit: 3 }</code>...
           </div>
           <div class="agent-step">
-            <span class="step-reply">↳ 21st.dev · magicui/marquee (score: 9.2)<br>↳ aceternity · review-marquee (score: 8.7)</span>
+            <span class="step-reply">↳ magicui · marquee.tsx (score: 9.2)<br>↳ aceternity · review-marquee (score: 8.7)</span>
           </div>
           <div class="agent-step">
             <span class="step-tool">Agent:</span> calling <code>get_code { source: "magicui", id: "marquee" }</code>...
@@ -1465,6 +1703,107 @@ footer .provenance-box strong {
         <div class="pillar-card">
           <h4>📜 Clean Licensing</h4>
           <p>Every resource carries its upstream license (MIT, Apache-2.0, OFL-1.1), author attribution, and origin repository links.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Interactive Sandbox Studio (Ultra Component Playground) -->
+  <section class="studio-section wrap" id="studio" aria-labelledby="studio-title">
+    <p class="eyebrow">Interactive Studio</p>
+    <h2 id="studio-title">Test Live Components in Real-Time</h2>
+    <p style="max-width: 44rem; font-size: 1.125rem; opacity: .9; margin-top: 1rem;">
+      Interact with live rendered components directly produced by the server's adapters. Toggle states, tweak controls, and inspect the underlying source code in real-time.
+    </p>
+
+    <div class="studio-box">
+      <div class="studio-tabs" id="studio-tabs-list">
+        <button class="studio-tab-btn active" data-studio="marquee" type="button">✨ Magic UI Marquee</button>
+        <button class="studio-tab-btn" data-studio="shadcn" type="button">🔘 shadcn/ui Button Suite</button>
+        <button class="studio-tab-btn" data-studio="tilt" type="button">🧊 Aceternity 3D Tilt Card</button>
+        <button class="studio-tab-btn" data-studio="palette" type="button">🎨 Radix Color Workbench</button>
+      </div>
+
+      <div class="studio-content-grid">
+        <!-- Live Visual Stage -->
+        <div class="studio-stage" id="studio-stage">
+          <!-- Marquee Stage Default -->
+          <div id="stage-marquee-view" style="width: 100%;">
+            <div style="background: var(--bg-darkest); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); overflow: hidden;">
+              <div class="marquee-track" id="studio-mini-marquee" style="animation-duration: 25s;">
+                <div class="marquee-card" style="flex: 0 0 15rem; min-height: 5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Magic UI</span>
+                  <span class="item-title" style="font-size: .875rem;">Interactive Review</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 15rem; min-height: 5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Aceternity</span>
+                  <span class="item-title" style="font-size: .875rem;">3D Pin Card</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 15rem; min-height: 5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">shadcn/ui</span>
+                  <span class="item-title" style="font-size: .875rem;">Radix Tooltip</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 15rem; min-height: 5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Magic UI</span>
+                  <span class="item-title" style="font-size: .875rem;">Interactive Review</span>
+                </div>
+              </div>
+            </div>
+            <div class="studio-controls-bar">
+              <label>Speed:</label>
+              <button class="btn-copy-code" id="speed-slow-btn" type="button">Slow</button>
+              <button class="btn-copy-code" id="speed-normal-btn" type="button" style="border-color: var(--emulsion); color: var(--emulsion);">Normal</button>
+              <button class="btn-copy-code" id="speed-fast-btn" type="button">Fast</button>
+              <span style="opacity: .6; margin-left: auto;">Hover to pause</span>
+            </div>
+          </div>
+
+          <!-- shadcn Stage View -->
+          <div id="stage-shadcn-view" style="display: none; width: 100%; text-align: center;">
+            <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; min-height: 8rem;">
+              <button class="sc-btn sc-btn-primary" id="interactive-sc-btn" type="button" style="padding: .75rem 1.5rem; font-size: 1rem;">
+                Live Interactive Button
+              </button>
+            </div>
+            <div class="studio-controls-bar" style="justify-content: center;">
+              <label>Variant:</label>
+              <button class="btn-copy-code active-var" data-var="primary" type="button">Primary</button>
+              <button class="btn-copy-code" data-var="secondary" type="button">Secondary</button>
+              <button class="btn-copy-code" data-var="destructive" type="button">Destructive</button>
+              <button class="btn-copy-code" data-var="outline" type="button">Outline</button>
+              <button class="btn-copy-code" data-var="ghost" type="button">Ghost</button>
+            </div>
+          </div>
+
+          <!-- Tilt Card Stage View -->
+          <div id="stage-tilt-view" style="display: none;">
+            <div class="tilt-card-wrapper">
+              <div class="tilt-card" id="interactive-tilt-card">
+                <span class="chip">ACETERNITY 3D</span>
+                <h4>Hover & Tilt Me</h4>
+                <p>3D mouse-tracking perspective powered by raw Framer Motion & CSS transforms.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Palette Workbench View -->
+          <div id="stage-palette-view" style="display: none; width: 100%;">
+            <div id="studio-palette-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: .5rem; margin-bottom: 1rem;">
+              <!-- Populated dynamically via JS -->
+            </div>
+            <div class="studio-controls-bar">
+              <span id="studio-palette-status" style="color: var(--emulsion);">Click any swatch to inspect & copy CSS var</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Inspection Side -->
+        <div class="studio-code-side">
+          <div class="code-tab-header">
+            <span class="filename" id="studio-code-filename">marquee.tsx (Magic UI)</span>
+            <button class="btn-copy-code" id="copy-studio-code-btn" type="button">Copy Source</button>
+          </div>
+          <pre class="code-pre-box" id="studio-code-pre"><code>// Loading component source...</code></pre>
         </div>
       </div>
     </div>
@@ -1689,6 +2028,16 @@ footer .provenance-box strong {
   </section>
 </main>
 
+<!-- Floating Quick Navigation Dock -->
+<div class="quick-dock" aria-label="Quick Section Navigation">
+  <a href="#potential">Potential</a>
+  <a href="#studio">Studio</a>
+  <a href="#showcase">Artifacts</a>
+  <a href="#tools">Tools</a>
+  <a href="#atlas">Atlas (65)</a>
+  <a href="#setup" style="background: var(--emulsion); color: var(--bg-deep);">Install</a>
+</div>
+
 <!-- Footer -->
 <footer class="wrap">
   <h3>Third-Party Credits & Open Source Licenses</h3>
@@ -1825,9 +2174,8 @@ class TabsAutomatic {
   // Hero Marquee generator (From searchAll results)
   const marqueeTrack = $("marquee-track");
   const marqueeResults = calls.searchAll?.reply?.results || [];
-  // Duplicate array for seamless infinite marquee loop
   const marqueeItems = [...marqueeResults, ...marqueeResults];
-  marqueeItems.forEach((r, i) => {
+  marqueeItems.forEach((r) => {
     const card = el("a", "marquee-card");
     card.href = r.url || "#";
     card.target = "_blank";
@@ -1900,6 +2248,123 @@ class TabsAutomatic {
       copyText(hex, `Copied ${name} (${hex})`);
     });
     tokensGrid.append(tokenChip);
+  }
+
+  // Interactive Component Studio Logic
+  const studioTabBtns = document.querySelectorAll(".studio-tab-btn");
+  const stageMarquee = $("stage-marquee-view");
+  const stageShadcn = $("stage-shadcn-view");
+  const stageTilt = $("stage-tilt-view");
+  const stagePalette = $("stage-palette-view");
+  const studioPre = $("studio-code-pre");
+  const studioFilename = $("studio-code-filename");
+
+  const studioSources = {
+    marquee: {
+      name: "marquee.tsx (Magic UI)",
+      code: calls.magicMarquee?.reply?.code?.tsx || "// Loading marquee.tsx..."
+    },
+    shadcn: {
+      name: "button.tsx (shadcn/ui)",
+      code: calls.shadcnButton?.reply?.code?.tsx || "// Loading button.tsx..."
+    },
+    tilt: {
+      name: "3d-card.tsx (Aceternity UI)",
+      code: `// Aceternity UI 3D Card implementation\nexport const CardContainer = ({\n  children,\n  className,\n  containerClassName\n}: {\n  children: React.ReactNode;\n  className?: string;\n  containerClassName?: string;\n}) => {\n  const containerRef = useRef<HTMLDivElement>(null);\n  const [isMouseEntered, setIsMouseEntered] = useState(false);\n\n  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {\n    if (!containerRef.current) return;\n    const { left, top, width, height } = containerRef.current.getBoundingClientRect();\n    const x = (e.clientX - left - width / 2) / 25;\n    const y = (e.clientY - top - height / 2) / 25;\n    containerRef.current.style.transform = \`rotateY(\${x}deg) rotateX(\${-y}deg)\`;\n  };\n\n  return (\n    <div\n      ref={containerRef}\n      onMouseEnter={() => setIsMouseEntered(true)}\n      onMouseMove={handleMouseMove}\n      onMouseLeave={() => {\n        setIsMouseEntered(false);\n        if (containerRef.current) containerRef.current.style.transform = "rotateY(0deg) rotateX(0deg)";\n      }}\n      className={cn("transition-transform duration-200 ease-linear", className)}\n    >\n      {children}\n    </div>\n  );\n};`
+    },
+    palette: {
+      name: "blue-dark.css (Radix Colors)",
+      code: calls.palette?.reply?.code?.css || "// Radix blue-dark colors..."
+    }
+  };
+
+  const switchStudioTab = (id) => {
+    studioTabBtns.forEach((b) => b.classList.remove("active"));
+    document.querySelector(`[data-studio="${id}"]`)?.classList.add("active");
+
+    stageMarquee.style.display = id === "marquee" ? "block" : "none";
+    stageShadcn.style.display = id === "shadcn" ? "block" : "none";
+    stageTilt.style.display = id === "tilt" ? "block" : "none";
+    stagePalette.style.display = id === "palette" ? "block" : "none";
+
+    const spec = studioSources[id];
+    if (spec) {
+      studioFilename.textContent = spec.name;
+      studioPre.textContent = spec.code;
+    }
+  };
+
+  studioTabBtns.forEach((btn) => {
+    btn.addEventListener("click", () => switchStudioTab(btn.dataset.studio));
+  });
+  switchStudioTab("marquee");
+
+  $("copy-studio-code-btn").addEventListener("click", () => {
+    copyText(studioPre.textContent, "Component source code copied!");
+  });
+
+  // Marquee Speed Controls
+  const miniMarquee = $("studio-mini-marquee");
+  $("speed-slow-btn").addEventListener("click", () => {
+    miniMarquee.style.animationDuration = "40s";
+    showToast("Marquee speed: Slow");
+  });
+  $("speed-normal-btn").addEventListener("click", () => {
+    miniMarquee.style.animationDuration = "25s";
+    showToast("Marquee speed: Normal");
+  });
+  $("speed-fast-btn").addEventListener("click", () => {
+    miniMarquee.style.animationDuration = "10s";
+    showToast("Marquee speed: Fast");
+  });
+
+  // shadcn Button Matrix Interaction
+  const interactiveBtn = $("interactive-sc-btn");
+  document.querySelectorAll("[data-var]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      interactiveBtn.className = `sc-btn sc-btn-${btn.dataset.var}`;
+      interactiveBtn.textContent = `Variant: ${btn.dataset.var}`;
+      showToast(`Applied shadcn variant: ${btn.dataset.var}`);
+    });
+  });
+
+  // 3D Tilt Card Interaction
+  const tiltCard = $("interactive-tilt-card");
+  if (tiltCard) {
+    tiltCard.addEventListener("mousemove", (e) => {
+      const rect = tiltCard.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const rotX = ((y - rect.height / 2) / (rect.height / 2)) * -14;
+      const rotY = ((x - rect.width / 2) / (rect.width / 2)) * 14;
+      tiltCard.style.setProperty("--mouse-x", `${(x / rect.width) * 100}%`);
+      tiltCard.style.setProperty("--mouse-y", `${(y / rect.height) * 100}%`);
+      tiltCard.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.05, 1.05, 1.05)`;
+    });
+    tiltCard.addEventListener("mouseleave", () => {
+      tiltCard.style.transform = "rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+    });
+  }
+
+  // Studio Palette Grid
+  const studioPaletteGrid = $("studio-palette-grid");
+  const studioPaletteStatus = $("studio-palette-status");
+  for (const [, step, hex] of paletteCss.matchAll(/--blue-(\d+):\s*(#[0-9a-f]{6});/gi)) {
+    if (!HEX.test(hex)) continue;
+    const n = Number(step);
+    const box = el("div", "", `Step ${n}`);
+    box.style.background = hex;
+    box.style.color = n < 9 ? "#c2e6ff" : "#0d2847";
+    box.style.padding = "1rem .5rem";
+    box.style.borderRadius = "4px";
+    box.style.font = "700 .75rem var(--mono)";
+    box.style.textAlign = "center";
+    box.style.cursor = "pointer";
+    box.addEventListener("click", () => {
+      copyText(`var(--blue-${n})`, `Copied var(--blue-${n})`);
+      studioPaletteStatus.textContent = `Selected: Step ${n} (${hex}) · Copied CSS variable`;
+    });
+    studioPaletteGrid.append(box);
   }
 
   // MCP Tools Explorer Tabs
@@ -2111,6 +2576,78 @@ class TabsAutomatic {
   $("copy-config-btn").addEventListener("click", () => {
     copyText(configPre.textContent, "Configuration snippet copied!");
   });
+
+  // Global Keyboard Shortcuts
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement !== $("q")) {
+      e.preventDefault();
+      $("q").focus();
+      showToast("Search sources (/ to focus)");
+    } else if (e.key === "1") {
+      switchStudioTab("marquee");
+    } else if (e.key === "2") {
+      switchStudioTab("shadcn");
+    } else if (e.key === "3") {
+      switchStudioTab("tilt");
+    } else if (e.key === "4") {
+      switchStudioTab("palette");
+    }
+  });
+
+  // Hero Background Particle Canvas (Simulating Three.js / Creative Canvas Potential)
+  const canvas = $("hero-canvas");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    let width = (canvas.width = canvas.offsetWidth);
+    let height = (canvas.height = canvas.offsetHeight);
+
+    const onResize = () => {
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+    };
+    window.addEventListener("resize", onResize);
+
+    const numPoints = 35;
+    const points = Array.from({ length: numPoints }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: (Math.random() - 0.5) * 0.6,
+      radius: Math.random() * 2 + 1
+    }));
+
+    let animFrame;
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < numPoints; i++) {
+        const p = points[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#38bdf8";
+        ctx.fill();
+
+        for (let j = i + 1; j < numPoints; j++) {
+          const p2 = points[j];
+          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist < 130) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(56, 189, 248, ${1 - dist / 130 * 0.8})`;
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+      animFrame = requestAnimationFrame(render);
+    };
+    render();
+  }
 })();
 </script>
 </body>
