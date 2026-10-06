@@ -23,9 +23,6 @@ const TOP_CATEGORIES: Category[] = [
   { id: "tailwind-code-examples", label: "Tailwind CSS" },
 ];
 
-const collectionSlug = (url: string): string =>
-  url.replace(BASE, "").replace(/^\/+|\/+$/g, "").split("/")[0];
-
 /** Parse the snippet cards on a single collection page. */
 function parseCards(html: string, collection: string): ResourceDetail[] {
   const $ = cheerio.load(html);
@@ -149,10 +146,17 @@ export const freefrontend: SourceAdapter = {
         const seen = new Set<string>();
         $("main a[href]").each((_, a) => {
           const href = $(a).attr("href") || "";
-          if (!href.includes("freefrontend.com") && !href.startsWith("/")) return;
-          const abs = href.startsWith("http") ? href : `${BASE}${href}`;
-          if (abs.includes("#")) return;
-          const slug = collectionSlug(abs);
+          // Resolve against BASE and compare the parsed host; a substring test would
+          // also accept e.g. https://evil.example/freefrontend.com.
+          let u: URL;
+          try {
+            u = new URL(href, BASE);
+          } catch {
+            return;
+          }
+          if (u.hostname !== "freefrontend.com" && u.hostname !== "www.freefrontend.com") return;
+          if (u.hash) return;
+          const slug = u.pathname.replace(/^\/+|\/+$/g, "").split("/")[0];
           // sub-collections look like /css-hover-effects/, /js-... etc.
           if (!slug || TOP_CATEGORIES.some((t) => t.id === slug)) return;
           if (!/-/.test(slug)) return;
