@@ -1,0 +1,41 @@
+name: Publish to npm
+
+# Runs when a version tag (v1.2.3) is pushed. Publishes with npm trusted publishing (OIDC),
+# so no npm token is stored anywhere and npm attaches a Sigstore-signed provenance attestation.
+# One-time setup on npmjs.com is described in RELEASING.md.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # lets GitHub mint the short-lived OIDC token npm exchanges for a publish token
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Check the tag matches package.json
+        run: |
+          version="$(node -p 'require("./package.json").version')"
+          if [ "v${version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match package.json version ${version}" >&2
+            exit 1
+          fi
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run coverage
+      - run: npm run check:reproducible
+
+      - name: Publish with provenance
+        run: npm publish --provenance --access public
