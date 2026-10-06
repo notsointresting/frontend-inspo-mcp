@@ -1,0 +1,11 @@
+{
+  "all": true,
+  "src": ["dist"],
+  "include": ["dist/**"],
+  "exclude": ["dist/smoke.js", "dist/lib/types.js"],
+  "reporter": ["text", "json-summary"],
+  "check-coverage": true,
+  "statements": 85,
+  "lines": 85,
+  "functions": 85
+}

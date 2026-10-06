@@ -20,6 +20,7 @@
     "start": "node dist/index.js",
     "smoke": "node dist/smoke.js",
     "test": "npm run build && node --test",
+    "coverage": "npm run build && c8 node --test",
     "check:reproducible": "node scripts/check-reproducible.mjs",
     "lint": "biome check",
     "lint:fix": "biome check --write",
@@ -63,6 +64,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
     "@types/node": "^26.6.4",
+    "c8": "12.0.0",
     "typescript": "^7.0.2"
   },
   "engines": {

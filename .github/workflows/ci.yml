@@ -32,8 +32,8 @@ jobs:
     - name: Build
       run: npm run build
       
-    - name: Unit tests
-      run: npm test
+    - name: Unit tests with coverage (fails below 85% statements)
+      run: npm run coverage
 
     - name: Reproducible build check
       run: npm run check:reproducible
