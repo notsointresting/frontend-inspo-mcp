@@ -1,6 +1,6 @@
 # frontend-inspo-mcp 🎨
 
-> **A local MCP server that lets AI coding agents discover and pull real frontend code, UI components, design mockups, design-system tokens, 3D/WebGL source, and agent guidance** — across **65 sources**, from shadcn-schema component registries to pmndrs 3D libraries, HTML/CSS galleries, design-token APIs, and free asset libraries.
+> **A local MCP server that lets AI coding agents discover and pull real frontend code, UI components, design mockups, design-system tokens, 3D/WebGL source, and agent guidance** — across **89 sources**, from shadcn-schema component registries to pmndrs 3D libraries, HTML/CSS galleries, design-token APIs, and free asset libraries.
 
 [![npm version](https://img.shields.io/npm/v/frontend-inspo-mcp.svg)](https://www.npmjs.com/package/frontend-inspo-mcp)
 [![MCP](https://img.shields.io/badge/Model_Context_Protocol-server-blue)](https://modelcontextprotocol.io)
@@ -38,10 +38,34 @@ Add this to your MCP client config and restart it; `npx` fetches and runs the se
 
 Prefer to hack on it? See [Quick start](#-quick-start) to run from source.
 
-## 🎬 Demo
+## 🎬 Interactive Demo Website
 
-<!-- TODO: replace with recorded demo video -->
-Demo video coming soon.
+The project includes an interactive web application showcasing all 89 sources and real-time MCP tool executions:
+
+- 🌐 **Live Web Demo**: [https://notsointresting.github.io/frontend-inspo-mcp/](https://notsointresting.github.io/frontend-inspo-mcp/)
+- 💻 **Run Locally**:
+  ```bash
+  python -m http.server 3000 --directory demo
+  # or
+  npx serve demo
+  ```
+
+### What's Inside the Demo:
+- ⚡ **Interactive Component Studio**: Live test rendered components including Magic UI Marquee, shadcn/ui Button Suite, Aceternity 3D Tilt Card, Radix Color Workbench, and the Live Sandbox Runner.
+- 📦 **Live Sandbox Runner (`asSandbox: true`)**: Preview and interact with 9 runnable component presets:
+  - 🛒 **E-Commerce Deal Card** (`shadcn` + Tailwind)
+  - ✨ **Live Status Badges** (`shadcn` / `radix`)
+  - 💬 **AI Agent Chat Thread** (`assistant-ui`)
+  - 📊 **Responsive Metric Bar Chart** (`visx` / D3)
+  - 🌐 **5kB WebGL Interactive Globe** (`cobe`)
+  - 📑 **Enterprise Data Grid** (`reui` / `hextaui`)
+  - 🎛️ **Accessible Switch & Slider** (`base-ui` / `jolly`)
+  - 🌌 **Aurora Plasma Shader** (`shaders` / `babylon`)
+  - 🌊 **Wave Button** (`uiverse`)
+- 🎨 **Responsive Viewports & Accent Toggling**: Test components in Desktop (100%), Tablet (680px), and Mobile (360px) frames, toggle Light/Dark canvas modes, and switch across 5 accent palettes (`Cyan`, `Emerald`, `Electric Gold`, `Violet`, `Rose`).
+- 💾 **Standalone HTML Export**: Click **Download HTML** or **Copy Sandbox HTML** to generate isolated, zero-dependency HTML previews with Tailwind CDN, Lucide icons, and Babel runtime ready for offline inspection.
+- 🏛️ **12 Living Verification Artifacts**: Interactive specimens directly generated from real MCP tool calls (typography, color palettes, micro-interactions, Baseline browser radar, D3 charts, GLSL ripples, enterprise tables, and accessible ARIA switches).
+- 🔍 **89-Source Atlas & Instant Search**: Live multi-filter search engine across all 89 sources with exact category counts (`React: 45`, `Tailwind: 39`, `3D: 22`, `Animation: 28`, `Tokens: 7`) and instant `📋 Copy MCP Call` actions for every card.
 
 ---
 
@@ -51,7 +75,7 @@ Most component galleries are built for humans clicking around a browser. This se
 them **agent-readable**, so your AI assistant can search, compare, and paste real code
 directly into your project.
 
-- 🔍 **Search 65 sources** through one consistent set of tools
+- 🔍 **Search 89 sources** through one consistent set of tools
 - 📋 **Get real code** — React/TSX, Tailwind, vanilla HTML/CSS/JS, GLSL, design tokens
 - 🎨 **Design systems & tokens** — DESIGN.md, Tailwind themes, CSS variables, color/gradient/font tokens
 - 🧊 **3D & WebGL** — three.js, the pmndrs ecosystem (drei, R3F, postprocessing, rapier, uikit…), shaders
@@ -60,7 +84,7 @@ directly into your project.
 - ⚡ **Fast & polite** — in-memory + optional disk cache, per-host throttling, deadline-bounded parallel search
 - 🧩 **Pluggable** — add a new source in one small adapter file
 
-## 📚 Sources (65)
+## 📚 Sources (89)
 
 Every source is public and read-only. Content is returned as **reference data, never executed**.
 `heavy` sources (large downloads or tight quotas) are skipped by `search_all` unless you name them
@@ -88,6 +112,29 @@ in its `sources` argument. Call `list_sources` for the live list with each sourc
 | **[AI Elements](https://ai-sdk.dev/elements)** | React + Tailwind building blocks for AI chat UIs | ✅ |
 | **[SVGL](https://svgl.app/)** | SVG brand logos as React components | ✅ |
 | **[Watermelon UI](https://ui.watermelon.sh/)** | React components, blocks, dashboards, templates | ✅ |
+| **[HextaUI](https://hextaui.com/)** | React + Tailwind components on Base UI, hooks, AI blocks, state examples | ✅ |
+| **[ReUI](https://reui.io/)** · _heavy_ | Data grid, calendar, gantt, kanban, filters + 1,000+ usage patterns (free items only) | ✅ |
+| **[Cnippet UI](https://ui.cnippet.dev/)** | Base UI components, ~1,000 variants, motion text effects | ✅ |
+| **[Systaliko UI](https://systaliko-ui.vercel.app/)** | Animated components and blocks on Motion | ✅ |
+| **[UI TripleD](https://ui.tripled.work/)** | Animated components, blocks and pages (shadcn/ui and Base UI builds) | ✅ |
+| **[Ruixen UI](https://ruixen.com/)** | Animated marketing components, each with a demo | ✅ |
+| **[useLayouts](https://uselayouts.com/)** | Animated components and micro-interactions on Motion | ✅ |
+| **[Spell UI](https://spell.sh/)** | Polished landing-page components and text effects | ✅ |
+| **[Jolly UI](https://www.jollyui.dev/)** | shadcn/ui-style components on React Aria (accessible) | ✅ |
+| **[assistant-ui](https://www.assistant-ui.com/)** | AI chat components (thread, composer, tool calls) + 100+ agent UI elements | ✅ |
+
+### Component libraries & data visualization
+
+| Source | What it gives you | Inline code? |
+| --- | --- | :---: |
+| **[Base UI](https://base-ui.com/)** | MUI's unstyled, accessible React components: every docs demo (Tailwind) | ✅ |
+| **[Radix Themes](https://www.radix-ui.com/themes/docs/overview/getting-started)** | Pre-styled Radix React components, their CSS and theme tokens | ✅ |
+| **[Reka UI](https://reka-ui.com/)** | Accessible Vue 3 primitives: Tailwind demos, examples, docs, source | ✅ |
+| **[Tamagui](https://tamagui.dev/)** · _heavy_ | React / React Native UI: demos, Bento screens, styled skins, docs | ✅ |
+| **[Ionic Framework](https://ionicframework.com/docs/components)** · _heavy_ | iOS / Material web components: source, SCSS, demo pages | ✅ |
+| **[Vuestic Admin](https://admin.vuestic.dev/)** | Vue 3 + Tailwind admin dashboard template (pages, layouts) | ✅ |
+| **[visx](https://visx.airbnb.tech/)** | Airbnb's React + D3 primitives: ~50 runnable demo charts | ✅ |
+| **[REAVIZ](https://reaviz.dev/)** | React chart components with their Storybook stories | ✅ |
 
 ### HTML / CSS / Tailwind galleries
 
@@ -100,6 +147,8 @@ in its `sources` argument. Call `list_sources` for the live list with each sourc
 | **[Pines](https://devdojo.com/pines)** | Alpine.js + Tailwind UI library | ✅ |
 | **[daisyUI](https://daisyui.com/)** | Tailwind CSS component classes | ✅ |
 | **[Flowbite](https://flowbite.com/)** | Tailwind HTML + JS components | ✅ |
+| **[Semantic UI](https://semantic-ui.com/)** | LESS + jQuery components, default theme, full-page HTML examples | ✅ |
+| **[TW Elements](https://tw-elements.com/)** | Vanilla JS for interactive Tailwind components + its Tailwind plugin | ✅ |
 
 ### Design systems, tokens & fonts
 
@@ -137,6 +186,10 @@ in its `sources` argument. Call `list_sources` for the live list with each sourc
 | **[liquid-glass-js](https://github.com/dashersw/liquid-glass-js)** | Apple-style "liquid glass" refraction effect | ✅ |
 | **[ThreeUI](https://threeui.com/browse)** · _heavy_ | Community Three.js/WebGL components & landing pages | ✅ |
 | **[img2threejs](https://github.com/img2threejs/img2threejs)** | Image → three.js/GLB scene pipeline (Python) | ✅ |
+| **[Babylon.js](https://www.babylonjs.com/)** · _heavy_ | Engine shader library (GLSL + WGSL) + materials, procedural textures, post-processes | ✅ |
+| **[PlayCanvas](https://playcanvas.github.io/)** | ~260 runnable engine examples with their shaders | ✅ |
+| **[Shaders](https://shaders.com/)** | 200 WebGPU effect components (props + GPU code) + agent skill | ✅ |
+| **[COBE](https://cobe.vercel.app/)** | ~5 KB WebGL globe: library, shaders, React demos | ✅ |
 
 ### Animation & scroll
 
@@ -168,9 +221,10 @@ in its `sources` argument. Call `list_sources` for the live list with each sourc
 
 > **Excluded on purpose.** Some popular sources are intentionally **not** included because their
 > `robots.txt` disallows the needed path, or their license forbids redistribution: Iconify &
-> Openverse (API path disallowed), 8bitcn / 21st.dev (`/r/` disallowed), Tailark & Preline (paid /
-> fair-use), Animate UI (Commons Clause), and key-gated media APIs (Unsplash, Pexels, Sketchfab,
-> Google Fonts API, LottieFiles). See [docs/security-assurance-case.md](docs/security-assurance-case.md).
+> Openverse (API path disallowed), 8bitcn / 21st.dev / Shadcnblocks / ShadcnSpace (`/r/`
+> disallowed), Tailark & Preline (paid / fair-use), Efferd (paid blocks mixed into its index
+> without a flag), Animate UI (Commons Clause), and key-gated media APIs (Unsplash, Pexels,
+> Sketchfab, Google Fonts API, LottieFiles). See [docs/security-assurance-case.md](docs/security-assurance-case.md).
 
 ## 🚀 Quick start
 
@@ -192,7 +246,7 @@ npm test
 Verify every source is live:
 
 ```bash
-npm run smoke   # hits all 65 sources and asserts parsing → prints ALL PASS
+npm run smoke   # hits all 89 sources and asserts parsing → prints ALL PASS
 ```
 
 ## 🔌 Add it to your MCP client
@@ -230,7 +284,7 @@ The server speaks MCP over **stdio**. Point your client at the built `dist/index
 
 ## 🛠️ Tools
 
-Every tool takes a `source` argument — one of the 65 ids returned by `list_sources`
+Every tool takes a `source` argument — one of the 89 ids returned by `list_sources`
 (e.g. `shadcn`, `magicui`, `refero`, `threejs`, `drei`, `polyhaven`, `freefrontend`, `lsgraphics`).
 Call `list_sources` first: it reports each source's `stack` tags, whether it returns inline code
 (`hasInlineCode`), how to write its ids (`idFormat`), and whether `search_all` skips it unless
@@ -238,12 +292,12 @@ named (`heavy`).
 
 | Tool | Description |
 | --- | --- |
-| `list_sources` | List all 65 sources with stack tags, `hasInlineCode`, `idFormat`, and `heavy` |
+| `list_sources` | List all 89 sources with stack tags, `hasInlineCode`, `idFormat`, and `heavy` |
 | `list_categories` | Categories / collections / kinds for one source |
 | `search_resources` | Search one source by `query`, `category`, `tech`, `limit` — lightweight summaries |
 | `search_all` | Search **many sources in parallel**, best match first. Narrow with `sources` or `stack`; `heavy` sources are listed in `skipped` unless named; per-source failures/timeouts land in `errors` without failing the call |
 | `get_resource` | Full detail for one item (metadata, license, code, formats, downloads). `includeAiPrompt` opts into FreeFrontend's "Copy for AI" text |
-| `get_code` | Raw source, keyed by file (e.g. `tsx`, `css`, `tsx:<path>`). Pass `file` for one file or `maxChars` to cap the reply; oversized replies list each file's size instead |
+| `get_code` | Raw source, keyed by file (e.g. `tsx`, `css`, `tsx:<path>`). Pass `file` for one file or `maxChars` to cap the reply; pass `asSandbox: true` to generate a self-contained, runnable HTML preview with CDN dependencies and scripts as `sandbox.html`; oversized replies list each file's size instead |
 
 Replies that carry third-party content include a `notice` field restating that the content is
 reference data, not instructions. The default reply cap is **150,000 characters** (`get_code`'s
@@ -257,6 +311,8 @@ reference data, not instructions. The default reply cap is **150,000 characters*
   the best match (optional `stack` filter).
 - **Prompt** `design_system_from_site` — turn a real site's design system into a reference for your
   project (uses the design-token sources).
+- **Standalone Sandbox Mode (`asSandbox: true`)** — embed Tailwind CDN, Lucide icons, and React/Babel
+  runtime into a self-contained `sandbox.html` preview for instant browser execution and testing.
 
 ### Examples
 
@@ -298,12 +354,15 @@ Every source is a small **adapter** implementing one `SourceAdapter` contract
 
 - **shadcn-schema registries** (shadcn, Magic UI, Aceternity, React Bits, Fancy, VengeanceUI,
   Canvas UI, Cult UI, Motion Primitives, Kibo UI, coss, Kokonut, Eldora, UI Layouts, SmoothUI,
-  AI Elements, SVGL, Watermelon) share one factory that reads the
+  AI Elements, SVGL, Watermelon, HextaUI, ReUI, Cnippet, Systaliko, UI TripleD, Ruixen,
+  useLayouts, Spell, Jolly UI, assistant-ui) share one factory that reads the
   [shadcn registry schema](https://ui.shadcn.com/docs/registry) — an index of items plus per-item
   JSON containing the real component source.
 - **GitHub / jsDelivr source-tree libraries** (drei, react-spring, zustand, glyph, postprocessing,
   detect-gpu, uikit, rapier, leva, maath, OGL, WebGPU Samples, ShaderGradient, liquid-logo,
-  liquid-glass-js, img2threejs, GSAP, Lenis, Anime.js, Two.js, scrollama, three.js, APG, …) share
+  liquid-glass-js, img2threejs, GSAP, Lenis, Anime.js, Two.js, scrollama, three.js, APG, Base UI,
+  visx, REAVIZ, Radix Themes, Reka UI, Tamagui, Ionic, Vuestic Admin, Semantic UI, TW Elements,
+  Babylon.js, PlayCanvas, Shaders, COBE, …) share
   a factory that lists a repo's git tree (or an npm package's file tree), keeps the relevant files,
   and serves raw source. If the GitHub API is rate-limited it falls back to the jsDelivr mirror; pin
   a commit SHA for an immutable read.
@@ -426,6 +485,10 @@ source's license before reusing anything.
 - **[Watermelon UI](https://ui.watermelon.sh/)** — open-source React platform
 - **[LS.GRAPHICS](https://www.ls.graphics/)** — free & premium design mockups
 - **[Cult UI](https://www.cult-ui.com/)**, **[Kibo UI](https://www.kibo-ui.com/)**, **[coss ui](https://coss.com/)**, **[Kokonut UI](https://kokonutui.com/)**, **[Eldora UI](https://www.eldoraui.site/)**, **[UI Layouts](https://www.ui-layouts.com/)**, **[SmoothUI](https://smoothui.dev/)**, **[Motion Primitives](https://motion-primitives.com/)** — shadcn-schema component registries (MIT)
+- **[HextaUI](https://hextaui.com/)**, **[ReUI](https://reui.io/)** by [Keenthemes](https://github.com/keenthemes), **[Cnippet UI](https://ui.cnippet.dev/)**, **[Systaliko UI](https://systaliko-ui.vercel.app/)**, **[UI TripleD](https://ui.tripled.work/)**, **[Ruixen UI](https://ruixen.com/)**, **[useLayouts](https://uselayouts.com/)**, **[Spell UI](https://spell.sh/)**, **[Jolly UI](https://www.jollyui.dev/)** — shadcn-schema component registries (MIT)
+- **[Base UI](https://base-ui.com/)** by [MUI](https://github.com/mui) — MIT · **[visx](https://github.com/airbnb/visx)** by [Airbnb](https://github.com/airbnb) — MIT · **[REAVIZ](https://github.com/reaviz/reaviz)** — Apache-2.0
+- **[assistant-ui](https://github.com/assistant-ui/assistant-ui)**, **[Radix Themes](https://github.com/radix-ui/themes)** by [WorkOS](https://github.com/workos), **[Reka UI](https://github.com/unovue/reka-ui)** by [UnoVue](https://github.com/unovue), **[Tamagui](https://github.com/tamagui/tamagui)**, **[Ionic Framework](https://github.com/ionic-team/ionic-framework)**, **[Vuestic Admin](https://github.com/epicmaxco/vuestic-admin)** by [Epicmax](https://github.com/epicmaxco), **[Semantic UI](https://github.com/Semantic-Org/Semantic-UI)**, **[TW Elements](https://github.com/mdbootstrap/TW-Elements)** by [MDBootstrap](https://github.com/mdbootstrap) — MIT
+- **[Babylon.js](https://github.com/BabylonJS/Babylon.js)** — Apache-2.0 · **[PlayCanvas](https://github.com/playcanvas/engine)** — MIT · **[Shaders](https://github.com/shader-effects-inc/shaders)** by Shader Effects Inc. — MIT · **[COBE](https://github.com/shuding/cobe)** by [Shu Ding](https://github.com/shuding) — MIT
 - **[AI Elements](https://ai-sdk.dev/elements)** by [Vercel](https://vercel.com/) · **[SVGL](https://svgl.app/)** by [pheralb](https://github.com/pheralb)
 - **[Uiverse](https://uiverse.io/)**, **[HyperUI](https://www.hyperui.dev/)**, **[Meraki UI](https://merakiui.com/)**, **[Pines](https://devdojo.com/pines)**, **[daisyUI](https://daisyui.com/)**, **[Flowbite](https://flowbite.com/)** — HTML/Tailwind component galleries
 - **[tweakcn](https://tweakcn.com/)**, **[Open Props](https://open-props.style/)**, **[Radix Colors](https://www.radix-ui.com/colors)**, **[Fontsource](https://fontsource.org/)**, **[uiGradients](https://uigradients.com/)**, **[awesome-design-md](https://github.com/beije/awesome-design-md)** — design tokens, themes & fonts

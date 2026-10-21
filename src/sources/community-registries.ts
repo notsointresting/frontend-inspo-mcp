@@ -180,6 +180,153 @@ export const communityRegistries: SourceAdapter[] = [
       "MIT for the SVGL code; each logo is a trademark of its owner, so follow the brand's usage guidelines",
     stack: ["react", "icons"],
   }),
+  // No docsUrl from here on: these registries' page paths were not checked item by item.
+  makeRegistryAdapter({
+    id: "hextaui",
+    label: "HextaUI",
+    description:
+      "HextaUI: shadcn-style React + Tailwind components on Base UI, hooks and AI chat blocks, plus hundreds of examples covering loading, error and empty states. Returns real source from hextaui.com.",
+    homepage: "https://hextaui.com/",
+    base: "https://hextaui.com/r",
+    indexUrl: "https://hextaui.com/r/registry.json",
+    indexItems: codeItems,
+    itemUrl: itemJson,
+    license: "MIT",
+    stack: ["react", "tailwind"],
+  }),
+  makeRegistryAdapter({
+    id: "reui",
+    label: "ReUI",
+    description:
+      "ReUI by Keenthemes: React + Tailwind components for shadcn projects (data grid, event calendar, gantt, kanban, filters, stepper, tree) plus 1,000+ usage patterns, Base UI build. Returns real source from reui.io; its paid blocks are left out.",
+    homepage: "https://reui.io/",
+    base: "https://reui.io/r/styles/base-nova",
+    indexUrl: "https://reui.io/r/styles/base-nova/registry.json",
+    // ponytail: the index also lists ReUI's paid blocks (they answer 401) and flags none of
+    // them, but the free usage patterns are all named "c-<component>-<n>", so any other block
+    // is dropped by name. Upgrade path: filter on a paid flag if the index gains one.
+    indexItems: (payload) =>
+      codeItems(payload).filter((it) => it.type !== "registry:block" || it.name.startsWith("c-")),
+    itemUrl: itemJson,
+    license: "MIT",
+    stack: ["react", "tailwind"],
+    idFormat:
+      'registry item name from search_resources, e.g. "alert" (a component) or "c-alert-1" (a usage pattern)',
+    // The index is about 2.4 MB, so search_all skips it unless named.
+    heavy: true,
+  }),
+  makeRegistryAdapter({
+    id: "cnippetui",
+    label: "Cnippet UI",
+    description:
+      "Cnippet UI: accessible React + Tailwind components on Base UI, about a thousand ready-made variants of them and motion text effects (reveal, scramble, typewriter). Returns real source from ui.cnippet.dev.",
+    homepage: "https://ui.cnippet.dev/",
+    base: "https://ui.cnippet.dev/r",
+    // robots.txt allows every agent except named AI-training crawlers (ai-train=no); this
+    // server reads items on request and trains nothing.
+    indexUrl: "https://ui.cnippet.dev/r/registry.json",
+    indexItems: codeItems,
+    itemUrl: itemJson,
+    license: "MIT",
+    stack: ["react", "tailwind", "animation"],
+  }),
+  makeRegistryAdapter({
+    id: "systalikoui",
+    label: "Systaliko UI",
+    description:
+      "Systaliko UI: animated React + Tailwind components and blocks on Motion: text staggers, scroll animations, card stacks, cursors, carousels, pricing. Returns real source from systaliko-ui.vercel.app.",
+    homepage: "https://systaliko-ui.vercel.app/",
+    base: "https://systaliko-ui.vercel.app/r",
+    indexUrl: "https://systaliko-ui.vercel.app/r/registry.json",
+    indexItems: codeItems,
+    itemUrl: itemJson,
+    license: "MIT",
+    stack: ["react", "tailwind", "animation"],
+  }),
+  makeRegistryAdapter({
+    id: "uitripled",
+    label: "UI TripleD",
+    description:
+      "UI TripleD: animated React + Tailwind components, blocks and full pages on Framer Motion, in a shadcn/ui (Radix) build and many also in a Base UI build. Returns real source from ui.tripled.work.",
+    homepage: "https://ui.tripled.work/",
+    base: "https://ui.tripled.work/r",
+    indexUrl: "https://ui.tripled.work/r/registry.json",
+    indexItems: codeItems,
+    itemUrl: itemJson,
+    license: "MIT",
+    stack: ["react", "tailwind", "animation"],
+    idFormat:
+      'registry item name from search_resources, e.g. "ai-glow-input-shadcnui"; the suffix names the build (-shadcnui for Radix, -baseui for Base UI)',
+  }),
+  makeRegistryAdapter({
+    id: "ruixenui",
+    label: "Ruixen UI",
+    description:
+      "Ruixen UI: animated React + Tailwind components for marketing pages (scroll effects, carousels, docks, text effects, layouts), each with a demo. Returns real source from ruixen.com.",
+    homepage: "https://ruixen.com/",
+    base: "https://ruixen.com/r",
+    // The index sits at the site root, the items under /r/.
+    indexUrl: "https://ruixen.com/registry.json",
+    indexItems: codeItems,
+    itemUrl: itemJson,
+    license: "MIT",
+    stack: ["react", "tailwind", "animation"],
+  }),
+  makeRegistryAdapter({
+    id: "uselayouts",
+    label: "useLayouts",
+    description:
+      "useLayouts: animated React + Tailwind components and micro-interactions on Motion (3D book, gooey navbar, wheel carousel, polaroid stack, multi-step form). Returns real source from uselayouts.com.",
+    homepage: "https://uselayouts.com/",
+    base: "https://uselayouts.com/r",
+    indexUrl: "https://uselayouts.com/r/registry.json",
+    indexItems: codeItems,
+    itemUrl: itemJson,
+    license: "MIT",
+    stack: ["react", "tailwind", "animation"],
+  }),
+  makeRegistryAdapter({
+    id: "spellui",
+    label: "Spell UI",
+    description:
+      "Spell UI: polished React + Tailwind components for landing pages: blur reveal, text marquee, tilt card, light rays, animated gradient, logo carousel. Returns real source from spell.sh.",
+    homepage: "https://spell.sh/",
+    base: "https://spell.sh/r",
+    indexUrl: "https://spell.sh/r/registry.json",
+    indexItems: codeItems,
+    itemUrl: itemJson,
+    license: "MIT",
+    stack: ["react", "tailwind", "animation"],
+  }),
+  makeRegistryAdapter({
+    id: "jollyui",
+    label: "Jolly UI",
+    description:
+      "Jolly UI: shadcn/ui-style React + Tailwind components built on React Aria Components, with full keyboard, focus and screen-reader support. Returns real source from www.jollyui.dev.",
+    homepage: "https://www.jollyui.dev/",
+    base: "https://www.jollyui.dev/r/styles/default",
+    // A legacy (shadcn v2) registry: a bare-array index, then one folder per style.
+    indexUrl: "https://www.jollyui.dev/r/index.json",
+    indexItems: codeItems,
+    itemUrl: itemJson,
+    license: "MIT",
+    stack: ["react", "tailwind", "accessibility"],
+  }),
+  makeRegistryAdapter({
+    id: "assistantui",
+    label: "assistant-ui",
+    description:
+      "assistant-ui: React + Tailwind components for AI chat on Radix (thread, composer, attachments, markdown, reasoning, tool calls, thread list), 100+ agent UI elements (tool timelines, citations, approval cards, code diffs, voice) and AI SDK backend routes. Returns real source from r.assistant-ui.com.",
+    homepage: "https://www.assistant-ui.com/",
+    base: "https://r.assistant-ui.com",
+    indexUrl: "https://r.assistant-ui.com/registry.json",
+    indexItems: codeItems,
+    itemUrl: itemJson,
+    license: "MIT",
+    stack: ["react", "tailwind"],
+    idFormat:
+      'registry item name from search_resources, e.g. "thread" (the chat UI) or "elements-tool-call" (an agent UI element)',
+  }),
   tweakcn,
   shadcndirectory,
 ];

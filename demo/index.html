@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>frontend-inspo-mcp — Real Frontend Code for AI Coding Agents</title>
-<meta name="description" content="A local MCP server giving AI coding agents access to 65 public sources of production React, Tailwind CSS, 3D shaders, design tokens, and W3C accessibility patterns.">
+<meta name="description" content="A local MCP server giving AI coding agents access to 89 public sources of production React, Tailwind CSS, 3D shaders, design tokens, and W3C accessibility patterns.">
 <meta property="og:title" content="frontend-inspo-mcp — The Ultimate UI Superpower for AI Agents">
-<meta property="og:description" content="Stop letting your AI agent hallucinate UI code. 65 public sources of real React, Tailwind, Framer Motion, 3D, and ARIA components directly on your machine.">
+<meta property="og:description" content="Stop letting your AI agent hallucinate UI code. 89 public sources of real React, Tailwind, Framer Motion, 3D, and ARIA components directly on your machine.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://notsointresting.github.io/frontend-inspo-mcp/">
 <meta name="theme-color" content="#003362">
@@ -786,6 +786,281 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 }
 
 /* ==========================================================================
+   Live Component Sandbox View Styles
+   ========================================================================== */
+.sandbox-toolbar {
+  background: var(--bg-darkest);
+  border: 1px solid var(--border-subtle);
+  border-bottom: none;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  padding: .75rem 1rem;
+}
+.sandbox-viewport-frame {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: 1.5rem;
+  transition: all .25s ease;
+  min-height: 18rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-inline: auto;
+  width: 100%;
+}
+.sandbox-viewport-frame.light {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+.sandbox-viewport-frame.tablet {
+  max-width: 680px !important;
+  box-shadow: 0 0 0 1px var(--cyan-bright), 0 20px 40px rgb(0 0 0 / 0.5);
+}
+.sandbox-viewport-frame.mobile {
+  max-width: 360px !important;
+  box-shadow: 0 0 0 1px var(--emerald-bright), 0 20px 40px rgb(0 0 0 / 0.5);
+}
+
+/* Deal Card inside Sandbox */
+.deal-sandbox-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1.25rem;
+  max-width: 22rem;
+  width: 100%;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+  transition: transform .2s ease, border-color .2s;
+}
+.sandbox-viewport-frame.light .deal-sandbox-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+.deal-sandbox-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--emulsion);
+}
+.deal-sandbox-card .deal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  background: rgba(52, 211, 153, 0.15);
+  border: 1px solid #34d399;
+  color: #34d399;
+  font: 700 .7rem var(--mono);
+  padding: .2rem .5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+.deal-sandbox-card .deal-title {
+  font: 700 1.15rem var(--body);
+  margin: .5rem 0 .25rem;
+  color: #ffffff;
+}
+.sandbox-viewport-frame.light .deal-sandbox-card .deal-title {
+  color: #0f172a;
+}
+.deal-sandbox-card .deal-desc {
+  font-size: .85rem;
+  opacity: .8;
+  margin: 0 0 .75rem;
+}
+.deal-sandbox-card .deal-price {
+  font: 800 1.4rem var(--mono);
+  color: var(--emulsion);
+}
+.sandbox-viewport-frame.light .deal-sandbox-card .deal-price {
+  color: #0284c7;
+}
+.deal-sandbox-card .deal-orig-price {
+  font-size: .85rem;
+  text-decoration: line-through;
+  opacity: .5;
+  margin-left: .5rem;
+}
+.deal-sandbox-card .deal-btn {
+  background: var(--emulsion);
+  color: var(--bg-deep);
+  font: 700 .875rem var(--body);
+  border: none;
+  padding: .6rem 1rem;
+  border-radius: 6px;
+  width: 100%;
+  margin-top: .85rem;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+}
+.deal-sandbox-card .deal-btn:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+.sandbox-viewport-frame.light .deal-sandbox-card .deal-btn {
+  background: #0284c7;
+  color: #ffffff;
+}
+.sandbox-viewport-frame.light .deal-sandbox-card .deal-btn:hover {
+  background: #0369a1;
+}
+
+/* assistant-ui Thread in Sandbox */
+.assistant-sandbox-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1.25rem;
+  max-width: 26rem;
+  width: 100%;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+}
+.sandbox-viewport-frame.light .assistant-sandbox-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+.assistant-chat-history {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  margin-bottom: 1rem;
+  max-height: 12rem;
+  overflow-y: auto;
+}
+.assistant-bubble {
+  padding: .6rem .85rem;
+  border-radius: 8px;
+  font-size: .85rem;
+  line-height: 1.45;
+}
+.assistant-bubble.agent {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #c2e6ff;
+  align-self: flex-start;
+}
+.sandbox-viewport-frame.light .assistant-bubble.agent {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+  color: #0369a1;
+}
+.assistant-bubble.user {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  align-self: flex-end;
+}
+.sandbox-viewport-frame.light .assistant-bubble.user {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+.assistant-composer-row {
+  display: flex;
+  gap: .5rem;
+}
+.assistant-input-field {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: .45rem .75rem;
+  font-size: .8125rem;
+  color: #ffffff;
+  font-family: inherit;
+}
+.sandbox-viewport-frame.light .assistant-input-field {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+.assistant-send-btn {
+  background: var(--emulsion);
+  color: var(--bg-deep);
+  border: none;
+  border-radius: 6px;
+  padding: .45rem .85rem;
+  font: 700 .8125rem var(--body);
+  cursor: pointer;
+  transition: all .15s;
+}
+.assistant-send-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* visx Chart in Sandbox */
+.visx-sandbox-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1.25rem;
+  max-width: 25rem;
+  width: 100%;
+  backdrop-filter: blur(12px);
+}
+.sandbox-viewport-frame.light .visx-sandbox-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+.visx-bars-grid {
+  display: flex;
+  align-items: flex-end;
+  gap: .65rem;
+  height: 7rem;
+  padding-top: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+.sandbox-viewport-frame.light .visx-bars-grid {
+  border-bottom-color: #e2e8f0;
+}
+.visx-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  cursor: pointer;
+}
+.visx-bar-fill {
+  width: 100%;
+  background: linear-gradient(to top, #0284c7, #38bdf8);
+  border-radius: 4px 4px 0 0;
+  transition: all .2s ease;
+}
+.visx-bar-col:hover .visx-bar-fill {
+  background: linear-gradient(to top, #38bdf8, #e6df5b);
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+  transform: scaleY(1.05);
+}
+.visx-bar-label {
+  font: 600 .65rem var(--mono);
+  margin-top: .4rem;
+  opacity: .7;
+}
+
+/* COBE Globe Wrap in Sandbox */
+.cobe-sandbox-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+  text-align: center;
+}
+.cobe-globe-canvas {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  box-shadow: 0 0 35px rgba(56, 189, 248, 0.35);
+  background: radial-gradient(circle at 35% 35%, #0369a1, #001f3f 75%);
+}
+
+/* ==========================================================================
    Section: Live Component Showcase (Printed Sheet On Paper)
    ========================================================================== */
 .sheet {
@@ -1006,6 +1281,231 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
   box-shadow: 0 4px 6px rgb(0 0 0 / 0.3);
 }
 
+/* Live Agent Specimen (assistant-ui) */
+.live-agent-specimen {
+  background: var(--bg-deep);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  color: #c2e6ff;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+.agent-specimen-bubble {
+  display: flex;
+  gap: .6rem;
+  align-items: flex-start;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 8px;
+  padding: .65rem .85rem;
+  font-size: .85rem;
+  line-height: 1.45;
+}
+.agent-specimen-bubble .bot-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+.agent-prompt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+.prompt-chip {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: .25rem .65rem;
+  font: 600 .75rem var(--mono);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.prompt-chip:hover {
+  background: var(--emulsion);
+  color: var(--bg-deep);
+  border-color: var(--emulsion);
+}
+.agent-reply-output {
+  background: rgb(0 0 0 / 0.35);
+  border: 1px dashed var(--border-line);
+  border-radius: 6px;
+  padding: .6rem .8rem;
+  font: .75rem/1.5 var(--mono);
+  color: var(--cyan-bright);
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/* visx Chart Specimen */
+.visx-specimen-chart {
+  background: var(--bg-deep);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.visx-svg {
+  width: 100%;
+  height: 110px;
+  overflow: visible;
+}
+.visx-point {
+  cursor: pointer;
+  transition: r .2s, fill .2s;
+}
+.visx-point:hover {
+  r: 7;
+  fill: #38bdf8;
+}
+.visx-chart-tooltip {
+  font: 700 .75rem var(--mono);
+  color: var(--emulsion);
+  background: rgba(0, 0, 0, 0.3);
+  padding: .3rem .6rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* Mini Data Table (ReUI) */
+.mini-grid-container {
+  border: 1px solid rgb(13 40 71 / 0.2);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: .5rem;
+}
+.mini-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .8125rem;
+  text-align: left;
+}
+.mini-data-table th {
+  background: #f1f5f9;
+  padding: .45rem .75rem;
+  font: 700 .75rem var(--mono);
+  color: var(--blue-7);
+  border-bottom: 1px solid #cbd5e1;
+}
+.mini-data-table td {
+  padding: .45rem .75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+.badge-mini {
+  display: inline-block;
+  padding: .15rem .45rem;
+  border-radius: 9999px;
+  font: 700 .65rem var(--mono);
+  text-transform: uppercase;
+}
+.badge-mini.success { background: #dcfce7; color: #166534; }
+.badge-mini.info { background: #e0f2fe; color: #0369a1; }
+
+/* Accessible Switch & Slider (Jolly / Base UI) */
+.jolly-primitives-box {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: .5rem;
+}
+.accessible-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+.accessible-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.accessible-switch .slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #cbd5e1;
+  transition: .3s;
+  border-radius: 24px;
+}
+.accessible-switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.accessible-switch input:checked + .slider {
+  background-color: #0284c7;
+}
+.accessible-switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+.accessible-range {
+  width: 100%;
+  accent-color: #0284c7;
+  cursor: pointer;
+  margin-top: .4rem;
+}
+
+/* Atlas Card Actions */
+.card-actions {
+  display: flex;
+  gap: .4rem;
+  margin-top: .5rem;
+  padding-top: .5rem;
+  border-top: 1px solid rgb(13 40 71 / 0.08);
+}
+.btn-card-copy, .btn-card-test {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: .35rem .5rem;
+  font: 600 .75rem var(--mono);
+  color: var(--blue-7);
+  cursor: pointer;
+  transition: all .15s;
+  text-align: center;
+}
+.btn-card-copy:hover {
+  background: var(--bg-deep);
+  color: var(--emulsion);
+  border-color: var(--bg-deep);
+}
+.btn-card-test:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+/* Palette Swatches in Sandbox */
+.sandbox-palette-row {
+  display: flex;
+  gap: .35rem;
+  align-items: center;
+}
+.accent-chip {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s;
+}
+.accent-chip:hover, .accent-chip.active {
+  transform: scale(1.2);
+  border-color: #ffffff;
+}
+
 /* ==========================================================================
    Section: The 6 MCP Tools Explorer (W3C APG Tabs)
    ========================================================================== */
@@ -1221,7 +1721,7 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 600; letter-spacing: 
 }
 
 /* ==========================================================================
-   Section: The 65-Source Atlas & Search Engine
+   Section: The 89-Source Atlas & Search Engine
    ========================================================================== */
 .atlas {
   background: var(--paper);
@@ -1772,7 +2272,7 @@ footer .provenance-box strong {
       <a href="#studio">Component Studio</a>
       <a href="#showcase">Living Artifacts</a>
       <a href="#tools">MCP Tools</a>
-      <a href="#atlas">65 Sources</a>
+      <a href="#atlas" id="nav-atlas-link">89 Sources</a>
       <a href="#setup" class="nav-cta">Install in 10s</a>
       <a href="https://github.com/notsointresting/frontend-inspo-mcp" target="_blank" rel="noopener noreferrer" class="nav-gh-star" id="nav-star-btn" aria-label="Star frontend-inspo-mcp on GitHub">
         <span class="star-icon">⭐</span>
@@ -1792,12 +2292,13 @@ footer .provenance-box strong {
         <p class="eyebrow">Local MCP Superpower for AI Coding Agents</p>
         <h1 id="hero-title"><span>Real frontend code.</span> <span class="highlight">Zero hallucinations.</span></h1>
         <p class="lede">
-          Connect your coding agent to <strong>65 public sources</strong> of production React, Tailwind CSS, Framer Motion,
+          Connect your coding agent to <strong>89 public sources</strong> of production React, Tailwind CSS, Framer Motion,
           Three.js shaders, design tokens, and ARIA patterns. Runs locally over stdio, fetches exact source files, and arms your AI with real design systems.
         </p>
         <div class="hero-badges">
-          <span><strong id="hero-source-count">65</strong> Curated Sources</span>
+          <span><strong id="hero-source-count">89</strong> Curated Sources</span>
           <span><strong>6</strong> Read-Only Tools</span>
+          <span><strong>⚡ Live Sandbox</strong> Previews</span>
           <span><strong>100%</strong> Local Stdio</span>
           <span><strong>O(1)</strong> Direct Code Retrieval</span>
         </div>
@@ -1811,7 +2312,7 @@ footer .provenance-box strong {
           </button>
         </div>
         <div class="quick-key-tip">
-          <span>Press <span class="key-cap">/</span> to search sources · Press <span class="key-cap">1-4</span> to switch sandbox</span>
+          <span>Press <span class="key-cap">/</span> to search sources · Press <span class="key-cap">1-5</span> for studio & live runner</span>
         </div>
       </div>
 
@@ -1946,6 +2447,7 @@ footer .provenance-box strong {
         <button class="studio-tab-btn" data-studio="shadcn" type="button">🔘 shadcn/ui Button Suite</button>
         <button class="studio-tab-btn" data-studio="tilt" type="button">🧊 Aceternity 3D Tilt Card</button>
         <button class="studio-tab-btn" data-studio="palette" type="button">🎨 Radix Color Workbench</button>
+        <button class="studio-tab-btn" data-studio="sandbox" type="button">⚡ Live Sandbox Runner</button>
       </div>
 
       <div class="studio-content-grid">
@@ -1961,9 +2463,29 @@ footer .provenance-box strong {
                   <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · marquee.tsx</span>
                 </div>
                 <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">assistant-ui</span>
+                  <span class="item-title" style="font-size: .875rem;">AI Chat Composer</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · thread.tsx</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">visx</span>
+                  <span class="item-title" style="font-size: .875rem;">Airbnb D3 Charts</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · bar-stack.tsx</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">COBE</span>
+                  <span class="item-title" style="font-size: .875rem;">5kB WebGL Globe</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · globe.js</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
                   <span class="source-badge" style="font-size: 1rem;">Aceternity</span>
                   <span class="item-title" style="font-size: .875rem;">3D Tilt Pin Card</span>
                   <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · 3d-card.tsx</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Base UI</span>
+                  <span class="item-title" style="font-size: .875rem;">Unstyled Primitives</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · dialog.tsx</span>
                 </div>
                 <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
                   <span class="source-badge" style="font-size: 1rem;">shadcn/ui</span>
@@ -1992,9 +2514,29 @@ footer .provenance-box strong {
                   <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · marquee.tsx</span>
                 </div>
                 <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">assistant-ui</span>
+                  <span class="item-title" style="font-size: .875rem;">AI Chat Composer</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · thread.tsx</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">visx</span>
+                  <span class="item-title" style="font-size: .875rem;">Airbnb D3 Charts</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · bar-stack.tsx</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">COBE</span>
+                  <span class="item-title" style="font-size: .875rem;">5kB WebGL Globe</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · globe.js</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
                   <span class="source-badge" style="font-size: 1rem;">Aceternity</span>
                   <span class="item-title" style="font-size: .875rem;">3D Tilt Pin Card</span>
                   <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · 3d-card.tsx</span>
+                </div>
+                <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
+                  <span class="source-badge" style="font-size: 1rem;">Base UI</span>
+                  <span class="item-title" style="font-size: .875rem;">Unstyled Primitives</span>
+                  <span style="font: .7rem var(--mono); color: var(--cyan-bright);">get_code · dialog.tsx</span>
                 </div>
                 <div class="marquee-card" style="flex: 0 0 16rem; min-height: 5.5rem;">
                   <span class="source-badge" style="font-size: 1rem;">shadcn/ui</span>
@@ -2065,6 +2607,61 @@ footer .provenance-box strong {
               <span id="studio-palette-status" style="color: var(--emulsion);">Click any swatch to inspect & copy CSS var</span>
             </div>
           </div>
+
+          <!-- Sandbox Runner Stage View -->
+          <div id="stage-sandbox-view" style="display: none; width: 100%;">
+            <div class="sandbox-toolbar" style="display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: .5rem;">
+                <span style="display: inline-flex; align-items: center; gap: .35rem; font: 700 .7rem var(--mono); color: var(--emerald-bright); background: rgba(52, 211, 153, 0.15); border: 1px solid var(--emerald-bright); padding: .2rem .5rem; border-radius: 9999px;">
+                  <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--emerald-bright); animation: pulse 2s infinite;"></span>
+                  LIVE SANDBOX
+                </span>
+                <select id="sandbox-component-select" style="background: var(--blue-3); color: var(--text-pale); border: 1px solid var(--border-line); border-radius: 4px; padding: .3rem .6rem; font-size: .8rem; font-family: var(--mono); cursor: pointer;">
+                  <option value="card">🛒 KartupAI / Deal Card (React + Tailwind)</option>
+                  <option value="badge">✨ Verified Live Badge (shadcn / Radix)</option>
+                  <option value="assistant">💬 AI Chat Composer (assistant-ui)</option>
+                  <option value="visx">📊 Metric Sparkline Chart (visx / D3)</option>
+                  <option value="cobe">🌐 5kB WebGL Globe (COBE)</option>
+                  <option value="grid">📑 Enterprise Data Grid (ReUI / Hexta)</option>
+                  <option value="switch">🎛️ Accessible Switch & Slider (Base UI / Jolly)</option>
+                  <option value="shader">🌌 Aurora Plasma Shader (Shaders / Babylon)</option>
+                  <option value="wave">🌊 Calm Tiger Wave Button (Uiverse CSS)</option>
+                </select>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: .6rem;">
+                <div class="sandbox-palette-row" title="Accent Theme Preset">
+                  <span class="accent-chip" data-accent="#38bdf8" style="background:#38bdf8;" title="Cyan Accent"></span>
+                  <span class="accent-chip" data-accent="#34d399" style="background:#34d399;" title="Emerald Accent"></span>
+                  <span class="accent-chip active" data-accent="#e6df5b" style="background:#e6df5b;" title="Electric Gold Accent"></span>
+                  <span class="accent-chip" data-accent="#a78bfa" style="background:#a78bfa;" title="Violet Accent"></span>
+                  <span class="accent-chip" data-accent="#fb7185" style="background:#fb7185;" title="Rose Accent"></span>
+                </div>
+                <div style="display: flex; align-items: center; gap: .35rem;">
+                  <button class="btn-copy-code viewport-btn active" data-viewport="desktop" type="button" title="Desktop Frame (100%)">💻 Desktop</button>
+                  <button class="btn-copy-code viewport-btn" data-viewport="tablet" type="button" title="Tablet Frame (680px)">📱 Tablet</button>
+                  <button class="btn-copy-code viewport-btn" data-viewport="mobile" type="button" title="Mobile Frame (360px)">📲 Mobile</button>
+                  <button class="btn-copy-code" id="sandbox-theme-toggle" type="button" style="margin-left: .25rem;" title="Toggle Light/Dark Preview Canvas">🌓 Canvas Theme</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="sandbox-viewport-frame" id="sandbox-viewport-frame">
+              <div id="sandbox-rendered-target" style="width: 100%; display: flex; justify-content: center;">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+
+            <div class="studio-controls-bar" style="margin-top: .75rem; justify-content: space-between;">
+              <span id="sandbox-status-text" style="font-size: .8rem; color: var(--cyan-bright); font-family: var(--mono);">
+                get_code({ source: "shadcn", id: "card", asSandbox: true })
+              </span>
+              <div style="display: flex; gap: .5rem;">
+                <button class="btn-copy-code" id="sandbox-interact-btn" type="button">⚡ Test Interactive Click</button>
+                <button class="btn-copy-code" id="download-sandbox-html-btn" type="button">💾 Download HTML</button>
+                <button class="btn-copy-code" id="copy-sandbox-html-btn" type="button">Copy Sandbox HTML</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Code Inspection Side -->
@@ -2093,7 +2690,7 @@ footer .provenance-box strong {
         <figure class="frame wide specimen-type">
           <div class="body">
             <p class="label">Typography · Fontsource get_resource</p>
-            <div class="big" aria-hidden="true">Aa 65</div>
+            <div class="big" aria-hidden="true">Aa 89</div>
             <p class="body-sample">Big Shoulders Display + Atkinson Hyperlegible Next.</p>
             <p class="mono-sample">Atkinson Hyperlegible Mono handles formatted tool calls.</p>
           </div>
@@ -2197,6 +2794,126 @@ footer .provenance-box strong {
           </div>
           <figcaption><b>get_code</b> refero · tokens.json → Reference Only</figcaption>
         </figure>
+
+        <!-- Frame 8: assistant-ui AI Chat -->
+        <figure class="frame wide">
+          <div class="body">
+            <p class="label">AI Agent UI · assistant-ui get_code</p>
+            <div class="live-agent-specimen" id="artifact-assistant-chat">
+              <div class="agent-specimen-bubble">
+                <span class="bot-icon">🤖</span>
+                <div class="bubble-txt">
+                  <strong>assistant-ui / Thread:</strong> Connected to 89 registries. Ready to generate and verify your design system tokens.
+                </div>
+              </div>
+              <div class="agent-prompt-chips">
+                <button type="button" class="prompt-chip" data-prompt="Animated Modal">⚡ Animated Modal</button>
+                <button type="button" class="prompt-chip" data-prompt="Color Tokens">🎨 Color Tokens</button>
+                <button type="button" class="prompt-chip" data-prompt="3D WebGL Shader">🧊 3D Shader</button>
+              </div>
+              <div class="agent-reply-output" id="artifact-agent-output">
+                Click any prompt chip above to simulate live MCP agent code generation.
+              </div>
+            </div>
+            <p style="font-size: .875rem; margin-top: .75rem;">
+              Composable chat threads, message streaming, composer bars, and agent tool-call cards.
+            </p>
+          </div>
+          <figcaption><b>get_code</b> assistantui · thread.tsx → MIT</figcaption>
+        </figure>
+
+        <!-- Frame 9: Airbnb visx Data Visualization -->
+        <figure class="frame wide">
+          <div class="body">
+            <p class="label">Data Visualization · visx get_code</p>
+            <div class="visx-specimen-chart" id="artifact-visx-chart">
+              <svg viewBox="0 0 400 100" class="visx-svg" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="visx-specimen-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0284c7" stop-opacity="0.5"/>
+                    <stop offset="100%" stop-color="#0284c7" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,80 Q50,25 100,50 T200,35 T300,65 T400,15 L400,100 L0,100 Z" fill="url(#visx-specimen-grad)"/>
+                <path d="M0,80 Q50,25 100,50 T200,35 T300,65 T400,15" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+                <circle cx="100" cy="50" r="4.5" fill="#e6df5b" class="visx-point" data-val="Component Libs: +142% adoption"/>
+                <circle cx="200" cy="35" r="4.5" fill="#e6df5b" class="visx-point" data-val="3D & Shaders: +98% adoption"/>
+                <circle cx="300" cy="65" r="4.5" fill="#e6df5b" class="visx-point" data-val="ARIA Primitives: +85% adoption"/>
+                <circle cx="400" cy="15" r="4.5" fill="#e6df5b" class="visx-point" data-val="AI Element UIs: +210% adoption"/>
+              </svg>
+              <div class="visx-chart-tooltip" id="artifact-visx-tip">Hover data points to inspect metric growth</div>
+            </div>
+            <p style="font-size: .875rem; margin-top: .75rem;">
+              Airbnb's low-level React + D3 primitives for custom charting, SVG math, and accessible data graphics.
+            </p>
+          </div>
+          <figcaption><b>get_code</b> visx · area-closed.tsx → MIT</figcaption>
+        </figure>
+
+        <!-- Frame 10: Shaders & 3D Engine -->
+        <figure class="frame">
+          <div class="body">
+            <p class="label">3D & Shaders · shaders get_code</p>
+            <div style="height: 105px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, #0369a1, #001226); border-radius: 6px; overflow: hidden; position: relative;">
+              <canvas id="artifact-shader-canvas" width="220" height="105" style="width:100%; height:100%; cursor:crosshair;"></canvas>
+              <div style="position: absolute; bottom: 6px; font: 600 .65rem var(--mono); color: #bae6fd; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px;">Move cursor for GLSL ripple</div>
+            </div>
+            <p style="font-size: .875rem; margin-top: .5rem;">
+              Shader Effects Inc GLSL fragments & Babylon.js procedural textures.
+            </p>
+          </div>
+          <figcaption><b>get_code</b> shaders · aurora-vertex.glsl → MIT</figcaption>
+        </figure>
+
+        <!-- Frame 11: ReUI Enterprise Data Grid -->
+        <figure class="frame">
+          <div class="body">
+            <p class="label">Data Grid · ReUI get_code</p>
+            <div class="mini-grid-container" id="artifact-reui-grid">
+              <table class="mini-data-table">
+                <thead>
+                  <tr><th>Component</th><th>Stack</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><b>KanbanBoard</b></td><td>React</td><td><span class="badge-mini success">Ready</span></td></tr>
+                  <tr><td><b>DataGrid</b></td><td>Tailwind</td><td><span class="badge-mini success">Verified</span></td></tr>
+                  <tr><td><b>FilterDrawer</b></td><td>Base UI</td><td><span class="badge-mini info">Active</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p style="font-size: .875rem; margin-top: .5rem;">
+              Enterprise data tables, filters, calendars, and gantt patterns with 1,000+ variants.
+            </p>
+          </div>
+          <figcaption><b>get_code</b> reui · data-table.tsx → MIT</figcaption>
+        </figure>
+
+        <!-- Frame 12: React Aria & Jolly UI Primitives -->
+        <figure class="frame">
+          <div class="body">
+            <p class="label">Accessible Primitives · Jolly UI get_code</p>
+            <div class="jolly-primitives-box">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:.85rem; font-weight:600;">Autonomous Loop</span>
+                <label class="accessible-switch">
+                  <input type="checkbox" checked id="artifact-jolly-switch">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div style="margin-top: .75rem;">
+                <div style="display:flex; justify-content:space-between; font-size:.75rem; font-family:var(--mono);">
+                  <span>Context Budget</span>
+                  <span id="artifact-slider-val">80%</span>
+                </div>
+                <input type="range" min="10" max="100" value="80" class="accessible-range" id="artifact-jolly-range">
+              </div>
+            </div>
+            <p style="font-size: .875rem; margin-top: .5rem;">
+              Unstyled, fully accessible UI on React Aria and Base UI primitives with WCAG AA compliance.
+            </p>
+          </div>
+          <figcaption><b>get_code</b> jolly · switch.tsx → MIT</figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -2215,6 +2932,10 @@ footer .provenance-box strong {
 
     <div class="mcp-capabilities-grid">
       <div class="cap-card">
+        <code>asSandbox: true (get_code)</code>
+        <p>Generates self-contained, standalone runnable HTML previews with Tailwind CSS, Lucide icons, and Babel React runtime directly inside returned code.</p>
+      </div>
+      <div class="cap-card">
         <code>inspo://{source}/{+id}</code>
         <p>Direct Resource URI Template. Read any component as metadata and code parts natively inside Claude Desktop or Cursor.</p>
       </div>
@@ -2229,11 +2950,11 @@ footer .provenance-box strong {
     </div>
   </section>
 
-  <!-- Section: The 65-Source Atlas & Search Engine -->
+  <!-- Section: The 89-Source Atlas & Search Engine -->
   <section class="atlas" id="atlas" aria-labelledby="atlas-title">
     <div class="wrap">
       <p class="eyebrow" style="color: var(--blue-7);">Comprehensive Catalog</p>
-      <h2 id="atlas-title"><span id="atlas-count">65</span> Curated Sources</h2>
+      <h2 id="atlas-title"><span id="atlas-count">89</span> Curated Sources</h2>
       <p class="intro">
         Every source is public, respects <code>robots.txt</code>, and is tagged with its stack. Sources marked <em>heavy</em> require explicit naming in <code>search_all</code> to preserve agent response latency.
       </p>
@@ -2251,7 +2972,7 @@ footer .provenance-box strong {
             </svg>
             <input id="q" type="search" placeholder="Search by name, ID, or keyword (e.g. shader, tailwind, 3d, buttons)..." autocomplete="off">
           </div>
-          <span class="shown-count" id="shown" aria-live="polite">Showing 65 of 65 sources</span>
+          <span class="shown-count" id="shown" aria-live="polite">Showing 89 of 89 sources</span>
         </div>
       </div>
 
@@ -2311,7 +3032,7 @@ footer .provenance-box strong {
         <p class="eyebrow">Support Open Source</p>
         <h2 id="three-stars-title">Star frontend-inspo-mcp on GitHub</h2>
         <p class="star-desc">
-          Grounding AI agents in 65 real UI libraries, design tokens, and WebGL graphics.
+          Grounding AI agents in 89 real UI libraries, design tokens, and WebGL graphics.
           Help spread the word and empower developers to vibe-code without hallucinated CSS!
         </p>
 
@@ -2321,7 +3042,7 @@ footer .provenance-box strong {
             <span class="metric-lbl">Stargazers</span>
           </div>
           <div class="star-metric">
-            <span class="metric-val">65</span>
+            <span class="metric-val" id="star-metric-sources">89</span>
             <span class="metric-lbl">UI Sources</span>
           </div>
           <div class="star-metric">
@@ -2356,7 +3077,7 @@ footer .provenance-box strong {
   <a href="#studio">Studio</a>
   <a href="#showcase">Artifacts</a>
   <a href="#tools">Tools</a>
-  <a href="#atlas">Atlas (65)</a>
+  <a href="#atlas" id="dock-atlas-link">Atlas (89)</a>
   <a href="#setup" style="background: var(--emulsion); color: var(--bg-deep);">Install</a>
   <a href="#three-stars" style="border: 1px solid var(--emulsion); color: var(--emulsion); display: inline-flex; align-items: center; gap: .25rem;">⭐ Star</a>
 </div>
@@ -2373,6 +3094,12 @@ footer .provenance-box strong {
     <li>“Royal Blue” palette by Indrashish Ghosh on <a href="https://uigradients.com/" target="_blank" rel="noopener noreferrer">uiGradients</a> (MIT)</li>
     <li>shadcn/ui registry by <a href="https://ui.shadcn.com/" target="_blank" rel="noopener noreferrer">shadcn</a> (MIT)</li>
     <li>Design tokens extracted via <a href="https://styles.refero.design/" target="_blank" rel="noopener noreferrer">Refero</a> (Reference Only)</li>
+    <li><a href="https://visx.airbnb.tech/" target="_blank" rel="noopener noreferrer">visx</a> React + D3 primitives by Airbnb (MIT)</li>
+    <li><a href="https://github.com/assistant-ui/assistant-ui" target="_blank" rel="noopener noreferrer">assistant-ui</a> AI agent thread components (MIT)</li>
+    <li><a href="https://base-ui.com/" target="_blank" rel="noopener noreferrer">Base UI</a> unstyled accessible primitives by MUI (MIT)</li>
+    <li><a href="https://reui.io/" target="_blank" rel="noopener noreferrer">ReUI</a> data grids and patterns by Keenthemes (MIT)</li>
+    <li><a href="https://github.com/shuding/cobe" target="_blank" rel="noopener noreferrer">COBE</a> 5kB WebGL globe by Shu Ding (MIT)</li>
+    <li><a href="https://github.com/shader-effects-inc/shaders" target="_blank" rel="noopener noreferrer">Shaders</a> GLSL effects by Shader Effects Inc (MIT)</li>
   </ul>
   <div class="provenance-box">
     <span id="provenance">Captured live from frontend-inspo-mcp by demo/capture.mjs.</span>
@@ -2492,6 +3219,9 @@ class TabsAutomatic {
   const sources = calls.sources?.reply || [];
   $("hero-source-count").textContent = String(sources.length);
   $("atlas-count").textContent = String(sources.length);
+  if ($("nav-atlas-link")) $("nav-atlas-link").textContent = `${sources.length} Sources`;
+  if ($("dock-atlas-link")) $("dock-atlas-link").textContent = `Atlas (${sources.length})`;
+  if ($("star-metric-sources")) $("star-metric-sources").textContent = String(sources.length);
   $("provenance").textContent =
     `Every tool reply on this page was captured from frontend-inspo-mcp v${version} on ${capturedAt} by demo/capture.mjs.`;
 
@@ -2585,6 +3315,7 @@ class TabsAutomatic {
   const stageShadcn = $("stage-shadcn-view");
   const stageTilt = $("stage-tilt-view");
   const stagePalette = $("stage-palette-view");
+  const stageSandbox = $("stage-sandbox-view");
   const studioPre = $("studio-code-pre");
   const studioFilename = $("studio-code-filename");
 
@@ -2604,6 +3335,36 @@ class TabsAutomatic {
     palette: {
       name: "blue-dark.css (Radix Colors)",
       code: calls.palette?.reply?.code?.css || "// Radix blue-dark colors..."
+    },
+    sandbox: {
+      name: "sandbox.html (Runnable HTML + Tailwind CDN)",
+      code: `<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KartupAI Live Deal Card — frontend-inspo-mcp Sandbox</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+</head>
+<body class="bg-[#003362] text-[#c2e6ff] p-6 flex items-center justify-center min-h-screen">
+  <!-- Generated via get_code({ source: "shadcn", id: "card", asSandbox: true }) -->
+  <div class="max-w-sm w-full bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur shadow-2xl">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="text-xs uppercase font-mono text-emerald-400 font-bold tracking-wider">Live Deal · Save 38%</span>
+    </div>
+    <h3 class="text-lg font-bold text-white">Apple MacBook Pro M4 (16GB, 512GB)</h3>
+    <p class="text-xs text-white/70 mt-1">AI Verified lowest price across 14 merchants in past 30 days.</p>
+    <div class="mt-3 flex items-baseline gap-2">
+      <span class="text-2xl font-mono font-bold text-[#e6df5b]">₹1,49,900</span>
+      <span class="text-xs line-through text-white/40">₹1,69,900</span>
+    </div>
+    <button class="w-full mt-4 py-2.5 bg-[#e6df5b] hover:bg-white text-[#003362] font-bold rounded-lg transition text-sm flex items-center justify-center gap-2">
+      🛒 Grab Deal Now
+    </button>
+  </div>
+</body>
+</html>`
     }
   };
 
@@ -2615,6 +3376,7 @@ class TabsAutomatic {
     stageShadcn.style.display = id === "shadcn" ? "block" : "none";
     stageTilt.style.display = id === "tilt" ? "block" : "none";
     stagePalette.style.display = id === "palette" ? "block" : "none";
+    if (stageSandbox) stageSandbox.style.display = id === "sandbox" ? "block" : "none";
 
     const spec = studioSources[id];
     if (spec) {
@@ -2627,6 +3389,732 @@ class TabsAutomatic {
     btn.addEventListener("click", () => switchStudioTab(btn.dataset.studio));
   });
   switchStudioTab("marquee");
+
+  // Live Sandbox Runner Controls & Rendering
+  const sandboxFrame = $("sandbox-viewport-frame");
+  const sandboxTarget = $("sandbox-rendered-target");
+  const sandboxSelect = $("sandbox-component-select");
+  const viewportBtns = document.querySelectorAll(".viewport-btn");
+  const sandboxThemeBtn = $("sandbox-theme-toggle");
+  const sandboxStatusText = $("sandbox-status-text");
+  const sandboxInteractBtn = $("sandbox-interact-btn");
+  const copySandboxHtmlBtn = $("copy-sandbox-html-btn");
+
+  let sandboxTheme = "dark";
+  let cartCount = 0;
+  let badgeStateIndex = 0;
+  let cobeAnimId = null;
+
+  const sandboxHtmlTemplates = {
+    card: `<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KartupAI Live Deal Card — frontend-inspo-mcp Sandbox</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+</head>
+<body class="bg-[#003362] text-[#c2e6ff] p-6 flex items-center justify-center min-h-screen">
+  <!-- Generated via get_code({ source: "shadcn", id: "card", asSandbox: true }) -->
+  <div class="max-w-sm w-full bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur shadow-2xl">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="text-xs uppercase font-mono text-emerald-400 font-bold tracking-wider">Live Deal · Save 38%</span>
+    </div>
+    <h3 class="text-lg font-bold text-white">Apple MacBook Pro M4 (16GB, 512GB)</h3>
+    <p class="text-xs text-white/70 mt-1">AI Verified lowest price across 14 merchants in past 30 days.</p>
+    <div class="mt-3 flex items-baseline gap-2">
+      <span class="text-2xl font-mono font-bold text-[#e6df5b]">₹1,49,900</span>
+      <span class="text-xs line-through text-white/40">₹1,69,900</span>
+    </div>
+    <button class="w-full mt-4 py-2.5 bg-[#e6df5b] hover:bg-white text-[#003362] font-bold rounded-lg transition text-sm flex items-center justify-center gap-2">
+      🛒 Grab Deal Now
+    </button>
+  </div>
+</body>
+</html>`,
+    badge: `<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>shadcn/ui Verified Live Badge — frontend-inspo-mcp Sandbox</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+</head>
+<body class="bg-[#001f3f] text-white p-6 flex items-center justify-center min-h-screen">
+  <!-- Generated via get_code({ source: "shadcn", id: "badge", asSandbox: true }) -->
+  <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full font-mono text-sm bg-emerald-500/20 border border-emerald-400 text-emerald-300 shadow-lg">
+    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+    ✓ Verified In Stock
+  </div>
+</body>
+</html>`,
+    wave: `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calm Tiger Wave Button — frontend-inspo-mcp Sandbox</title>
+  <style>
+    body { background: #002244; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: system-ui, sans-serif; }
+    .btn-wave { position: relative; padding: 14px 28px; border: 1.5px solid #e6df5b; border-radius: 8px; color: #fff; background: transparent; font-weight: bold; cursor: pointer; overflow: hidden; }
+    .btn-wave::after { content: ""; position: absolute; inset: 0; background: #e6df5b; transform: scaleX(0); transform-origin: right; transition: transform 0.3s ease; z-index: -1; }
+    .btn-wave:hover { color: #002244; }
+    .btn-wave:hover::after { transform: scaleX(1); transform-origin: left; }
+  </style>
+</head>
+<body>
+  <!-- Generated via get_code({ source: "uiverse", id: "calm-tiger-42", asSandbox: true }) -->
+  <button class="btn-wave">🌊 Calm Tiger Wave</button>
+</body>
+</html>`,
+    assistant: `<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>assistant-ui AI Chat Composer — frontend-inspo-mcp Sandbox</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+</head>
+<body class="bg-[#002244] text-[#c2e6ff] p-6 flex items-center justify-center min-h-screen">
+  <!-- Generated via get_code({ source: "assistantui", id: "thread", asSandbox: true }) -->
+  <div class="max-w-md w-full bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur shadow-2xl">
+    <div class="flex items-center gap-2 mb-3 pb-2 border-b border-white/10">
+      <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+      <span class="font-mono text-xs uppercase font-bold text-cyan-300">assistant-ui Thread</span>
+    </div>
+    <div class="space-y-2 mb-4 text-xs">
+      <div class="bg-cyan-900/30 border border-cyan-500/30 p-2.5 rounded-lg text-cyan-200">
+        🤖 Agent ready: Discovered 89 frontend sources. How can I assist your UI build?
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <input type="text" placeholder="Ask agent to compose a component..." class="flex-1 bg-black/30 border border-white/20 rounded px-3 py-1.5 text-xs text-white">
+      <button class="px-3 py-1.5 bg-[#e6df5b] text-[#002244] font-bold rounded text-xs">Send</button>
+    </div>
+  </div>
+</body>
+</html>`,
+    visx: `<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Airbnb visx Component Adoption Chart — frontend-inspo-mcp Sandbox</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+</head>
+<body class="bg-[#002244] text-[#c2e6ff] p-6 flex items-center justify-center min-h-screen">
+  <!-- Generated via get_code({ source: "visx", id: "bar-stack", asSandbox: true }) -->
+  <div class="max-w-md w-full bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur">
+    <div class="flex justify-between items-center mb-3">
+      <span class="font-bold text-sm text-white">Airbnb visx / D3 Metric</span>
+      <span class="text-xs font-mono text-emerald-400">+38.4% WoW</span>
+    </div>
+    <div class="flex items-end gap-3 h-28 pt-4 border-b border-white/10">
+      <div class="flex-1 bg-sky-500 rounded-t h-[60%]"></div>
+      <div class="flex-1 bg-sky-500 rounded-t h-[85%]"></div>
+      <div class="flex-1 bg-sky-400 rounded-t h-[45%]"></div>
+      <div class="flex-1 bg-sky-400 rounded-t h-[95%]"></div>
+      <div class="flex-1 bg-amber-300 rounded-t h-[75%]"></div>
+    </div>
+  </div>
+</body>
+</html>`,
+    cobe: `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>COBE 5kB WebGL Globe — frontend-inspo-mcp Sandbox</title>
+  <style>
+    body { background: #001f3f; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; color: #fff; font-family: sans-serif; }
+    canvas { width: 220px; height: 220px; border-radius: 50%; box-shadow: 0 0 35px rgba(56, 189, 248, 0.4); }
+  </style>
+</head>
+<body>
+  <!-- Generated via get_code({ source: "cobe", id: "globe", asSandbox: true }) -->
+  <canvas id="cobe-globe"></canvas>
+</body>
+</html>`,
+    grid: `<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReUI Enterprise Data Grid — frontend-inspo-mcp Sandbox</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+</head>
+<body class="bg-[#002244] text-[#c2e6ff] p-6 flex items-center justify-center min-h-screen">
+  <!-- Generated via get_code({ source: "reui", id: "data-grid", asSandbox: true }) -->
+  <div class="max-w-xl w-full bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur shadow-2xl">
+    <div class="flex justify-between items-center mb-4 pb-2 border-b border-white/10">
+      <h3 class="font-bold text-white text-sm">ReUI Enterprise Data Grid</h3>
+      <span class="text-xs px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-mono">1,000+ Patterns</span>
+    </div>
+    <table class="w-full text-left text-xs">
+      <thead class="text-white/60 uppercase font-mono border-b border-white/10">
+        <tr><th class="pb-2">Component</th><th class="pb-2">Stack</th><th class="pb-2">Status</th></tr>
+      </thead>
+      <tbody class="divide-y divide-white/5">
+        <tr><td class="py-2.5 font-bold text-white">KanbanBoard</td><td>React / Motion</td><td><span class="text-emerald-400">Ready</span></td></tr>
+        <tr><td class="py-2.5 font-bold text-white">FilterDrawer</td><td>Tailwind v4</td><td><span class="text-sky-400">Verified</span></td></tr>
+        <tr><td class="py-2.5 font-bold text-white">CalendarGantt</td><td>Base UI</td><td><span class="text-amber-400">Stable</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>`,
+    switch: `<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Base UI / React Aria Accessible Controls — frontend-inspo-mcp Sandbox</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+</head>
+<body class="bg-[#001f3f] text-white p-6 flex items-center justify-center min-h-screen">
+  <!-- Generated via get_code({ source: "base-ui", id: "switch", asSandbox: true }) -->
+  <div class="max-w-sm w-full bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur shadow-xl space-y-4">
+    <div class="flex justify-between items-center">
+      <span class="text-sm font-semibold">Autonomous Copilot</span>
+      <button class="w-12 h-6 bg-sky-500 rounded-full p-1 transition"><div class="w-4 h-4 bg-white rounded-full translate-x-6"></div></button>
+    </div>
+    <div>
+      <div class="flex justify-between text-xs font-mono text-white/70 mb-1">
+        <span>Context Window Cap</span><span>80%</span>
+      </div>
+      <input type="range" class="w-full accent-sky-400" min="10" max="100" value="80">
+    </div>
+  </div>
+</body>
+</html>`,
+    shader: `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurora GLSL Shader — frontend-inspo-mcp Sandbox</title>
+  <style>
+    body { background: #000c18; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    canvas { width: 320px; height: 200px; border-radius: 12px; box-shadow: 0 0 40px rgba(56, 189, 248, 0.4); }
+  </style>
+</head>
+<body>
+  <!-- Generated via get_code({ source: "shaders", id: "aurora", asSandbox: true }) -->
+  <canvas id="aurora-canvas"></canvas>
+</body>
+</html>`
+  };
+
+  const renderSandbox = () => {
+    if (!sandboxTarget) return;
+    if (cobeAnimId) {
+      cancelAnimationFrame(cobeAnimId);
+      cobeAnimId = null;
+    }
+    const comp = sandboxSelect?.value || "card";
+    sandboxTarget.innerHTML = "";
+
+    // Update active code in studioSources
+    if (sandboxHtmlTemplates[comp]) {
+      studioSources.sandbox.code = sandboxHtmlTemplates[comp];
+      studioSources.sandbox.name = `sandbox-${comp}.html (Runnable HTML + CDN)`;
+      if (stageSandbox && stageSandbox.style.display !== "none") {
+        studioFilename.textContent = studioSources.sandbox.name;
+        studioPre.textContent = studioSources.sandbox.code;
+      }
+    }
+
+    if (comp === "card") {
+      if (sandboxStatusText) sandboxStatusText.textContent = 'get_code({ source: "shadcn", id: "card", asSandbox: true })';
+      const card = el("div", "deal-sandbox-card");
+      card.innerHTML = `
+        <div class="deal-badge">
+          <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#34d399;"></span>
+          LIVE DEAL · SAVE 38%
+        </div>
+        <div class="deal-title">Apple MacBook Pro M4 (16GB, 512GB)</div>
+        <div class="deal-desc">Verified lowest price across 14 merchants in past 30 days. Includes 1-yr AppleCare+.</div>
+        <div style="display:flex;align-items:baseline;gap:.5rem;">
+          <span class="deal-price">₹1,49,900</span>
+          <span class="deal-orig-price">₹1,69,900</span>
+        </div>
+        <button class="deal-btn" id="sandbox-card-cta" type="button">
+          🛒 ${cartCount > 0 ? `Added to Bag (${cartCount})` : "Grab Deal · Save ₹20,000"}
+        </button>
+      `;
+      sandboxTarget.appendChild(card);
+      card.querySelector("#sandbox-card-cta")?.addEventListener("click", () => {
+        cartCount++;
+        renderSandbox();
+        showToast(`Item added to KartupAI Bag! (Count: ${cartCount})`);
+      });
+    } else if (comp === "badge") {
+      if (sandboxStatusText) sandboxStatusText.textContent = 'get_code({ source: "shadcn", id: "badge", asSandbox: true })';
+      const states = [
+        { label: "✓ Verified In Stock", bg: "rgba(52, 211, 153, 0.2)", border: "#34d399", color: "#34d399" },
+        { label: "⚡ Price Drop Alert", bg: "rgba(251, 191, 36, 0.2)", border: "#fbbf24", color: "#fbbf24" },
+        { label: "🔥 Limited Offer", bg: "rgba(248, 113, 113, 0.2)", border: "#f87171", color: "#f87171" },
+        { label: "✨ AI Curated Pick", bg: "rgba(56, 189, 248, 0.2)", border: "#38bdf8", color: "#38bdf8" }
+      ];
+      const cur = states[badgeStateIndex % states.length];
+      const wrap = el("div");
+      wrap.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:1rem;cursor:pointer;";
+      wrap.innerHTML = `
+        <div style="display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1.25rem;border-radius:9999px;font:700 .9rem var(--mono);background:${cur.bg};border:1.5px solid ${cur.border};color:${cur.color};box-shadow:0 8px 24px rgba(0,0,0,0.3);transition:all .2s;">
+          ${cur.label}
+        </div>
+        <span style="font-size:.75rem;opacity:.7;font-family:var(--mono);">(Click badge to cycle variant)</span>
+      `;
+      wrap.addEventListener("click", () => {
+        badgeStateIndex++;
+        renderSandbox();
+        showToast("Cycled shadcn badge variant");
+      });
+      sandboxTarget.appendChild(wrap);
+    } else if (comp === "wave") {
+      if (sandboxStatusText) sandboxStatusText.textContent = 'get_code({ source: "uiverse", id: "calm-tiger-42", asSandbox: true })';
+      const wrap = el("div");
+      wrap.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:1rem;";
+      wrap.innerHTML = `
+        <button class="btn-uiverse" id="sandbox-wave-btn" type="button" style="color:var(--text-pale);border-color:var(--emulsion);padding:.9rem 2rem;font-size:1rem;">
+          🌊 Calm Tiger Wave
+        </button>
+        <span style="font-size:.75rem;opacity:.7;font-family:var(--mono);">Adapted from Uiverse calm-tiger-42.html</span>
+      `;
+      wrap.querySelector("#sandbox-wave-btn")?.addEventListener("click", () => {
+        showToast("Triggered Calm Tiger wave wave-form!");
+      });
+      sandboxTarget.appendChild(wrap);
+    } else if (comp === "assistant") {
+      if (sandboxStatusText) sandboxStatusText.textContent = 'get_code({ source: "assistantui", id: "thread", asSandbox: true })';
+      const card = el("div", "assistant-sandbox-card");
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(255,255,255,0.1);">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--cyan-bright);"></span>
+          <span style="font:700 .75rem var(--mono);color:var(--cyan-bright);text-transform:uppercase;">assistant-ui · Live Agent Thread</span>
+        </div>
+        <div class="assistant-chat-history" id="assistant-chat-history">
+          <div class="assistant-bubble agent">
+            🤖 <strong>Agent:</strong> I have access to 89 frontend sources. Ready to pull code, tokens, or shaders!
+          </div>
+        </div>
+        <div class="assistant-composer-row">
+          <input type="text" class="assistant-input-field" id="assistant-user-input" placeholder="Ask agent to pull a component..." value="Find me an accessible data table">
+          <button class="assistant-send-btn" id="assistant-send-btn" type="button">Send ↵</button>
+        </div>
+      `;
+      sandboxTarget.appendChild(card);
+
+      const sendMsg = () => {
+        const inp = card.querySelector("#assistant-user-input");
+        const hist = card.querySelector("#assistant-chat-history");
+        const val = inp?.value.trim();
+        if (!val || !hist) return;
+        const uBubble = el("div", "assistant-bubble user", `👤 ${val}`);
+        hist.appendChild(uBubble);
+        inp.value = "";
+        setTimeout(() => {
+          const aBubble = el("div", "assistant-bubble agent");
+          aBubble.innerHTML = `🤖 <strong>Agent:</strong> Calling <code>search_all({ query: "${val.slice(0, 20)}" })</code> across 89 sources... Retrieved ReUI data grid & Base UI table!`;
+          hist.appendChild(aBubble);
+          hist.scrollTop = hist.scrollHeight;
+          showToast("AI Agent response generated from live registry!");
+        }, 400);
+      };
+
+      card.querySelector("#assistant-send-btn")?.addEventListener("click", sendMsg);
+      card.querySelector("#assistant-user-input")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") sendMsg();
+      });
+    } else if (comp === "visx") {
+      if (sandboxStatusText) sandboxStatusText.textContent = 'get_code({ source: "visx", id: "bar-stack", asSandbox: true })';
+      const card = el("div", "visx-sandbox-card");
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+          <div>
+            <div style="font:700 .9rem var(--body);color:var(--text-pale);">Airbnb visx · UI Adoption</div>
+            <div style="font-size:.75rem;opacity:.7;font-family:var(--mono);">D3-backed reactive bar stack</div>
+          </div>
+          <span style="font:700 .75rem var(--mono);color:var(--emerald-bright);background:rgba(52,211,153,0.15);padding:.2rem .5rem;border-radius:4px;">+38.4% WoW</span>
+        </div>
+        <div class="visx-bars-grid" id="visx-bars-grid">
+          <div class="visx-bar-col" data-cat="React" data-val="92%"><div class="visx-bar-fill" style="height:92%;"></div><span class="visx-bar-label">React</span></div>
+          <div class="visx-bar-col" data-cat="Tailwind" data-val="88%"><div class="visx-bar-fill" style="height:88%;"></div><span class="visx-bar-label">TW v4</span></div>
+          <div class="visx-bar-col" data-cat="Three.js" data-val="64%"><div class="visx-bar-fill" style="height:64%;"></div><span class="visx-bar-label">WebGL</span></div>
+          <div class="visx-bar-col" data-cat="ARIA" data-val="95%"><div class="visx-bar-fill" style="height:95%;"></div><span class="visx-bar-label">ARIA</span></div>
+          <div class="visx-bar-col" data-cat="Tokens" data-val="78%"><div class="visx-bar-fill" style="height:78%;"></div><span class="visx-bar-label">Tokens</span></div>
+        </div>
+        <div style="margin-top:.75rem;font-size:.75rem;text-align:center;font-family:var(--mono);color:var(--cyan-bright);" id="visx-tip-text">
+          Hover or click bars to inspect adoption metrics
+        </div>
+      `;
+      sandboxTarget.appendChild(card);
+      card.querySelectorAll(".visx-bar-col").forEach((col) => {
+        col.addEventListener("click", () => {
+          const cat = col.dataset.cat;
+          const val = col.dataset.val;
+          const tip = card.querySelector("#visx-tip-text");
+          if (tip) tip.textContent = `Selected: ${cat} — ${val} verified agent compliance`;
+          showToast(`visx metric: ${cat} (${val})`);
+        });
+      });
+    } else if (comp === "cobe") {
+      if (sandboxStatusText) sandboxStatusText.textContent = 'get_code({ source: "cobe", id: "globe", asSandbox: true })';
+      const wrap = el("div", "cobe-sandbox-wrap");
+      wrap.innerHTML = `
+        <canvas class="cobe-globe-canvas" id="cobe-interactive-canvas" width="180" height="180"></canvas>
+        <div>
+          <div style="font:700 .9rem var(--body);color:var(--text-pale);">COBE 5kB WebGL Globe</div>
+          <div style="font-size:.75rem;opacity:.7;font-family:var(--mono);">Interactive Canvas / Drag to rotate</div>
+        </div>
+      `;
+      sandboxTarget.appendChild(wrap);
+
+      const canvas = wrap.querySelector("#cobe-interactive-canvas");
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        let angle = 0;
+        let isDragging = false;
+        let lastX = 0;
+
+        const drawGlobe = () => {
+          if (!ctx) return;
+          const w = canvas.width;
+          const h = canvas.height;
+          ctx.clearRect(0, 0, w, h);
+
+          const r = w * 0.44;
+          const cx = w / 2;
+          const cy = h / 2;
+
+          // Globe outline & gradient
+          const grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
+          grad.addColorStop(0, "#0ea5e9");
+          grad.addColorStop(0.7, "#0369a1");
+          grad.addColorStop(1, "#001f3f");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Latitude and Longitude rings
+          ctx.strokeStyle = "rgba(186, 230, 253, 0.35)";
+          ctx.lineWidth = 1;
+
+          // Latitudes
+          for (let lat = -60; lat <= 60; lat += 30) {
+            const yOffset = Math.sin((lat * Math.PI) / 180) * r;
+            const rLat = Math.cos((lat * Math.PI) / 180) * r;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + yOffset, rLat, rLat * 0.25, 0, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          // Longitudes rotating
+          for (let lon = 0; lon < 360; lon += 45) {
+            const rad = ((lon + angle) * Math.PI) / 180;
+            const xOffset = Math.sin(rad) * r;
+            ctx.beginPath();
+            ctx.ellipse(cx + xOffset * 0.25, cy, Math.abs(Math.sin(rad)) * r, r, 0, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          // Glowing active markers
+          const markerLon = (angle * 2) % 360;
+          const mx = cx + Math.cos((markerLon * Math.PI) / 180) * (r * 0.7);
+          const my = cy + Math.sin((markerLon * Math.PI) / 180) * (r * 0.35);
+          ctx.fillStyle = "#e6df5b";
+          ctx.shadowColor = "#e6df5b";
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.arc(mx, my, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          if (!isDragging) angle = (angle + 0.8) % 360;
+          cobeAnimId = requestAnimationFrame(drawGlobe);
+        };
+
+        drawGlobe();
+
+        canvas.addEventListener("mousedown", (e) => {
+          isDragging = true;
+          lastX = e.clientX;
+        });
+        window.addEventListener("mouseup", () => { isDragging = false; });
+        window.addEventListener("mousemove", (e) => {
+          if (!isDragging) return;
+          const dx = e.clientX - lastX;
+          angle = (angle + dx * 0.5) % 360;
+          lastX = e.clientX;
+        });
+      }
+    } else if (comp === "grid") {
+      if (sandboxStatusText) sandboxStatusText.textContent = 'get_code({ source: "reui", id: "data-grid", asSandbox: true })';
+      const wrap = el("div");
+      wrap.style.cssText = "width: 100%; max-width: 34rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 1.25rem; backdrop-filter: blur(12px);";
+      wrap.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+          <div>
+            <div style="font: 700 1rem var(--body); color: #fff;">ReUI Enterprise Data Grid</div>
+            <div style="font-size: .75rem; opacity: .7; font-family: var(--mono);">1,000+ Production Usage Patterns</div>
+          </div>
+          <input type="search" id="sandbox-grid-search" placeholder="Filter rows..." style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: .3rem .6rem; font-size: .75rem; color: #fff; width: 8.5rem;">
+        </div>
+        <table style="width: 100%; border-collapse: collapse; font-size: .8rem; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); font-family: var(--mono); text-transform: uppercase;">
+              <th style="padding: .4rem .6rem;">Item</th>
+              <th style="padding: .4rem .6rem;">Category</th>
+              <th style="padding: .4rem .6rem;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="sandbox-grid-tbody">
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;"><td style="padding: .5rem .6rem; font-weight: 600;">KanbanBoard</td><td style="padding: .5rem .6rem;">Motion</td><td style="padding: .5rem .6rem;"><span style="background:rgba(52,211,153,0.2); color:#34d399; padding:.15rem .45rem; border-radius:9999px; font-size:.7rem; font-family:var(--mono);">Ready</span></td></tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;"><td style="padding: .5rem .6rem; font-weight: 600;">FilterDrawer</td><td style="padding: .5rem .6rem;">Tailwind</td><td style="padding: .5rem .6rem;"><span style="background:rgba(56,189,248,0.2); color:#38bdf8; padding:.15rem .45rem; border-radius:9999px; font-size:.7rem; font-family:var(--mono);">Verified</span></td></tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;"><td style="padding: .5rem .6rem; font-weight: 600;">CalendarGantt</td><td style="padding: .5rem .6rem;">Base UI</td><td style="padding: .5rem .6rem;"><span style="background:rgba(251,191,36,0.2); color:#fbbf24; padding:.15rem .45rem; border-radius:9999px; font-size:.7rem; font-family:var(--mono);">Stable</span></td></tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;"><td style="padding: .5rem .6rem; font-weight: 600;">AuditLogTimeline</td><td style="padding: .5rem .6rem;">Radix</td><td style="padding: .5rem .6rem;"><span style="background:rgba(167,139,250,0.2); color:#a78bfa; padding:.15rem .45rem; border-radius:9999px; font-size:.7rem; font-family:var(--mono);">Pattern</span></td></tr>
+          </tbody>
+        </table>
+      `;
+      sandboxTarget.appendChild(wrap);
+      const searchInp = wrap.querySelector("#sandbox-grid-search");
+      searchInp?.addEventListener("input", (e) => {
+        const q = e.target.value.toLowerCase();
+        wrap.querySelectorAll("#sandbox-grid-tbody tr").forEach((row) => {
+          row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+      });
+      wrap.querySelectorAll("#sandbox-grid-tbody tr").forEach((row) => {
+        row.addEventListener("click", () => {
+          showToast(`Selected component: ${row.firstElementChild?.textContent}`);
+        });
+      });
+    } else if (comp === "switch") {
+      if (sandboxStatusText) sandboxStatusText.textContent = 'get_code({ source: "base-ui", id: "switch", asSandbox: true })';
+      const wrap = el("div");
+      wrap.style.cssText = "width: 100%; max-width: 24rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(12px); display: flex; flex-direction: column; gap: 1.25rem;";
+      wrap.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font: 700 .95rem var(--body); color: #fff;">Base UI / Jolly Switch</div>
+            <div style="font-size: .75rem; opacity: .7; font-family: var(--mono);">Accessible React Aria Toggle</div>
+          </div>
+          <button id="sandbox-toggle-btn" role="switch" aria-checked="true" type="button" style="width: 48px; height: 26px; border-radius: 9999px; background: var(--cyan-bright); border: none; padding: 3px; cursor: pointer; transition: background .2s; display: flex; align-items: center;">
+            <span id="sandbox-toggle-knob" style="width: 20px; height: 20px; border-radius: 50%; background: #002244; transform: translateX(22px); transition: transform .2s; display: block;"></span>
+          </button>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size: .75rem; font-family: var(--mono); color: var(--text-pale); margin-bottom: .4rem;">
+            <span>Throttle Latency Cap</span>
+            <span id="sandbox-slider-num" style="color: var(--emulsion); font-weight: 700;">400 ms</span>
+          </div>
+          <input type="range" id="sandbox-slider-input" min="50" max="1000" value="400" step="50" style="width: 100%; accent-color: var(--emulsion); cursor: pointer;">
+        </div>
+      `;
+      sandboxTarget.appendChild(wrap);
+      let isSwitchOn = true;
+      const toggleBtn = wrap.querySelector("#sandbox-toggle-btn");
+      const toggleKnob = wrap.querySelector("#sandbox-toggle-knob");
+      toggleBtn?.addEventListener("click", () => {
+        isSwitchOn = !isSwitchOn;
+        toggleBtn.setAttribute("aria-checked", String(isSwitchOn));
+        toggleBtn.style.background = isSwitchOn ? "var(--cyan-bright)" : "rgba(255,255,255,0.2)";
+        toggleKnob.style.transform = isSwitchOn ? "translateX(22px)" : "translateX(0px)";
+        showToast(`Accessible Switch: ${isSwitchOn ? "Enabled" : "Disabled"}`);
+      });
+      const slider = wrap.querySelector("#sandbox-slider-input");
+      const numSpan = wrap.querySelector("#sandbox-slider-num");
+      slider?.addEventListener("input", (e) => {
+        if (numSpan) numSpan.textContent = `${e.target.value} ms`;
+      });
+      slider?.addEventListener("change", (e) => {
+        showToast(`Adjusted throttle gap: ${e.target.value} ms`);
+      });
+    } else if (comp === "shader") {
+      if (sandboxStatusText) sandboxStatusText.textContent = 'get_code({ source: "shaders", id: "aurora", asSandbox: true })';
+      const wrap = el("div");
+      wrap.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: .75rem; text-align: center; width: 100%; max-width: 26rem;";
+      wrap.innerHTML = `
+        <div style="position: relative; width: 100%; height: 160px; border-radius: 12px; overflow: hidden; box-shadow: 0 16px 36px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);">
+          <canvas id="sandbox-shader-canvas" width="400" height="160" style="width: 100%; height: 100%; cursor: crosshair;"></canvas>
+          <div style="position: absolute; bottom: 8px; left: 10px; font: 600 .7rem var(--mono); color: #c2e6ff; background: rgba(0,0,0,0.5); padding: 2px 8px; border-radius: 4px;">Move mouse inside to distort Aurora</div>
+        </div>
+        <div style="font: 700 .9rem var(--body); color: #fff;">Shader Effects Inc · GLSL Aurora Wave</div>
+      `;
+      sandboxTarget.appendChild(wrap);
+      const canvas = wrap.querySelector("#sandbox-shader-canvas");
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        let t = 0;
+        let mx = 200, my = 80;
+        const renderShader = () => {
+          if (!ctx) return;
+          const w = canvas.width;
+          const h = canvas.height;
+          t += 0.03;
+          const grad = ctx.createLinearGradient(0, 0, w, h);
+          grad.addColorStop(0, "#001f3f");
+          grad.addColorStop(0.5, "#0284c7");
+          grad.addColorStop(1, "#0f172a");
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, w, h);
+
+          for (let i = 0; i < 4; i++) {
+            ctx.beginPath();
+            ctx.moveTo(0, h);
+            for (let x = 0; x <= w; x += 10) {
+              const distToM = Math.hypot(x - mx, h / 2 - my);
+              const warp = Math.sin(distToM * 0.05 - t * 2) * 20;
+              const y = Math.sin(x * 0.015 + t + i * 1.2) * 28 + h * 0.5 + warp;
+              ctx.lineTo(x, y);
+            }
+            ctx.lineTo(w, h);
+            ctx.closePath();
+            ctx.fillStyle = i === 0 ? "rgba(56, 189, 248, 0.25)" : i === 1 ? "rgba(52, 211, 153, 0.2)" : i === 2 ? "rgba(230, 223, 91, 0.2)" : "rgba(167, 139, 250, 0.15)";
+            ctx.fill();
+          }
+          cobeAnimId = requestAnimationFrame(renderShader);
+        };
+        renderShader();
+        canvas.addEventListener("mousemove", (e) => {
+          const rect = canvas.getBoundingClientRect();
+          mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+          my = (e.clientY - rect.top) * (canvas.height / rect.height);
+        });
+      }
+    }
+  };
+
+  sandboxSelect?.addEventListener("change", renderSandbox);
+  renderSandbox();
+
+  // Viewport switching
+  viewportBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      viewportBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const vp = btn.dataset.viewport;
+      sandboxFrame?.classList.remove("tablet", "mobile");
+      if (vp === "tablet") sandboxFrame?.classList.add("tablet");
+      if (vp === "mobile") sandboxFrame?.classList.add("mobile");
+      showToast(`Viewport mode: ${vp} (${vp === "desktop" ? "100%" : vp === "tablet" ? "680px" : "360px"})`);
+    });
+  });
+
+  // Canvas theme toggle
+  sandboxThemeBtn?.addEventListener("click", () => {
+    sandboxTheme = sandboxTheme === "dark" ? "light" : "dark";
+    if (sandboxTheme === "light") {
+      sandboxFrame?.classList.add("light");
+      showToast("Canvas theme: Light mode");
+    } else {
+      sandboxFrame?.classList.remove("light");
+      showToast("Canvas theme: Dark mode");
+    }
+  });
+
+  // Test interactive click button
+  sandboxInteractBtn?.addEventListener("click", () => {
+    const cta = $("sandbox-card-cta") || $("sandbox-wave-btn") || sandboxTarget?.firstElementChild;
+    if (cta) {
+      cta.click();
+    } else {
+      showToast("Interactive component triggered!");
+    }
+  });
+
+  // Copy runnable HTML
+  copySandboxHtmlBtn?.addEventListener("click", () => {
+    const code = studioSources.sandbox?.code || "";
+    copyText(code, "Copied standalone runnable sandbox HTML!");
+  });
+
+  // Download runnable HTML file
+  $("download-sandbox-html-btn")?.addEventListener("click", () => {
+    const code = studioSources.sandbox?.code || "";
+    const comp = sandboxSelect?.value || "component";
+    const blob = new Blob([code], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `frontend-inspo-${comp}-sandbox.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`Downloaded frontend-inspo-${comp}-sandbox.html!`);
+  });
+
+  // Sandbox Accent Palette Tweak
+  document.querySelectorAll(".accent-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".accent-chip").forEach((c) => c.classList.remove("active"));
+      chip.classList.add("active");
+      const accent = chip.dataset.accent;
+      document.documentElement.style.setProperty("--emulsion", accent);
+      showToast(`Active Accent Color: ${accent}`);
+      renderSandbox();
+    });
+  });
+
+  // Living Artifacts Frame 8: assistant-ui Prompt Chips
+  document.querySelectorAll(".prompt-chip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const p = btn.dataset.prompt;
+      const out = $("artifact-agent-output");
+      if (out) {
+        out.innerHTML = `🤖 Calling <code>search_all({ query: "${p}" })</code> across 89 sources... Retrieved clean source with verified license!`;
+        showToast(`Agent generated: ${p}`);
+      }
+    });
+  });
+
+  // Living Artifacts Frame 9: visx Chart Hover Tooltip
+  document.querySelectorAll(".visx-point").forEach((pt) => {
+    pt.addEventListener("mouseenter", () => {
+      const tip = $("artifact-visx-tip");
+      if (tip) tip.textContent = pt.dataset.val;
+    });
+  });
+
+  // Living Artifacts Frame 10: Shader Canvas Ripple
+  const artCanvas = $("artifact-shader-canvas");
+  if (artCanvas) {
+    const actx = artCanvas.getContext("2d");
+    let at = 0;
+    let amx = 110, amy = 50;
+    const animArt = () => {
+      if (!actx) return;
+      at += 0.04;
+      const w = artCanvas.width;
+      const h = artCanvas.height;
+      actx.fillStyle = "#001226";
+      actx.fillRect(0, 0, w, h);
+      for (let r = 10; r < 90; r += 16) {
+        actx.beginPath();
+        actx.arc(amx, amy, (r + Math.sin(at + r * 0.1) * 6), 0, Math.PI * 2);
+        actx.strokeStyle = `rgba(56, 189, 248, ${0.7 - r / 100})`;
+        actx.lineWidth = 1.5;
+        actx.stroke();
+      }
+      requestAnimationFrame(animArt);
+    };
+    animArt();
+    artCanvas.addEventListener("mousemove", (e) => {
+      const r = artCanvas.getBoundingClientRect();
+      amx = (e.clientX - r.left) * (artCanvas.width / r.width);
+      amy = (e.clientY - r.top) * (artCanvas.height / r.height);
+    });
+  }
+
+  // Living Artifacts Frame 12: Jolly UI Switch & Slider
+  $("artifact-jolly-switch")?.addEventListener("change", (e) => {
+    showToast(`Autonomous loop: ${e.target.checked ? "Active" : "Paused"}`);
+  });
+  $("artifact-jolly-range")?.addEventListener("input", (e) => {
+    const span = $("artifact-slider-val");
+    if (span) span.textContent = `${e.target.value}%`;
+  });
 
   $("copy-studio-code-btn").addEventListener("click", () => {
     copyText(studioPre.textContent, "Component source code copied!");
@@ -2762,13 +4250,13 @@ class TabsAutomatic {
       tool: "search_all",
       headline: "Parallel cross-source search with relevance scoring",
       description: "Searches all non-heavy sources in parallel. Returns top matches ranked by relevance. Sources that fail or time out are reported gracefully without failing the call.",
-      reasoning: "Agent needs an accessible marquee component. Calling search_all across 65 sources to compare implementations from Magic UI, Aceternity, and FreeFrontend."
+      reasoning: "Agent needs an accessible marquee component. Calling search_all across 89 sources to compare implementations from Magic UI, Aceternity, and FreeFrontend."
     },
     {
       key: "code",
       tool: "get_code",
-      headline: "Raw source code retrieval with safety size caps",
-      description: "Returns clean source code files (.tsx, .jsx, .css, .html, .glsl, .json). Capped at safety limits to protect the agent context window.",
+      headline: "Raw source code retrieval with safety size caps & sandbox preview",
+      description: "Returns clean source code files (.tsx, .jsx, .css, .html, .glsl, .json) or a self-contained runnable preview when asSandbox: true. Capped at safety limits to protect the agent context window.",
       reasoning: "Selected calm-tiger-42 from Uiverse. Fetching the exact CSS and HTML files for local project integration."
     },
     {
@@ -2788,9 +4276,9 @@ class TabsAutomatic {
     {
       key: "sources",
       tool: "list_sources",
-      headline: "Complete catalog of 65 permitted frontend sources",
+      headline: "Complete catalog of 89 permitted frontend sources",
       description: "Lists every source with its supported stacks, ID format rules, inline code availability, and heavy flags.",
-      reasoning: "Discovering active registry capabilities to check whether 3D shaders or mockup assets are available."
+      reasoning: "Discovering active registry capabilities to check whether 3D shaders, WebGL libraries, or mockup assets are available."
     },
     {
       key: "categories",
@@ -2857,21 +4345,27 @@ class TabsAutomatic {
 
   new TabsAutomatic(tablist);
 
-  // 65-Source Atlas & Search
-  const stacks = [...new Set(sources.flatMap((s) => s.stack || []))].sort();
+  // 89-Source Atlas & Search
+  const stackCounts = {};
+  for (const s of sources) {
+    for (const st of s.stack || []) {
+      stackCounts[st] = (stackCounts[st] || 0) + 1;
+    }
+  }
+  const stacks = Object.keys(stackCounts).sort((a, b) => stackCounts[b] - stackCounts[a]);
   const filtersFieldset = $("filters");
 
-  const createFilterRadio = (value, label, checked = false) => {
+  const createFilterRadio = (value, label, count, checked = false) => {
     const id = `stack-${value || "all"}`;
     const input = Object.assign(el("input"), { type: "radio", name: "stack", id, value, checked });
-    const lbl = el("label", "", label);
+    const lbl = el("label", "", `${label} (${count})`);
     lbl.htmlFor = id;
     filtersFieldset.append(input, lbl);
   };
 
-  createFilterRadio("", "All (65)", true);
+  createFilterRadio("", "All", sources.length, true);
   for (const s of stacks) {
-    createFilterRadio(s, s);
+    createFilterRadio(s, s, stackCounts[s]);
   }
 
   const cardsContainer = $("cards");
@@ -2897,7 +4391,31 @@ class TabsAutomatic {
     if (s.hasInlineCode) tags.append(el("span", "flag-code", "Inline Code"));
     if (s.heavy) tags.append(el("span", "flag-heavy", "Heavy"));
 
-    li.append(titleRow, desc, tags);
+    // Quick Action Bar for every card
+    const actionRow = el("div", "card-actions");
+    const copyToolBtn = el("button", "btn-card-copy", "📋 Copy MCP Call");
+    copyToolBtn.type = "button";
+    const toolSnippet = s.hasInlineCode
+      ? `get_code({ source: "${s.id}", id: "..." })`
+      : `search_resources({ source: "${s.id}", query: "..." })`;
+    copyToolBtn.title = `Copy: ${toolSnippet}`;
+    copyToolBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      copyText(toolSnippet, `Copied ${s.id} tool call to clipboard!`);
+    });
+
+    const testToolBtn = el("button", "btn-card-test", "⚡ Filter Atlas");
+    testToolBtn.type = "button";
+    testToolBtn.title = `Filter Atlas for ${s.id}`;
+    testToolBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      $("q").value = s.id;
+      updateAtlas();
+      showToast(`Filtered Atlas for: ${s.id}`);
+    });
+
+    actionRow.append(copyToolBtn, testToolBtn);
+    li.append(titleRow, desc, tags, actionRow);
     cardsContainer.append(li);
   }
 
@@ -2979,6 +4497,8 @@ class TabsAutomatic {
       switchStudioTab("tilt");
     } else if (e.key === "4") {
       switchStudioTab("palette");
+    } else if (e.key === "5") {
+      switchStudioTab("sandbox");
     }
   });
 

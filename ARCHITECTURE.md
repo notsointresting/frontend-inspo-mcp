@@ -1,6 +1,6 @@
 # Architecture
 
-frontend-inspo-mcp is a local [Model Context Protocol](https://modelcontextprotocol.io) server. An MCP client (Claude Desktop, Claude Code, Cursor, Kiro, ...) starts it as a child process and talks to it over stdin/stdout. It answers tool calls by reading public frontend and design resources from 65 sources and returning them as JSON.
+frontend-inspo-mcp is a local [Model Context Protocol](https://modelcontextprotocol.io) server. An MCP client (Claude Desktop, Claude Code, Cursor, Kiro, ...) starts it as a child process and talks to it over stdin/stdout. It answers tool calls by reading public frontend and design resources from 89 sources and returning them as JSON.
 
 ```
  MCP client (agent)                          frontend-inspo-mcp (local process)
@@ -11,7 +11,7 @@ frontend-inspo-mcp is a local [Model Context Protocol](https://modelcontextproto
                                              │    │                                      │
                                              │    ▼  SourceAdapter (lib/types.ts)        │
                                              │ sources/index.ts  the source registry     │
-                                             │ sources/*.ts      65 adapters             │
+                                             │ sources/*.ts      89 adapters             │
                                              │    │                                      │
                                              │    ▼                                      │
                                              │ lib/fetch.ts   the only network code:     │
@@ -57,7 +57,7 @@ Adapters fetch through `lib/fetch.ts` and parse with `cheerio` (HTML) or `JSON.p
 ## Key design decisions
 
 - **stdio only.** No network listener means no remote attack surface and no authentication to get wrong.
-- **One network module.** Security and politeness rules live in one place instead of 65.
+- **One network module.** Security and politeness rules live in one place instead of 89.
 - **Read-only, data-only.** The server returns third-party content but never runs it.
 - **Public, permitted sources only.** Adapters use documented APIs or public pages that the site's `robots.txt` allows (for example, Refero is read from its public pages because its API is disallowed). Sources whose `robots.txt` or license forbids the needed access are deliberately left out.
 - **`search_all` is bounded.** It searches sources in parallel under a per-source deadline, skips `heavy` sources unless named, and reports per-source failures in `errors` rather than failing the whole call.
@@ -65,4 +65,4 @@ Adapters fetch through `lib/fetch.ts` and parse with `cheerio` (HTML) or `JSON.p
 
 ## Build and test
 
-`npm run build` compiles TypeScript (`tsc`, strict) into `dist/` and copies the bundled markdown. `npm test` runs the offline unit tests (`node:test`, with the network faked), `npm run coverage` enforces coverage, `npm run lint` runs Biome, and `npm run check:reproducible` proves two clean builds are byte-identical. CI runs all of them on every push (Node 22/24/26, Linux + Windows); the live smoke test over all 65 sources runs on a nightly schedule.
+`npm run build` compiles TypeScript (`tsc`, strict) into `dist/` and copies the bundled markdown. `npm test` runs the offline unit tests (`node:test`, with the network faked), `npm run coverage` enforces coverage, `npm run lint` runs Biome, and `npm run check:reproducible` proves two clean builds are byte-identical. CI runs all of them on every push (Node 22/24/26, Linux + Windows); the live smoke test over all 89 sources runs on a nightly schedule.

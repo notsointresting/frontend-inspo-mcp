@@ -67,18 +67,21 @@ const baseName = (p: string): string =>
     ?.replace(/\.[^.]+$/, "") || p;
 
 /** File names that say nothing on their own: the folder names the resource. */
-const GENERIC_NAME = /^(?:index|\+page|readme|skill|design)$/i;
+const GENERIC_NAME = /^(?:index|\+?page|readme|skill|design|example)$/i;
 /** Numbered variants ("1", "1-dark", "example-01"): kept, after their folder's name. */
 const NUMBERED_NAME = /^(?:\d+(?:-dark)?|example-\d+)$/i;
+/** A folder that only names a demo's styling variant ("hero/tailwind/index.tsx"): its parent
+ *  names the resource. */
+const VARIANT_FOLDER = /^tailwind$/i;
 
 /** A file's title: its base name, unless that only means something with its folder
  *  ("/design-md/stripe/DESIGN.md" -> "stripe", ".../accordions/1-dark.html" ->
- *  "accordions 1-dark"). */
+ *  "accordions 1-dark", ".../demos/hero/tailwind/index.tsx" -> "hero"). */
 const titleOf = (p: string): string => {
   const name = baseName(p);
-  const folder = p.split("/").at(-2);
+  const [parent, folder] = p.split("/").slice(-3, -1);
   if (!folder) return name; // a top-level file has no folder to borrow from
-  if (GENERIC_NAME.test(name)) return folder;
+  if (GENERIC_NAME.test(name)) return VARIANT_FOLDER.test(folder) && parent ? parent : folder;
   return NUMBERED_NAME.test(name) ? `${folder} ${name}` : name;
 };
 

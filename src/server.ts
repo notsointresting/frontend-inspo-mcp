@@ -10,6 +10,7 @@ import {
   type ReadResourceResult,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
+import { generateSandboxHtml } from "./lib/sandbox.js";
 import { matchScore } from "./lib/search.js";
 import { type ResourceSummary, type SourceAdapter, STACKS } from "./lib/types.js";
 import { categorySchema, idSchema, querySchema, techSchema } from "./lib/validate.js";
@@ -556,10 +557,16 @@ export function createServer(): McpServer {
           .describe(
             "Include FreeFrontend's 'Copy for AI' prompt (aiPrompt). Off by default: that text is written to instruct an AI.",
           ),
+        asSandbox: z
+          .boolean()
+          .optional()
+          .describe(
+            "When true, generates a self-contained, runnable HTML sandbox preview with styles and scripts, added as 'sandbox.html' in the returned code.",
+          ),
       },
       annotations: READ_ONLY,
     },
-    async ({ source, id, file, maxChars, includeAiPrompt }) => {
+    async ({ source, id, file, maxChars, includeAiPrompt, asSandbox }) => {
       const adapter = getAdapter(source);
       if (!adapter.hasInlineCode) {
         return err(
@@ -570,6 +577,9 @@ export function createServer(): McpServer {
         const detail = await adapter.getResource(id);
         if (!detail) return err(`Resource not found: ${source} / ${id}`);
         let code: Code = detail.code ?? {};
+        if (asSandbox) {
+          code = { ...code, "sandbox.html": generateSandboxHtml(detail) };
+        }
         if (file !== undefined) {
           const one = Object.hasOwn(code, file) ? code[file] : undefined;
           if (one === undefined) {

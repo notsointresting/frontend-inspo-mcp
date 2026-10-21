@@ -458,6 +458,476 @@ const CASES = [
     license:
       "MIT for the SVGL code; each logo is a trademark of its owner, so follow the brand's usage guidelines",
   },
+  {
+    id: "hextaui",
+    index: "https://hextaui.com/r/registry.json",
+    indexBody: {
+      $schema: "https://ui.shadcn.com/schema/registry.json",
+      name: "hextaui",
+      homepage: "https://hextaui.com",
+      items: [
+        { name: "theme", type: "registry:theme", title: "Theme" }, // theme: dropped
+        {
+          name: "use-autosize",
+          type: "registry:hook",
+          title: "useAutosize",
+          description:
+            "Grows a textarea with what you write between its minimum and maximum height, animating each change without ever touching the text.",
+          files: [file("hooks/use-autosize.ts", "registry:hook")],
+        },
+        {
+          name: "accordion",
+          type: "registry:ui",
+          title: "Accordion",
+          description:
+            "Stacked headings that each reveal a panel, with height motion you can reverse mid-way and panels that stay searchable while closed.",
+          categories: ["layout"],
+          files: [file("components/ui/accordion.tsx", "registry:ui")],
+        },
+        {
+          name: "accordion-controlled",
+          type: "registry:example",
+          title: "Accordion: Controlled",
+          description: "The Controlled example from the Accordion docs.",
+          files: [file("components/examples/accordion/controlled.tsx", "registry:example")],
+        },
+      ],
+    },
+    ids: ["use-autosize", "accordion", "accordion-controlled"],
+    query: "textarea",
+    found: ["use-autosize"],
+    item: "use-autosize",
+    itemUrl: "https://hextaui.com/r/use-autosize.json",
+    files: [
+      file(
+        "hooks/use-autosize.ts",
+        "registry:hook",
+        'import * as React from "react"\n\nimport { easeOut, prefersReducedMotion } from "@/lib/motion"\n',
+      ),
+    ],
+    code: {
+      ts: 'import * as React from "react"\n\nimport { easeOut, prefersReducedMotion } from "@/lib/motion"\n',
+    },
+    url: "https://hextaui.com/",
+    license: "MIT",
+  },
+  {
+    id: "reui",
+    heavy: true,
+    index: "https://reui.io/r/styles/base-nova/registry.json",
+    indexBody: {
+      name: "reui",
+      homepage: "https://reui.io",
+      items: [
+        {
+          name: "alert",
+          type: "registry:ui",
+          title: "Alert",
+          description: "",
+          files: [file("alert.tsx", "registry:ui")],
+        },
+        {
+          name: "c-alert-1",
+          type: "registry:block",
+          title: "Basic alert",
+          description: "Basic alert",
+          files: [file("c-alert-1.tsx", "registry:block")],
+        },
+        {
+          name: "agent-activity-1", // a paid block (it answers 401): dropped by name
+          type: "registry:block",
+          title:
+            "Agent run console that stops at approval steps for an inline Approve, Revise or Deny",
+          files: [file("page.tsx", "registry:block"), file("agent-activity.tsx", "registry:block")],
+        },
+        {
+          name: "use-copy-to-clipboard",
+          type: "registry:hook",
+          title: "Use Copy To Clipboard",
+          description: "",
+          files: [file("use-copy-to-clipboard.ts", "registry:hook")],
+        },
+      ],
+    },
+    ids: ["alert", "c-alert-1", "use-copy-to-clipboard"],
+    query: "basic alert",
+    found: ["c-alert-1"],
+    item: "c-alert-1",
+    itemUrl: "https://reui.io/r/styles/base-nova/c-alert-1.json",
+    files: [
+      file(
+        "c-alert-1.tsx",
+        "registry:block",
+        'import {\n  Alert,\n  AlertDescription,\n  AlertTitle,\n} from "@/components/reui/alert"\n',
+      ),
+    ],
+    code: {
+      tsx: 'import {\n  Alert,\n  AlertDescription,\n  AlertTitle,\n} from "@/components/reui/alert"\n',
+    },
+    url: "https://reui.io/",
+    license: "MIT",
+  },
+  {
+    id: "cnippetui",
+    index: "https://ui.cnippet.dev/r/registry.json",
+    indexBody: {
+      name: "cnippet ui",
+      homepage: "https://ui.cnippet.dev",
+      items: [
+        { name: "ui", type: "registry:ui" }, // the bundle of every component has no files: dropped
+        {
+          name: "accordion",
+          type: "registry:ui",
+          files: [file("registry/default/ui/accordion.tsx", "registry:ui")],
+        },
+        {
+          name: "v-accordion-2",
+          type: "registry:block",
+          description: "Single Accordion",
+          categories: ["accordion"],
+          files: [file("registry/default/variants/v-accordion-2.tsx", "registry:block")],
+        },
+        {
+          name: "m-typewriter-1",
+          type: "registry:block",
+          description: "Hero headline — types once with a block-underscore cursor",
+          categories: ["typewriter"],
+          files: [file("registry/default/motion-variants/m-typewriter-1.tsx", "registry:block")],
+        },
+        { name: "font-sans", type: "registry:font" },
+      ],
+    },
+    ids: ["accordion", "v-accordion-2", "m-typewriter-1"],
+    query: "typewriter cursor",
+    found: ["m-typewriter-1"],
+    item: "m-typewriter-1",
+    itemUrl: "https://ui.cnippet.dev/r/m-typewriter-1.json",
+    files: [
+      file(
+        "registry/default/motion-variants/m-typewriter-1.tsx",
+        "registry:block",
+        'import { Typewriter } from "@/registry/default/motion/typewriter";\n',
+      ),
+    ],
+    code: { tsx: 'import { Typewriter } from "@/registry/default/motion/typewriter";\n' },
+    url: "https://ui.cnippet.dev/",
+    license: "MIT",
+  },
+  {
+    id: "systalikoui",
+    index: "https://systaliko-ui.vercel.app/r/registry.json",
+    indexBody: {
+      $schema: "https://ui.shadcn.com/schema/registry.json",
+      name: "systaliko",
+      homepage: "https://systaliko.com",
+      items: [
+        { name: "index", type: "registry:style", files: [] },
+        {
+          name: "animated-menu",
+          type: "registry:block",
+          title: "Animated Menu",
+          description: "Animated menu, with orchestrated children animation, fully customizable.",
+          files: [file("registry/blocks/animated-menu/index.tsx", "registry:block")],
+        },
+        {
+          name: "text-stagger-inview",
+          type: "registry:ui",
+          title: "Text Stagger Inview",
+          description:
+            "Splitted text animation with staggered reveal triggered by view, You can easily customize by controlling the animation property (transform, opacity, blur) and the stagger value, and the transition.",
+          files: [file("registry/text/text-stagger-inview/index.tsx", "registry:ui")],
+        },
+        {
+          name: "badge",
+          type: "registry:ui",
+          title: "Badge",
+          description: "Badge component with variants.",
+          files: [file("registry/shadcn/badge/index.tsx", "registry:ui")],
+        },
+        {
+          name: "badge", // the button, published under the badge's name: the first one wins
+          type: "registry:ui",
+          title: "Button",
+          description: "Button component with variants.",
+          files: [file("registry/shadcn/button/index.tsx", "registry:ui")],
+        },
+      ],
+    },
+    ids: ["animated-menu", "text-stagger-inview", "badge"],
+    query: "staggered reveal",
+    found: ["text-stagger-inview"],
+    item: "text-stagger-inview",
+    itemUrl: "https://systaliko-ui.vercel.app/r/text-stagger-inview.json",
+    files: [
+      file(
+        "registry/text/text-stagger-inview/index.tsx",
+        "registry:ui",
+        "'use client';\nimport * as React from 'react';\n",
+      ),
+    ],
+    code: { tsx: "'use client';\nimport * as React from 'react';\n" },
+    url: "https://systaliko-ui.vercel.app/",
+    license: "MIT",
+  },
+  {
+    id: "uitripled",
+    index: "https://ui.tripled.work/r/registry.json",
+    indexBody: {
+      items: [
+        {
+          name: "ai-glow-input-shadcnui",
+          type: "registry:component",
+          title: "AI Glow Input",
+          description:
+            "Input field with dynamic glow that pulses based on typing speed - smart motion feedback",
+          files: [
+            file(
+              "@uitripled/react-shadcn/src/components/motion-core/ai-glow-input.tsx",
+              "registry:component",
+            ),
+          ],
+        },
+        {
+          name: "about-us-section-baseui",
+          type: "registry:block",
+          title: "About Us",
+          description:
+            "About us section with value cards, icons, and animated reveal effects (Base UI)",
+          files: [
+            file(
+              "@uitripled/react-baseui/src/components/sections/about-us-section-baseui.tsx",
+              "registry:block",
+            ),
+          ],
+        },
+      ],
+    },
+    ids: ["ai-glow-input-shadcnui", "about-us-section-baseui"],
+    query: "value cards",
+    found: ["about-us-section-baseui"],
+    item: "about-us-section-baseui",
+    itemUrl: "https://ui.tripled.work/r/about-us-section-baseui.json",
+    files: [
+      file(
+        "@uitripled/react-baseui/src/components/sections/about-us-section-baseui.tsx",
+        "registry:block",
+        '"use client";\n\nimport { motion, Variants } from "framer-motion";\n',
+      ),
+    ],
+    code: { tsx: '"use client";\n\nimport { motion, Variants } from "framer-motion";\n' },
+    url: "https://ui.tripled.work/",
+    license: "MIT",
+  },
+  {
+    id: "ruixenui",
+    // The index sits at the site root, the items under /r/.
+    index: "https://ruixen.com/registry.json",
+    indexBody: {
+      name: "ruixen-ui",
+      homepage: "https://ruixen.com",
+      items: [
+        { name: "index", type: "registry:style", files: [] },
+        {
+          name: "halo-reel",
+          type: "registry:ui",
+          title: "Halo Reel",
+          description:
+            "Image cards riding an ellipse — cos θ places each card, sizes it and stacks it, so the near side of the ring is large and the far side small.",
+          files: [file("registry/ruixenui/halo-reel.tsx", "registry:ui")],
+        },
+        {
+          name: "halo-reel-demo",
+          type: "registry:example",
+          title: "Halo Reel Demo",
+          description:
+            "Example of an image ring that turns on its own, pauses on hover, and spins under a drag.",
+          files: [file("registry/example/halo-reel-demo.tsx", "registry:example")],
+        },
+      ],
+    },
+    ids: ["halo-reel", "halo-reel-demo"],
+    query: "ellipse",
+    found: ["halo-reel"],
+    item: "halo-reel-demo",
+    itemUrl: "https://ruixen.com/r/halo-reel-demo.json",
+    files: [
+      file(
+        "registry/example/halo-reel-demo.tsx",
+        "registry:example",
+        '"use client";\n\nimport { HaloReel, type HaloReelItem } from "@/registry/ruixenui/halo-reel";\n',
+      ),
+    ],
+    code: {
+      tsx: '"use client";\n\nimport { HaloReel, type HaloReelItem } from "@/registry/ruixenui/halo-reel";\n',
+    },
+    url: "https://ruixen.com/",
+    license: "MIT",
+  },
+  {
+    id: "uselayouts",
+    index: "https://uselayouts.com/r/registry.json",
+    indexBody: {
+      $schema: "https://ui.shadcn.com/schema/registry.json",
+      name: "uselayouts",
+      homepage: "https://uselayouts.com",
+      items: [
+        {
+          name: "3d-book",
+          type: "registry:component",
+          title: "3D Book",
+          description: "An interactive 3D book component with page flip animations.",
+          files: [file("registry/default/example/3d-book.tsx", "registry:component")],
+        },
+        {
+          name: "gooey-navbar",
+          type: "registry:component",
+          title: "Gooey Navbar",
+          description:
+            "A pill nav that melts into its neighbor when you hover — liquid bridges, active dot.",
+          files: [file("registry/default/example/gooey-navbar.tsx", "registry:component")],
+        },
+      ],
+    },
+    ids: ["3d-book", "gooey-navbar"],
+    query: "page flip",
+    found: ["3d-book"],
+    item: "gooey-navbar",
+    itemUrl: "https://uselayouts.com/r/gooey-navbar.json",
+    files: [
+      file(
+        "registry/default/example/gooey-navbar.tsx",
+        "registry:component",
+        '"use client";\n\nimport React, { useState, useEffect, useRef } from "react";\n',
+      ),
+    ],
+    code: { tsx: '"use client";\n\nimport React, { useState, useEffect, useRef } from "react";\n' },
+    url: "https://uselayouts.com/",
+    license: "MIT",
+  },
+  {
+    id: "spellui",
+    index: "https://spell.sh/r/registry.json",
+    indexBody: {
+      $schema: "https://ui.shadcn.com/schema/registry.json",
+      name: "spell-ui",
+      homepage: "https://spell.sh",
+      items: [
+        {
+          name: "blur-reveal",
+          type: "registry:component",
+          title: "Blur Reveal",
+          description: "Animated text reveal with blur effect.",
+          files: [file("registry/spell-ui/blur-reveal.tsx", "registry:component")],
+        },
+        {
+          name: "text-marquee",
+          type: "registry:component",
+          title: "Text Marquee",
+          description: "Animated text marquee component with vertical scrolling.",
+          files: [file("registry/spell-ui/text-marquee.tsx", "registry:component")],
+        },
+      ],
+    },
+    ids: ["blur-reveal", "text-marquee"],
+    query: "vertical scrolling",
+    found: ["text-marquee"],
+    item: "text-marquee",
+    itemUrl: "https://spell.sh/r/text-marquee.json",
+    files: [
+      file(
+        "registry/spell-ui/text-marquee.tsx",
+        "registry:component",
+        '"use client";\n\nimport React from "react";\nimport { cn } from "@/lib/utils";\n',
+      ),
+    ],
+    code: {
+      tsx: '"use client";\n\nimport React from "react";\nimport { cn } from "@/lib/utils";\n',
+    },
+    url: "https://spell.sh/",
+    license: "MIT",
+  },
+  {
+    id: "jollyui",
+    index: "https://www.jollyui.dev/r/index.json",
+    // A legacy (shadcn v2) index: a bare array.
+    indexBody: [
+      {
+        name: "breadcrumbs",
+        type: "registry:ui",
+        dependencies: ["react-aria-components"],
+        registryDependencies: ["button"],
+        files: [file("ui/breadcrumbs.tsx", "registry:ui")],
+      },
+      { name: "meter", type: "registry:ui", files: [file("ui/meter.tsx", "registry:ui")] },
+    ],
+    ids: ["breadcrumbs", "meter"],
+    query: "meter",
+    found: ["meter"],
+    item: "meter",
+    itemUrl: "https://www.jollyui.dev/r/styles/default/meter.json",
+    files: [
+      file("ui/meter.tsx", "registry:ui", '"use client"\n\nimport * as React from "react"\n'),
+    ],
+    code: { tsx: '"use client"\n\nimport * as React from "react"\n' },
+    url: "https://www.jollyui.dev/",
+    license: "MIT",
+  },
+  {
+    id: "assistantui",
+    index: "https://r.assistant-ui.com/registry.json",
+    indexBody: {
+      $schema: "https://ui.shadcn.com/schema/registry.json",
+      name: "assistant-ui",
+      homepage: "https://assistant-ui.com",
+      items: [
+        {
+          name: "elements-tool-call",
+          type: "registry:component",
+          title: "Tool call",
+          description:
+            "One tool invocation with its request and result tucked behind a disclosure.",
+          files: [file("components/assistant-ui/elements/tool-call.tsx", "registry:component")],
+          dependencies: ["lucide-react"],
+        },
+        {
+          name: "shimmer-style", // a style without files: dropped
+          type: "registry:style",
+          title: "Shimmer Style",
+          description: "Keyframes and theme variables for the streaming shimmer animation.",
+        },
+        {
+          name: "thread",
+          type: "registry:component",
+          title: "Thread",
+          description:
+            "Chat container with message list, composer, auto scroll, and accessibility built in.",
+          files: [file("components/assistant-ui/elements/thread.aui.tsx", "registry:component")],
+        },
+        {
+          name: "use-copy-to-clipboard",
+          type: "registry:hook",
+          title: "Use Copy To Clipboard",
+          description: "Copy text to the clipboard with a temporary copied state.",
+          files: [file("hooks/use-copy-to-clipboard.ts", "registry:hook")],
+        },
+      ],
+    },
+    ids: ["elements-tool-call", "thread", "use-copy-to-clipboard"],
+    query: "auto scroll",
+    found: ["thread"],
+    item: "elements-tool-call",
+    itemUrl: "https://r.assistant-ui.com/elements-tool-call.json",
+    files: [
+      file(
+        "components/assistant-ui/elements/tool-call.tsx",
+        "registry:component",
+        '"use client";\n\nimport { CheckIcon, ChevronRightIcon } from "lucide-react";\n',
+      ),
+    ],
+    code: { tsx: '"use client";\n\nimport { CheckIcon, ChevronRightIcon } from "lucide-react";\n' },
+    url: "https://www.assistant-ui.com/",
+    license: "MIT",
+  },
 ];
 
 describe("community registries", () => {
@@ -471,7 +941,8 @@ describe("community registries", () => {
   for (const c of CASES) {
     it(`${c.id}: lists its items, finds "${c.query}" and returns ${c.item}'s code`, async () => {
       const a = communityRegistries.find((x) => x.id === c.id);
-      const type = c.indexBody.items.find((i) => i?.name === c.item)?.type;
+      const listed = Array.isArray(c.indexBody) ? c.indexBody : c.indexBody.items;
+      const type = listed.find((i) => i?.name === c.item)?.type;
       const item = {
         $schema: "https://ui.shadcn.com/schema/registry-item.json",
         name: c.item,

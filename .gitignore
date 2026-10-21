@@ -10,6 +10,7 @@ coverage/
 .playwright-mcp/
 _skill_extract/
 *.log
+*.png
 lsg.html
 peach.html
 test/

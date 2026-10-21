@@ -288,9 +288,14 @@ describe("package titles and categories", () => {
       "/skills/gsap-react/README.md": "gsap-react",
       "/examples/stagger/index.js": "stagger", // anime.js examples
       "/packages/docs/src/routes/(routes)/components/button/+page.md": "button", // daisyUI docs
+      "/website/app/ip/page.tsx": "ip", // a Next.js app-router page (cobe's demo site)
       "/public/examples/application/accordions/1.html": "accordions 1", // HyperUI
       "/public/examples/application/accordions/1-dark.html": "accordions 1-dark",
       "/elements/accordion-examples/example-01.html": "accordion-examples example-01", // Pines
+      "/packages/visx-demo/src/sandboxes/visx-bars/Example.tsx": "visx-bars", // visx demos
+      // Base UI demos: the styling-variant folder defers to the demo's own name.
+      "/docs/src/app/(docs)/react/components/accordion/demos/hero/tailwind/index.tsx": "hero",
+      "/tailwind/index.tsx": "tailwind", // ... unless there is no folder above it
       // Everything else keeps its base name, as does a top-level file (no folder to name it).
       "/elements/accordion.html": "accordion",
       "/src/core/index.d.ts": "index.d",
